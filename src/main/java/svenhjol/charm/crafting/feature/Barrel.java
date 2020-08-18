@@ -62,7 +62,7 @@ public class Barrel extends Feature
         useCharmBarrels = propBoolean(
             "Use Charm barrels",
             "Charm's barrels will be enabled even if barrels from other mods are present.",
-            false
+            true
         );
 
         // internal
@@ -95,13 +95,24 @@ public class Barrel extends Feature
             types.put(rarity, barrels);
         }
 
-        // create recipes for all block barrel wood types
-        for (int i = 0; i < BlockBarrel.WoodVariant.values().length; i++) {
-            RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(block, 1, i),
-                "WSW", "W W", "WSW",
-                'W', ProxyRegistry.newStack(Blocks.PLANKS, 1, i),
-                'S', ProxyRegistry.newStack(Blocks.WOODEN_SLAB, 1, i)
-            );
+        if (!ForgeHelper.areModsLoaded("futuremc")) {
+            // create recipes for all block barrel wood types
+            for (int i = 0; i < BlockBarrel.WoodVariant.values().length; i++) {
+                RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(block, 1, i),
+                    "WSW", "W W", "WSW",
+                    'W', ProxyRegistry.newStack(Blocks.PLANKS, 1, i),
+                    'S', ProxyRegistry.newStack(Blocks.WOODEN_SLAB, 1, i)
+                );
+            }
+        } else {
+            // create alternate recipes for all block barrel wood types (only when FutureMC is present)
+            for (int i = 0; i < BlockBarrel.WoodVariant.values().length; i++) {
+                RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(block, 1, i),
+                    "WWW", "S S", "WWW",
+                    'W', ProxyRegistry.newStack(Blocks.PLANKS, 1, i),
+                    'S', ProxyRegistry.newStack(Blocks.WOODEN_SLAB, 1, i)
+                );
+            }
         }
     }
 

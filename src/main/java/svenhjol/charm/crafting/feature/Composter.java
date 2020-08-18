@@ -4,10 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,12 +19,14 @@ import net.minecraftforge.oredict.OreDictionary;
 import svenhjol.charm.Charm;
 import svenhjol.charm.crafting.block.BlockComposter;
 import svenhjol.charm.crafting.message.MessageComposterAddLevel;
+import svenhjol.charm.world.compat.FutureMcBlocks;
 import svenhjol.meson.Feature;
 import svenhjol.meson.handler.NetworkHandler;
-import svenhjol.meson.helper.ItemHelper;
-import svenhjol.meson.registry.ProxyRegistry;
 import svenhjol.meson.handler.RecipeHandler;
+import svenhjol.meson.helper.ForgeHelper;
+import svenhjol.meson.helper.ItemHelper;
 import svenhjol.meson.helper.SoundHelper;
+import svenhjol.meson.registry.ProxyRegistry;
 
 import java.util.*;
 
@@ -30,11 +36,18 @@ public class Composter extends Feature
     public static Map<String, Float> inputs = new HashMap<>();
     public static List<String> outputs = new ArrayList<>();
     public static int maxOutput;
+    public static boolean useCharmComposters;
 
     @Override
     public String getDescription()
     {
         return "Right-click the composter with organic items to add them.  When the composter is full, bonemeal will be returned.";
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return enabled && (!ForgeHelper.areModsLoaded("futuremc") || useCharmComposters);
     }
 
     @Override
@@ -61,7 +74,8 @@ public class Composter extends Feature
                         "inspirations:cactus_seeds",
                         "inspirations:sugar_cane_seeds",
                         "inspirations:carrot_seeds",
-                        "inspirations:potato_seeds"
+                        "inspirations:potato_seeds",
+                        "futuremc:sweet_berries"
                 }
         );
         for (String item : items) inputs.put(item, 0.3f);
@@ -104,7 +118,10 @@ public class Composter extends Feature
                         "inspirations:flower",
                         "inspirations:materials[4]",
                         "inspirations:materials[5]",
-                        "inspirations:edibles[0]"
+                        "inspirations:edibles[0]",
+                        "futuremc:cornflower",
+                        "futuremc:lily_of_the_valley",
+                        "futuremc:wither_rose"
                 }
         );
         for (String item : items) inputs.put(item, 0.65f);
@@ -149,6 +166,12 @@ public class Composter extends Feature
                 "Sets the maximum stack size of the composter output.",
                 3
         );
+
+        useCharmComposters = propBoolean(
+                "Use Charm composters",
+                "Charm's composters will be enabled even if composters from other mods are present.",
+                false
+        );
     }
 
     @Override
@@ -159,11 +182,35 @@ public class Composter extends Feature
         GameRegistry.registerTileEntity(composter.getTileEntityClass(), new ResourceLocation(Charm.MOD_ID + ":composter"));
         NetworkHandler.register(MessageComposterAddLevel.class, Side.CLIENT);
 
-        RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(composter),
+        if (!ForgeHelper.areModsLoaded("futuremc")) {
+            RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(composter),
                 "F F", "F F", "PPP",
                 'F', "fenceWood",
                 'P', "plankWood"
-        );
+            );
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGH)
+    public void onRegister(RegistryEvent.Register<IRecipe> event)
+    {
+        // Register recipe here only when FutureMC is present, inside preInit FutureMC blocks don't exist
+        if (FutureMcBlocks.composter == null) {
+            RecipeHandler.addShapedRecipe(ProxyRegistry.newStack(composter),
+                "F F", "F F", "PPP",
+                'F', "fenceWood",
+                'P', "plankWood"
+            );
+        } else {
+            RecipeHandler.addShapelessRecipe(ProxyRegistry.newStack(Composter.composter), new ItemStack(FutureMcBlocks.composter));
+            RecipeHandler.addShapelessRecipe(new ItemStack(FutureMcBlocks.composter), ProxyRegistry.newStack(Composter.composter));
+        }
+    }
+
+    @Override
+    public boolean hasSubscriptions()
+    {
+        return ForgeHelper.areModsLoaded("futuremc") && useCharmComposters;
     }
 
     @SideOnly(Side.CLIENT)
