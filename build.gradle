@@ -1,47 +1,33 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
+        mavenLocal()
+        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url = 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'com.wynprice.cursemaven', name: 'CurseMaven', version: '2.1.1'
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 
 ext.configFile = file('gradle.properties')
 ext.config = parseConfig(configFile)
 
 version = "${minecraft_version}-${mod_version}"
-group = "svenhjol.charm" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = mod_name
+group = "svenhjol.charm"
+archivesBaseName = "${mod_name}"
 
 minecraft {
-//    coreMod = "svenhjol.charm.base.CharmLoadingPlugin"
-    mappings channel: 'snapshot', version: "${forge_mappings}"
-
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-
-        server {
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-    }
+    coreMod = "svenhjol.charm.base.CharmLoadingPlugin"
+    version = "1.12.2-14.23.5.2847"
+    mappings = "stable_39"
+    runDir = 'run'
 }
 
 jar {
@@ -77,8 +63,8 @@ repositories {
         url "https://maven.tehnut.info"
     }
     maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
+        name = 'CurseForge'
+        url = 'https://minecraft.curseforge.com/api/maven/'
     }
     flatDir {
         // for including local jar files
@@ -87,14 +73,14 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+//    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
     // set to "compileOnly" to test without quark
-    compile "curse.maven:${arl}"
-    compile "curse.maven:${quark}"
+    compileOnly "curse.maven:${arl}"
+    compileOnly "curse.maven:${quark}"
     compileOnly "mezz.jei:jei_${minecraft_version}:${jei}:api"
-//    runtimeOnly "mezz.jei:jei_${minecraft_version}:${jei}"
-    compile "inventory-tweaks:InventoryTweaks:${invtweaks}:api"
+    runtimeOnly "mezz.jei:jei_${minecraft_version}:${jei}"
+//    compile "inventory-tweaks:InventoryTweaks:${invtweaks}:api"
 //    deobfProvided "curse:maven:${quark}:api"
 //    runtime "mcp.mobius.waila:Hwyla:${waila}_${minecraft_version}"
 }
