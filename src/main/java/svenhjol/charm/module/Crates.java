@@ -2,9 +2,9 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -28,8 +28,8 @@ public class Crates extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "crate");
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
 
-    public static ScreenHandlerType<CrateScreenHandler> SCREEN_HANDLER;
-    public static BlockEntityType<CrateBlockEntity> BLOCK_ENTITY;
+    public static ContainerType<CrateScreenHandler> SCREEN_HANDLER;
+    public static TileEntityType<CrateBlockEntity> BLOCK_ENTITY;
 
     // add blocks and items to these lists to blacklist them from crates
     public static final List<Class<? extends Block>> INVALID_CRATE_BLOCKS = new ArrayList<>();

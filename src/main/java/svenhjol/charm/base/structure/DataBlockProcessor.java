@@ -5,6 +5,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.StructureMode;
 import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.tileentity.MobSpawnerTileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -344,7 +346,7 @@ public class DataBlockProcessor extends StructureProcessor {
                 if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                     return;
 
-                Block ore = Registry.BLOCK.get(typeId);
+                Block ore = Registry.BLOCK.getOrDefault(typeId);
                 state = ore.getDefaultState();
                 return;
             }
@@ -373,7 +375,7 @@ public class DataBlockProcessor extends StructureProcessor {
                 if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                     return;
 
-                entity = Registry.ENTITY_TYPE.get(typeId);
+                entity = Registry.ENTITY_TYPE.getOrDefault(typeId);
             }
 
             if (entity == null)
@@ -381,18 +383,18 @@ public class DataBlockProcessor extends StructureProcessor {
 
             state = Blocks.SPAWNER.getDefaultState();
 
-            MobSpawnerBlockEntity blockEntity = TileEntityType.MOB_SPAWNER.create();
+            MobSpawnerTileEntity blockEntity = TileEntityType.MOB_SPAWNER.create();
             if (blockEntity != null) {
-                blockEntity.getLogic().setEntityId(entity);
+                blockEntity.getSpawnerBaseLogic().setEntityType(entity);
                 tag = new CompoundNBT();
-                blockEntity.toTag(this.tag);
+                blockEntity.write(this.tag);
             }
         }
 
         protected void storage() {
             if (!withChance(STORAGE_CHANCE)) return;
 
-            LootableContainerBlockEntity blockEntity;
+            LockableLootTileEntity blockEntity;
             IVariantMaterial woodType = DecorationHelper.getRandomVariantMaterial(random);
 
             if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {
@@ -408,7 +410,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     // get vanilla barrel
                     state = Blocks.BARREL.getDefaultState();
                 }
-                state = state.with(BarrelBlock.FACING, Direction.UP);
+                state = state.with(BarrelBlock.PROPERTY_FACING, Direction.UP);
                 blockEntity = TileEntityType.BARREL.create();
             }
 
@@ -418,7 +420,7 @@ public class DataBlockProcessor extends StructureProcessor {
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
             blockEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
-            blockEntity.toTag(tag);
+            blockEntity.write(tag);
         }
 
         public boolean withChance(float chance) {

@@ -1,27 +1,20 @@
 package svenhjol.charm.blockentity;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SidedInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.collection.NonNullList;
-import net.minecraft.util.math.Direction;
+import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.util.NonNullList;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.screenhandler.CrateScreenHandler;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class CrateBlockEntity extends LootableContainerBlockEntity implements SidedInventory {
+public class CrateBlockEntity extends LockableLootTileEntity implements ISidedInventory {
     public static int SIZE = 9;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
     private NonNullList<ItemStack> items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);

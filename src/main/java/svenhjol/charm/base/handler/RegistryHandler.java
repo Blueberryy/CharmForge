@@ -14,6 +14,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.village.PointOfInterestType;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 
 import java.util.function.Supplier;
 
@@ -27,7 +29,7 @@ public class RegistryHandler {
         return Registry.register(Registry.BLOCK_ENTITY_TYPE, id, TileEntityType.Builder.create(supplier, blocks).build(null));
     }
 
-    public static ConfiguredStructureFeature<?, ?> configuredFeature(ResourceLocation id, ConfiguredStructureFeature<?, ?> configuredFeature) {
+    public static StructureFeature<?, ?> configuredFeature(ResourceLocation id, StructureFeature<?, ?> configuredFeature) {
         WorldGenRegistries.register(WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE, id, configuredFeature);
         return configuredFeature;
     }
@@ -68,7 +70,7 @@ public class RegistryHandler {
         return Registry.register(Registry.SOUND_EVENT, id, sound);
     }
 
-    public static StructurePieceType structurePiece(ResourceLocation id, StructurePieceType structurePieceType) {
+    public static IStructurePieceType structurePiece(ResourceLocation id, IStructurePieceType structurePieceType) {
         return Registry.register(Registry.STRUCTURE_PIECE, id, structurePieceType);
     }
 

@@ -4,22 +4,15 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.state.IntegerProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import svenhjol.charm.blockentity.BookcaseBlockEntity;
 import svenhjol.charm.base.CharmModule;
@@ -29,13 +22,13 @@ import svenhjol.charm.base.enums.IVariantMaterial;
 import javax.annotation.Nullable;
 
 public class BookcaseBlock extends CharmBlockWithEntity {
-    public static final IntProperty SLOTS = IntProperty.of("slots", 0, BookcaseBlockEntity.SIZE);
+    public static final IntegerProperty SLOTS = IntegerProperty.create("slots", 0, BookcaseBlockEntity.SIZE);
 
     protected CharmModule module;
     protected IVariantMaterial type;
 
     public BookcaseBlock(CharmModule module, IVariantMaterial type) {
-        super(module, type.asString() + "_bookcase", AbstractBlock.Settings
+        super(module, type.getString() + "_bookcase", AbstractBlock.Settings
             .copy(Blocks.BOOKSHELF));
 
         this.module = module;
@@ -103,7 +96,7 @@ public class BookcaseBlock extends CharmBlockWithEntity {
     @Override
     public BlockEntity createBlockEntity(BlockView world) {
         BookcaseBlockEntity bookcase = new BookcaseBlockEntity();
-        bookcase.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_bookcase"));
+        bookcase.setCustomName(new TranslatableText("block." + module.mod + "." + type.getString() + "_bookcase"));
         return bookcase;
     }
 

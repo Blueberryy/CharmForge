@@ -11,7 +11,7 @@ import svenhjol.charm.base.block.ICharmBlock;
 public abstract class BaseLanternBlock extends LanternBlock implements ICharmBlock {
     protected CharmModule module;
 
-    public BaseLanternBlock(CharmModule module, String name, AbstractBlock.Settings settings) {
+    public BaseLanternBlock(CharmModule module, String name, AbstractBlock.Properties settings) {
         super(settings);
         this.module = module;
         register(module, name);
