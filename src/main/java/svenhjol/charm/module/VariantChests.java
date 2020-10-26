@@ -2,7 +2,7 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
@@ -20,8 +20,8 @@ import java.util.Map;
 
 @Module(mod = Charm.MOD_ID, description = "Chests available in all types of vanilla wood.")
 public class VariantChests extends CharmModule {
-    public static final Identifier NORMAL_ID = new Identifier("variant_chest");
-    public static final Identifier TRAPPED_ID = new Identifier(Charm.MOD_ID, "trapped_chest");
+    public static final ResourceLocation NORMAL_ID = new ResourceLocation("variant_chest");
+    public static final ResourceLocation TRAPPED_ID = new ResourceLocation(Charm.MOD_ID, "trapped_chest");
 
     public static final Map<IVariantMaterial, VariantChestBlock> NORMAL_CHEST_BLOCKS = new HashMap<>();
     public static final Map<IVariantMaterial, VariantTrappedChestBlock> TRAPPED_CHEST_BLOCKS = new HashMap<>();

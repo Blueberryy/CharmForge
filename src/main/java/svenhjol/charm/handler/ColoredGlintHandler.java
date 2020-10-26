@@ -3,9 +3,9 @@ package svenhjol.charm.handler;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.mixin.accessor.BufferBuilderStorageAccessor;
 import svenhjol.charm.mixin.accessor.MinecraftClientAccessor;
@@ -19,7 +19,7 @@ import java.util.SortedMap;
 public class ColoredGlintHandler {
     public static final String GLINT_TAG = "charm_glint";
 
-    public static Map<DyeColor, Identifier> TEXTURES = new HashMap<>();
+    public static Map<DyeColor, ResourceLocation> TEXTURES = new HashMap<>();
     public static Map<DyeColor, RenderLayer> GLINT = new HashMap<>();
     public static Map<DyeColor, RenderLayer> DIRECT_GLINT = new HashMap<>();
     public static Map<DyeColor, RenderLayer> ENTITY_GLINT = new HashMap<>();
@@ -33,7 +33,7 @@ public class ColoredGlintHandler {
             return;
 
         for (DyeColor dyeColor : DyeColor.values()) {
-            TEXTURES.put(dyeColor, new Identifier(Charm.MOD_ID, "textures/misc/" + dyeColor.getName() + "_glint.png"));
+            TEXTURES.put(dyeColor, new ResourceLocation(Charm.MOD_ID, "textures/misc/" + dyeColor.getName() + "_glint.png"));
 
             GLINT.put(dyeColor, createGlint(dyeColor, TEXTURES.get(dyeColor)));
             DIRECT_GLINT.put(dyeColor, createDirectGlint(dyeColor, TEXTURES.get(dyeColor)));
@@ -48,7 +48,7 @@ public class ColoredGlintHandler {
         return DyeColor.PURPLE;
     }
 
-    public static RenderLayer createGlint(DyeColor dyeColor, Identifier texture) {
+    public static RenderLayer createGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderLayer renderLayer = RenderLayer.of("glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderLayer.MultiPhaseParameters.builder()
             .texture(new RenderPhase.Texture(texture, true, false))
             .writeMaskState(RenderPhaseAccessor.getColorMask())
@@ -62,7 +62,7 @@ public class ColoredGlintHandler {
         return renderLayer;
     }
 
-    public static RenderLayer createDirectGlint(DyeColor dyeColor, Identifier texture) {
+    public static RenderLayer createDirectGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderLayer renderLayer = RenderLayer.of("glint_direct_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderLayer.MultiPhaseParameters.builder()
             .texture(new RenderPhase.Texture(texture, true, false))
             .writeMaskState(RenderPhaseAccessor.getColorMask())
@@ -76,7 +76,7 @@ public class ColoredGlintHandler {
         return renderLayer;
     }
 
-    public static RenderLayer createEntityGlint(DyeColor dyeColor, Identifier texture) {
+    public static RenderLayer createEntityGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderLayer renderLayer = RenderLayer.of("entity_glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderLayer.MultiPhaseParameters.builder()
             .texture(new RenderPhase.Texture(texture, true, false))
             .writeMaskState(RenderPhaseAccessor.getColorMask())
@@ -91,7 +91,7 @@ public class ColoredGlintHandler {
         return renderLayer;
     }
 
-    public static RenderLayer createDirectEntityGlint(DyeColor dyeColor, Identifier texture) {
+    public static RenderLayer createDirectEntityGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderLayer renderLayer = RenderLayer.of("entity_glint_direct_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderLayer.MultiPhaseParameters.builder()
             .texture(new RenderPhase.Texture(texture, true, false))
             .writeMaskState(RenderPhaseAccessor.getColorMask())
@@ -116,7 +116,7 @@ public class ColoredGlintHandler {
         }
 
         if (stack != null && stack.hasTag()) {
-            CompoundTag tag = stack.getTag();
+            CompoundNBT tag = stack.getTag();
             if (tag != null) {
                 if (tag.contains(GLINT_TAG)) {
                     DyeColor dyeColor = DyeColor.byName(tag.getString(GLINT_TAG), DyeColor.PURPLE);
@@ -140,7 +140,7 @@ public class ColoredGlintHandler {
             }
 
             if (stack != null && stack.hasTag()) {
-                CompoundTag tag = stack.getTag();
+                CompoundNBT tag = stack.getTag();
                 if (tag != null) {
                     if (tag.contains(GLINT_TAG)) {
                         DyeColor dyeColor = DyeColor.byName(tag.getString(GLINT_TAG), DyeColor.PURPLE);

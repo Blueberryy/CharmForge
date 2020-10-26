@@ -4,7 +4,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.recipe.CookingRecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ClientRegistryHandler;
@@ -18,8 +18,8 @@ import svenhjol.charm.screenhandler.KilnScreenHandler;
 
 @Module(mod = Charm.MOD_ID, description = "A functional block that speeds up cooking of clay, bricks and terracotta.")
 public class Kilns extends CharmModule {
-    public static Identifier RECIPE_ID = new Identifier("firing");
-    public static Identifier BLOCK_ID = new Identifier(Charm.MOD_ID, "kiln");
+    public static ResourceLocation RECIPE_ID = new ResourceLocation("firing");
+    public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "kiln");
     public static KilnBlock KILN;
     public static BlockEntityType<KilnBlockEntity> BLOCK_ENTITY;
     public static RecipeType<FiringRecipe> RECIPE_TYPE;

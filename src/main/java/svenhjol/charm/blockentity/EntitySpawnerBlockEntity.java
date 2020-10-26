@@ -2,38 +2,29 @@ package svenhjol.charm.blockentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.entity.vehicle.ChestMinecartEntity;
-import net.minecraft.entity.vehicle.MinecartEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootTables;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Tickable;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.ServerWorldAccess;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.DataBlockHelper;
 import svenhjol.charm.module.EntitySpawner;
 
 import java.util.*;
 
-public class EntitySpawnerBlockEntity extends BlockEntity implements Tickable {
+public class EntitySpawnerBlockEntity extends TileEntity implements ITickableTileEntity {
     private final static String ENTITY = "entity";
     private final static String PERSIST = "persist";
     private final static String HEALTH = "health";
@@ -41,8 +32,8 @@ public class EntitySpawnerBlockEntity extends BlockEntity implements Tickable {
     private final static String COUNT = "count";
     private final static String ROTATION = "rotation";
 
-    public Identifier entity = null;
-    public BlockRotation rotation = BlockRotation.NONE;
+    public ResourceLocation entity = null;
+    public Rotation rotation = Rotation.NONE;
     public boolean persist = false;
     public double health = 0;
     public int count = 1;
@@ -53,10 +44,10 @@ public class EntitySpawnerBlockEntity extends BlockEntity implements Tickable {
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
-        super.fromTag(state, tag);
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
 
-        this.entity = Identifier.tryParse(tag.getString(ENTITY));
+        this.entity = ResourceLocation.tryParse(tag.getString(ENTITY));
         this.persist = tag.getBoolean(PERSIST);
         this.health = tag.getDouble(HEALTH);
         this.count = tag.getInt(COUNT);
@@ -67,8 +58,8 @@ public class EntitySpawnerBlockEntity extends BlockEntity implements Tickable {
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
-        super.toTag(tag);
+    public CompoundNBT toTag(CompoundNBT tag) {
+        super.write(tag);
 
         tag.putString(ENTITY, entity.toString());
         tag.putString(ROTATION, rotation.name());
@@ -144,7 +135,7 @@ public class EntitySpawnerBlockEntity extends BlockEntity implements Tickable {
 
         if (type == EntityType.CHEST_MINECART) {
             minecart = new ChestMinecartEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-            Identifier lootTable = DataBlockHelper.getLootTable(this.meta, LootTables.ABANDONED_MINESHAFT_CHEST);
+            ResourceLocation lootTable = DataBlockHelper.getLootTable(this.meta, LootTables.ABANDONED_MINESHAFT_CHEST);
             ((ChestMinecartEntity)minecart).setLootTable(lootTable, world.random.nextLong());
         } else if (type == EntityType.MINECART) {
             minecart = new MinecartEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);

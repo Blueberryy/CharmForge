@@ -5,12 +5,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.StructureFeature;
 import svenhjol.charm.Charm;
@@ -31,9 +31,9 @@ import java.util.function.BiConsumer;
 
 @Module(mod = Charm.MOD_ID, description = "Synchronize additional state from server to client.", alwaysEnabled = true)
 public class PlayerState extends CharmModule {
-    public static final Identifier MSG_SERVER_UPDATE_PLAYER_STATE = new Identifier(Charm.MOD_ID, "server_update_player_state");
-    public static final Identifier MSG_CLIENT_UPDATE_PLAYER_STATE = new Identifier(Charm.MOD_ID, "client_update_player_state");
-    public static List<BiConsumer<ServerPlayerEntity, CompoundTag>> listeners = new ArrayList<>();
+    public static final ResourceLocation MSG_SERVER_UPDATE_PLAYER_STATE = new ResourceLocation(Charm.MOD_ID, "server_update_player_state");
+    public static final ResourceLocation MSG_CLIENT_UPDATE_PLAYER_STATE = new ResourceLocation(Charm.MOD_ID, "client_update_player_state");
+    public static List<BiConsumer<ServerPlayerEntity, CompoundNBT>> listeners = new ArrayList<>();
 
     public static PlayerStateClient client;
 
@@ -67,7 +67,7 @@ public class PlayerState extends CharmModule {
 
         // register client message handler to call the clientCallback
         ClientSidePacketRegistry.INSTANCE.register(MSG_CLIENT_UPDATE_PLAYER_STATE, (context, data) -> {
-            CompoundTag tag = new CompoundTag();
+            CompoundNBT tag = new CompoundNBT();
 
             try {
                 byte[] byteData = Base64.getDecoder().decode(data.readString());
@@ -76,7 +76,7 @@ public class PlayerState extends CharmModule {
                 Charm.LOG.warn("Failed to decompress player state");
             }
 
-            CompoundTag finalTag = tag;
+            CompoundNBT finalTag = tag;
             context.getTaskQueue().execute(() -> {
                 clientCallback(finalTag);
             });
@@ -91,7 +91,7 @@ public class PlayerState extends CharmModule {
         ServerWorld world = player.getServerWorld();
         BlockPos pos = player.getBlockPos();
         long dayTime = world.getTimeOfDay() % 24000;
-        CompoundTag tag = new CompoundTag();
+        CompoundNBT tag = new CompoundNBT();
 
         tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, StructureFeature.MINESHAFT));
         tag.putBoolean("stronghold", PosHelper.isInsideStructure(world, pos, StructureFeature.STRONGHOLD));
@@ -125,7 +125,7 @@ public class PlayerState extends CharmModule {
      * Unpack the received server data from the NBT tag.
      */
     @Environment(EnvType.CLIENT)
-    public static void clientCallback(CompoundTag data) {
+    public static void clientCallback(CompoundNBT data) {
         client.mineshaft = data.getBoolean("mineshaft");
         client.stronghold = data.getBoolean("stronghold");
         client.fortress = data.getBoolean("fortress");

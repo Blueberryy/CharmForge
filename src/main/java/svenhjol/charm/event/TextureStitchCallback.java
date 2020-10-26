@@ -3,7 +3,7 @@ package svenhjol.charm.event;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.Set;
 
@@ -14,5 +14,5 @@ public interface TextureStitchCallback {
         }
     });
 
-    void interact(SpriteAtlasTexture atlas, Set<Identifier> textures);
+    void interact(SpriteAtlasTexture atlas, Set<ResourceLocation> textures);
 }

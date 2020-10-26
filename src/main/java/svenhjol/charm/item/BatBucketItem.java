@@ -7,7 +7,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -57,7 +57,7 @@ public class BatBucketItem extends CharmItem {
             BatEntity bat = MobHelper.spawn(EntityType.BAT, (ServerWorld)world, spawnPos, SpawnReason.BUCKET);
             if (bat != null) {
 
-                CompoundTag data = ItemNBTHelper.getCompound(held, STORED_BAT);
+                CompoundNBT data = ItemNBTHelper.getCompound(held, STORED_BAT);
                 if (!data.isEmpty())
                     bat.readCustomDataFromTag(data);
 

@@ -5,7 +5,7 @@ import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
@@ -25,7 +25,7 @@ import java.util.*;
 
 @Module(mod = Charm.MOD_ID, description = "A smaller storage solution with the benefit of being transportable.")
 public class Crates extends CharmModule {
-    public static final Identifier ID = new Identifier(Charm.MOD_ID, "crate");
+    public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "crate");
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
 
     public static ScreenHandlerType<CrateScreenHandler> SCREEN_HANDLER;

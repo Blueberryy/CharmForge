@@ -1,11 +1,11 @@
 package svenhjol.charm.module;
 
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -25,11 +25,11 @@ import java.util.*;
 
 @Module(mod = Charm.MOD_ID, description = "Bookshelves that can hold up to 9 stacks of books and maps.")
 public class Bookcases extends CharmModule {
-    public static final Identifier ID = new Identifier(Charm.MOD_ID, "bookcase");
+    public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "bookcase");
     public static final Map<IVariantMaterial, BookcaseBlock> BOOKCASE_BLOCKS = new HashMap<>();
 
-    public static ScreenHandlerType<BookcaseScreenHandler> SCREEN_HANDLER;
-    public static BlockEntityType<BookcaseBlockEntity> BLOCK_ENTITY;
+    public static ContainerType<BookcaseScreenHandler> SCREEN_HANDLER;
+    public static TileEntityType<BookcaseBlockEntity> BLOCK_ENTITY;
 
     public static List<Class<? extends Item>> validItems = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class Bookcases extends CharmModule {
         });
 
         configValidItems.forEach(string -> {
-            Item item = Registry.ITEM.get(new Identifier(string));
+            Item item = Registry.ITEM.get(new ResourceLocation(string));
             validItems.add(item.getClass());
         });
 

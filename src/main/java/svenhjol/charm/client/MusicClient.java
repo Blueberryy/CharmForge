@@ -17,7 +17,7 @@ import net.minecraft.sound.MusicSound;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import svenhjol.charm.Charm;
@@ -37,7 +37,7 @@ public class MusicClient {
     private SoundInstance musicToStop = null;
     private int ticksBeforeStop = 0;
     private static SoundInstance currentMusic;
-    private static Identifier currentDim = null;
+    private static ResourceLocation currentDim = null;
     private static int timeUntilNextMusic = 100;
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
     public static boolean enabled;
@@ -69,7 +69,7 @@ public class MusicClient {
         musicConditions.add(new MusicCondition(
             SoundEvents.MUSIC_CREATIVE, 1200, 3600, mc -> mc.player != null
                 && (!mc.player.isCreative() || !mc.player.isSpectator())
-                && DimensionHelper.isDimension(mc.player.world, new Identifier("overworld"))
+                && DimensionHelper.isDimension(mc.player.world, new ResourceLocation("overworld"))
                 && new Random().nextFloat() < 0.25F
         ));
     }

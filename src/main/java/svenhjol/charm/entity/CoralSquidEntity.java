@@ -19,12 +19,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.tag.FluidTags;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -48,7 +48,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     public static final String CORAL_SQUID_TYPE_TAG = "CoralSquidType";
 
     private static final TrackedData<Integer> CORAL_SQUID_TYPE;
-    public static final Map<Integer, Identifier> TEXTURES;
+    public static final Map<Integer, ResourceLocation> TEXTURES;
     public static final Map<Integer, Item> DROPS;
 
     public float tiltAngle;
@@ -74,7 +74,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
 
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundTag entityTag) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundNBT entityTag) {
         entityData = super.initialize(world, difficulty, spawnReason, entityData, entityTag);
         setCoralSquidType(random.nextInt(5));
         return entityData;
@@ -104,7 +104,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
         return 8; // might be important for performance
     }
 
-    public Identifier getTexture() {
+    public ResourceLocation getTexture() {
         return TEXTURES.getOrDefault(getCoralSquidType(), TEXTURES.get(0));
     }
 
@@ -126,13 +126,13 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundTag tag) {
+    public void writeCustomDataToTag(CompoundNBT tag) {
         super.writeCustomDataToTag(tag);
         tag.putInt(CORAL_SQUID_TYPE_TAG, this.getCoralSquidType());
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundTag tag) {
+    public void readCustomDataFromTag(CompoundNBT tag) {
         super.readCustomDataFromTag(tag);
         this.setCoralSquidType(tag.getInt(CORAL_SQUID_TYPE_TAG));
     }
@@ -361,11 +361,11 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     static {
         CORAL_SQUID_TYPE = DataTracker.registerData(CoralSquidEntity.class, TrackedDataHandlerRegistry.INTEGER);
         TEXTURES = Util.make(Maps.newHashMap(), map -> {
-            map.put(0, new Identifier(Charm.MOD_ID, "textures/entity/coral_squid/tube.png"));
-            map.put(1, new Identifier(Charm.MOD_ID, "textures/entity/coral_squid/brain.png"));
-            map.put(2, new Identifier(Charm.MOD_ID, "textures/entity/coral_squid/bubble.png"));
-            map.put(3, new Identifier(Charm.MOD_ID, "textures/entity/coral_squid/fire.png"));
-            map.put(4, new Identifier(Charm.MOD_ID, "textures/entity/coral_squid/horn.png"));
+            map.put(0, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/tube.png"));
+            map.put(1, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/brain.png"));
+            map.put(2, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/bubble.png"));
+            map.put(3, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/fire.png"));
+            map.put(4, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/horn.png"));
         });
         DROPS = Util.make(Maps.newHashMap(), map -> {
             map.put(0, Items.TUBE_CORAL);

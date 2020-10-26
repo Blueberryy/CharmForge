@@ -10,7 +10,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.EndermiteEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
@@ -26,7 +26,7 @@ import svenhjol.charm.item.EndermitePowderItem;
 
 @Module(mod = Charm.MOD_ID, description = "Endermites drop endermite powder that can be used to locate an End City.")
 public class EndermitePowder extends CharmModule {
-    public static Identifier ID = new Identifier(Charm.MOD_ID, "endermite_powder");
+    public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "endermite_powder");
     public static EntityType<EndermitePowderEntity> ENTITY;
     public static EndermitePowderItem ENDERMITE_POWDER;
     public static double lootingBoost = 0.3D;

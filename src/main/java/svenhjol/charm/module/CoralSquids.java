@@ -5,7 +5,7 @@ import net.minecraft.entity.SpawnGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
@@ -25,8 +25,8 @@ import java.util.List;
 
 @Module(mod = Charm.MOD_ID, description = "Coral Squids spawn near coral in warm oceans.")
 public class CoralSquids extends CharmModule {
-    public static Identifier ID = new Identifier(Charm.MOD_ID, "coral_squid");
-    public static Identifier EGG_ID = new Identifier(Charm.MOD_ID, "coral_squid_spawn_egg");
+    public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "coral_squid");
+    public static ResourceLocation EGG_ID = new ResourceLocation(Charm.MOD_ID, "coral_squid_spawn_egg");
 
     public static EntityType<CoralSquidEntity> CORAL_SQUID;
     public static Item SPAWN_EGG;

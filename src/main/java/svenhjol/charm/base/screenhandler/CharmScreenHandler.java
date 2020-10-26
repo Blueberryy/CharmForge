@@ -3,15 +3,15 @@ package svenhjol.charm.base.screenhandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
 
-public abstract class CharmScreenHandler extends ScreenHandler implements ICharmScreenHandler {
+import java.awt.*;
+
+public abstract class CharmScreenHandler extends Container implements ICharmScreenHandler {
     protected final Inventory inventory;
 
-    protected CharmScreenHandler(ScreenHandlerType<?> type, int id, PlayerInventory playerInventory, Inventory inventory) {
+    protected CharmScreenHandler(ContainerType<?> type, int id, PlayerInventory playerInventory, Inventory inventory) {
         super(type, id);
         this.inventory = inventory;
         inventory.onOpen(playerInventory.player);

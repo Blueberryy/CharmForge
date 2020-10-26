@@ -8,7 +8,7 @@ import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.PortableCraftingClient;
 import svenhjol.charm.screenhandler.PortableCraftingScreenHandler;
@@ -19,7 +19,7 @@ import svenhjol.charm.base.iface.Module;
 @Module(mod = Charm.MOD_ID, description = "Allows crafting from inventory if the player has a crafting table in their inventory.")
 public class PortableCrafting extends CharmModule {
     private static final Text LABEL = new TranslatableText("container.charm.portable_crafting_table");
-    public static final Identifier MSG_SERVER_OPEN_CRAFTING = new Identifier(Charm.MOD_ID, "server_open_crafting");
+    public static final ResourceLocation MSG_SERVER_OPEN_CRAFTING = new ResourceLocation(Charm.MOD_ID, "server_open_crafting");
     public static PortableCraftingClient client;
 
     @Config(name = "Enable keybind", description = "If true, sets a keybind for opening the portable crafting table (defaults to 'c').")

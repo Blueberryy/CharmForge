@@ -13,14 +13,14 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class CrateBlock extends CharmBlockWithEntity {
     private static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
-    private static final Identifier CONTENTS = new Identifier("contents");
+    private static final ResourceLocation CONTENTS = new ResourceLocation("contents");
     private IVariantMaterial type;
 
     public CrateBlock(CharmModule module, IVariantMaterial type) {
@@ -85,7 +85,7 @@ public class CrateBlock extends CharmBlockWithEntity {
 
             if (!world.isClient && player.isCreative() && !crate.isEmpty()) {
                 ItemStack stack = new ItemStack(getBlockByMaterial(this.type));
-                CompoundTag tag = crate.toTag(new CompoundTag());
+                CompoundNBT tag = crate.toTag(new CompoundNBT());
 
                 if (!tag.isEmpty())
                     stack.putSubTag(BLOCK_ENTITY_TAG, tag);
@@ -178,7 +178,7 @@ public class CrateBlock extends CharmBlockWithEntity {
         if (crate == null)
             return ItemStack.EMPTY;
 
-        CompoundTag tag = crate.toTag(new CompoundTag());
+        CompoundNBT tag = crate.toTag(new CompoundNBT());
         if (!tag.isEmpty())
             stack.putSubTag(BLOCK_ENTITY_TAG, tag);
 

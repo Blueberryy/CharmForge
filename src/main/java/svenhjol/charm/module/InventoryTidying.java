@@ -5,7 +5,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.InventoryTidyingClient;
 import svenhjol.charm.handler.InventoryTidyingHandler;
@@ -20,7 +20,7 @@ import static svenhjol.charm.handler.InventoryTidyingHandler.BE;
 @Module(mod = Charm.MOD_ID, description = "Button to automatically tidy inventories.")
 public class InventoryTidying extends CharmModule {
     public static InventoryTidyingClient client;
-    public static final Identifier MSG_SERVER_TIDY_INVENTORY = new Identifier(Charm.MOD_ID, "server_tidy_inventory");
+    public static final ResourceLocation MSG_SERVER_TIDY_INVENTORY = new ResourceLocation(Charm.MOD_ID, "server_tidy_inventory");
 
     @Override
     public void init() {

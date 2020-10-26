@@ -8,7 +8,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -28,7 +28,7 @@ public class EndermitePowderItem extends CharmItem {
     public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getStackInHand(handIn);
 
-        if (!DimensionHelper.isDimension(worldIn, new Identifier("the_end")))
+        if (!DimensionHelper.isDimension(worldIn, new ResourceLocation("the_end")))
             return TypedActionResult.fail(stack);
 
         if (!playerIn.isCreative())

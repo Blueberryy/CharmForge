@@ -4,7 +4,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import svenhjol.charm.entity.CoralSquidEntity;
 import svenhjol.charm.model.CoralSquidEntityModel;
@@ -15,7 +15,7 @@ public class CoralSquidEntityRenderer extends MobEntityRenderer<CoralSquidEntity
     }
 
     @Override
-    public Identifier getTexture(CoralSquidEntity entity) {
+    public ResourceLocation getTexture(CoralSquidEntity entity) {
         return entity.getTexture();
     }
 

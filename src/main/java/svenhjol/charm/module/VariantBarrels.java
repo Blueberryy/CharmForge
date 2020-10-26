@@ -2,7 +2,7 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.entity.BarrelBlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Module(mod = Charm.MOD_ID, description = "Barrels available in all types of vanilla wood.")
 public class VariantBarrels extends CharmModule {
-    public static final Identifier ID = new Identifier(Charm.MOD_ID, "barrel");
+    public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "barrel");
     public static final Map<IVariantMaterial, VariantBarrelBlock> BARREL_BLOCKS = new HashMap<>();
 
     public static BlockEntityType<BarrelBlockEntity> BLOCK_ENTITY;

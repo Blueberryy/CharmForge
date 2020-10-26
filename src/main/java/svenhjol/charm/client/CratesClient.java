@@ -8,7 +8,7 @@ import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.text.OrderedText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.collection.DefaultedList;
@@ -45,7 +45,7 @@ public class CratesClient {
         if (!stack.hasTag())
             return false;
 
-        CompoundTag tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
+        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
 
         if (tag == null)
             return false;

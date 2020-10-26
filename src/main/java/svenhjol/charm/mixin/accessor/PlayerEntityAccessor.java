@@ -1,18 +1,18 @@
 package svenhjol.charm.mixin.accessor;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(PlayerEntity.class)
 public interface PlayerEntityAccessor {
     @Invoker()
-    void callSetShoulderEntityLeft(CompoundTag tag);
+    void callSetShoulderEntityLeft(CompoundNBT tag);
 
     @Invoker()
-    void callSetShoulderEntityRight(CompoundTag tag);
+    void callSetShoulderEntityRight(CompoundNBT tag);
 
     @Invoker()
-    void callDropShoulderEntity(CompoundTag tag);
+    void callDropShoulderEntity(CompoundNBT tag);
 }

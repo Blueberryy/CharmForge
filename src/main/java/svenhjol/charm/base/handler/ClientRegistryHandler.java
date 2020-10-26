@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 
@@ -15,7 +16,7 @@ public class ClientRegistryHandler {
         ScreenRegistry.register(screenHandler, screen);
     }
 
-    public static void setRenderLayer(Block block, RenderLayer renderLayer) {
+    public static void setRenderLayer(Block block, RenderType renderLayer) {
         BlockRenderLayerMap.INSTANCE.putBlock(block, renderLayer);
     }
 }

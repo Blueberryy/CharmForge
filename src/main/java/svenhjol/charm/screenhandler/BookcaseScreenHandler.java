@@ -2,8 +2,6 @@ package svenhjol.charm.screenhandler;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.screen.slot.Slot;
 import svenhjol.charm.base.screenhandler.CharmScreenHandler;
 import svenhjol.charm.blockentity.BookcaseBlockEntity;
 import svenhjol.charm.module.Bookcases;

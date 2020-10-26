@@ -1,6 +1,6 @@
 package svenhjol.charm.module;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -29,11 +29,11 @@ public class RefinedObsidian extends CharmModule {
     }
 
     @Override
-    public List<Identifier> getRecipesToRemove() {
-        List<Identifier> remove = new ArrayList<>();
+    public List<ResourceLocation> getRecipesToRemove() {
+        List<ResourceLocation> remove = new ArrayList<>();
 
         if (!ModuleHandler.enabled("charm:kilns"))
-            remove.add(new Identifier(Charm.MOD_ID, "refined_obsidian/refined_obsidian_from_firing"));
+            remove.add(new ResourceLocation(Charm.MOD_ID, "refined_obsidian/refined_obsidian_from_firing"));
 
         return remove;
     }

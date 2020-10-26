@@ -4,7 +4,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ClientRegistryHandler;
@@ -17,8 +17,8 @@ import svenhjol.charm.screenhandler.WoodcutterScreenHandler;
 
 @Module(mod = Charm.MOD_ID, description = "A functional block that adds more efficient recipes for crafting wooden stairs and slabs.")
 public class Woodcutters extends CharmModule {
-    public static Identifier RECIPE_ID = new Identifier("woodcutting");
-    public static Identifier BLOCK_ID = new Identifier(Charm.MOD_ID, "woodcutter");
+    public static ResourceLocation RECIPE_ID = new ResourceLocation("woodcutting");
+    public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "woodcutter");
     public static WoodcutterBlock WOODCUTTER;
     public static ScreenHandlerType<WoodcutterScreenHandler> SCREEN_HANDLER;
     public static RecipeType<WoodcuttingRecipe> RECIPE_TYPE;

@@ -6,11 +6,11 @@ import net.minecraft.block.LanternBlock;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.loot.LootTables;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.structure.MineshaftGenerator.MineshaftCorridor;
 import net.minecraft.structure.MineshaftGenerator.MineshaftRoom;
 import net.minecraft.structure.StructurePiece;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -40,7 +40,7 @@ public class MineshaftImprovements extends CharmModule {
     public static List<BlockState> pileBlocks = new ArrayList<>();
     public static List<BlockState> roomBlocks = new ArrayList<>();
     public static List<BlockState> roomDecoration = new ArrayList<>();
-    public static List<Identifier> crateLootTables = new ArrayList<>();
+    public static List<ResourceLocation> crateLootTables = new ArrayList<>();
 
     public static float floorBlockChance = 0.05F;
     public static float ceilingBlockChance = 0.03F;
@@ -184,14 +184,14 @@ public class MineshaftImprovements extends CharmModule {
 
                 if (box.contains(blockpos)) {
                     BlockState state = Crates.getRandomCrateBlock(rand).getDefaultState();
-                    Identifier loot = crateLootTables.get(rand.nextInt(crateLootTables.size()));
+                    ResourceLocation loot = crateLootTables.get(rand.nextInt(crateLootTables.size()));
 
                     world.setBlockState(blockpos, state, 2);
 
                     BlockEntity blockEntity = world.getBlockEntity(blockpos);
                     if (blockEntity instanceof CrateBlockEntity) {
                         ((CrateBlockEntity) blockEntity).setLootTable(loot, rand.nextLong());
-                        blockEntity.toTag(new CompoundTag());
+                        blockEntity.toTag(new CompoundNBT());
                     }
                 }
             }

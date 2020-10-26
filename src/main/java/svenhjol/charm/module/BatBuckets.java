@@ -6,10 +6,10 @@ import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
@@ -26,7 +26,7 @@ public class BatBuckets extends CharmModule {
     public static BatBucketItem BAT_BUCKET_ITEM;
     public static BatBucketClient client = null;
 
-    public static final Identifier MSG_CLIENT_SET_GLOWING = new Identifier(Charm.MOD_ID, "client_set_glowing");
+    public static final ResourceLocation MSG_CLIENT_SET_GLOWING = new ResourceLocation(Charm.MOD_ID, "client_set_glowing");
 
     @Config(name = "Glowing time", description = "Number of seconds that entities will receive the glowing effect.")
     public static int glowingTime = 10;
@@ -61,7 +61,7 @@ public class BatBuckets extends CharmModule {
                 return ActionResult.PASS;
 
             ItemStack batBucket = new ItemStack(BAT_BUCKET_ITEM);
-            CompoundTag tag = new CompoundTag();
+            CompoundNBT tag = new CompoundNBT();
             ItemNBTHelper.setCompound(batBucket, BatBucketItem.STORED_BAT, bat.toTag(tag));
 
             if (held.getCount() == 1) {

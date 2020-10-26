@@ -2,7 +2,7 @@ package svenhjol.charm.mixin;
 
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,7 +29,7 @@ public class SpriteAtlasTextureMixin {
         ),
         locals = LocalCapture.CAPTURE_FAILHARD
     )
-    private void hookStitch(ResourceManager resourceManager, Stream<Identifier> idStream, Profiler profiler, int mipmapLevel, CallbackInfoReturnable<SpriteAtlasTexture.Data> cir, Set<Identifier> set) {
+    private void hookStitch(ResourceManager resourceManager, Stream<ResourceLocation> idStream, Profiler profiler, int mipmapLevel, CallbackInfoReturnable<SpriteAtlasTexture.Data> cir, Set<ResourceLocation> set) {
         TextureStitchCallback.EVENT.invoker().interact((SpriteAtlasTexture)(Object)this, set);
     }
 }

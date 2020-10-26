@@ -10,7 +10,7 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -102,7 +102,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public void createBlockItem(Identifier id) {
+    public void createBlockItem(ResourceLocation id) {
         // don't
     }
 

@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -86,7 +86,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     /**
      * Copypasta from {@link net.minecraft.block.TrappedChestBlock}
      */
-    protected Stat<Identifier> getOpenStat() {
+    protected Stat<ResourceLocation> getOpenStat() {
         return Stats.CUSTOM.getOrCreateStat(Stats.TRIGGER_TRAPPED_CHEST);
     }
 }

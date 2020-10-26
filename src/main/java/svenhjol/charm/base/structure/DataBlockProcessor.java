@@ -3,11 +3,19 @@ package svenhjol.charm.base.structure;
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.StructureMode;
+import net.minecraft.tileentity.ChestTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.gen.feature.template.IStructureProcessorType;
+import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.StructureProcessor;
+import net.minecraft.world.gen.feature.template.Template;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -31,11 +39,11 @@ public class DataBlockProcessor extends StructureProcessor {
 
     @Nullable
     @Override
-    public StructureBlockInfo process(WorldView world, BlockPos pos, BlockPos blockPos, StructureBlockInfo unused, StructureBlockInfo blockInfo, StructurePlacementData placement) {
+    public Template.BlockInfo process(IWorldReader world, BlockPos pos, BlockPos blockPos, Template.BlockInfo unused, Template.BlockInfo blockInfo, PlacementSettings placement, @Nullable Template template) {
         if (blockInfo.state.getBlock() == Blocks.STRUCTURE_BLOCK) {
-            StructureBlockMode mode = StructureBlockMode.valueOf(blockInfo.tag.getString("mode"));
-            if (mode == StructureBlockMode.DATA) {
-                return resolver.replace(world, placement.getRotation(), blockInfo, new Random(pos.asLong()));
+            StructureMode mode = StructureMode.valueOf(blockInfo.nbt.getString("mode"));
+            if (mode == StructureMode.DATA) {
+                return resolver.replace(world, placement.getRotation(), blockInfo, new Random(pos.toLong()));
             }
         }
 
@@ -43,7 +51,7 @@ public class DataBlockProcessor extends StructureProcessor {
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
+    protected IStructureProcessorType<?> getType() {
         return null;
     }
 
@@ -90,17 +98,17 @@ public class DataBlockProcessor extends StructureProcessor {
         public static float STORAGE_CHANCE = 0.7F;
 
         public String data;
-        public BlockRotation rotation;
+        public Rotation rotation;
         public BlockState state;
         public BlockPos pos;
-        public WorldView world;
+        public IWorldReader world;
         public CompoundNBT tag;
         public Random fixedRandom; // fixed according to parent template
         public Random random; // random according to the replaced block hashcode
         public float chance;
 
-        public StructureBlockInfo replace(WorldView world, BlockRotation rotation, StructureBlockInfo blockInfo, Random random) {
-            String data = blockInfo.tag.getString("metadata");
+        public Template.BlockInfo replace(IWorldReader world, Rotation rotation, Template.BlockInfo blockInfo, Random random) {
+            String data = blockInfo.nbt.getString("metadata");
             this.world = world;
             this.fixedRandom = random;
             this.rotation = rotation;
@@ -145,7 +153,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     this.state = Blocks.AIR.getDefaultState();
             }
 
-            return new StructureBlockInfo(this.pos, this.state, this.tag);
+            return new Template.BlockInfo(this.pos, this.state, this.tag);
         }
 
         protected void anvil() {
@@ -160,7 +168,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void armorStand() {
-            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.instantiate();
+            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (blockEntity == null) return;
             this.tag = new CompoundNBT();
 
@@ -179,7 +187,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (type.isEmpty()) return;
 
             ResourceLocation typeId = new ResourceLocation(type);
-            Optional<Block> optionalBlock = Registry.BLOCK.getOrEmpty(typeId);
+            Optional<Block> optionalBlock = Registry.BLOCK.getOptional(typeId);
 
             if (!optionalBlock.isPresent())
                 return;
@@ -196,7 +204,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     .with(BookcaseBlock.SLOTS, BookcaseBlockEntity.SIZE); // make it have the "full" texture
 
                 if (random.nextFloat() < BOOKCASE_LOOT_CHANCE) {
-                    BookcaseBlockEntity blockEntity = Bookcases.BLOCK_ENTITY.instantiate();
+                    BookcaseBlockEntity blockEntity = Bookcases.BLOCK_ENTITY.create();
                     if (blockEntity == null)
                         return;
 
@@ -242,13 +250,13 @@ public class DataBlockProcessor extends StructureProcessor {
             state = setFacing(state, ChestBlock.FACING, getValue("facing", data, "north"));
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_CHEST_CHANCE ? RARE_CHEST_LOOT_TABLES : CHEST_LOOT_TABLES, random);
-            ChestBlockEntity blockEntity = BlockEntityType.CHEST.instantiate();
+            ChestTileEntity blockEntity = TileEntityType.CHEST.create();
             if (blockEntity == null)
                 return;
 
             blockEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
-            blockEntity.toTag(tag);
+            blockEntity.write(tag);
         }
 
         protected void decoration() {
@@ -259,7 +267,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void entity() {
-            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.instantiate();
+            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (blockEntity == null) return;
             tag = new CompoundNBT();
 
@@ -268,7 +276,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
             ResourceLocation typeId = new ResourceLocation(type);
 
-            if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
+            if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                 return;
 
             blockEntity.entity = typeId;
@@ -310,7 +318,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void mob() {
             if (!withChance(MOB_CHANCE)) return;
 
-            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.instantiate();
+            EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (blockEntity == null) return;
 
             String type = getValue("type", this.data, "");
@@ -333,7 +341,7 @@ public class DataBlockProcessor extends StructureProcessor {
             String type = getValue("type", this.data, "");
             if (!type.isEmpty()) {
                 ResourceLocation typeId = new ResourceLocation(type);
-                if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
+                if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                     return;
 
                 Block ore = Registry.BLOCK.get(typeId);
@@ -362,7 +370,7 @@ public class DataBlockProcessor extends StructureProcessor {
             } else {
                 // try and use the specified entity
                 ResourceLocation typeId = new ResourceLocation(type);
-                if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
+                if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                     return;
 
                 entity = Registry.ENTITY_TYPE.get(typeId);
@@ -373,7 +381,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
             state = Blocks.SPAWNER.getDefaultState();
 
-            MobSpawnerBlockEntity blockEntity = BlockEntityType.MOB_SPAWNER.instantiate();
+            MobSpawnerBlockEntity blockEntity = TileEntityType.MOB_SPAWNER.create();
             if (blockEntity != null) {
                 blockEntity.getLogic().setEntityId(entity);
                 tag = new CompoundNBT();
@@ -390,7 +398,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {
                 // get a crate
                 state = Crates.CRATE_BLOCKS.get(woodType).getDefaultState();
-                blockEntity = Crates.BLOCK_ENTITY.instantiate();
+                blockEntity = Crates.BLOCK_ENTITY.create();
             } else {
                 // get a barrel
                 if (ModuleHandler.enabled("charm:variant_barrels")) {
@@ -401,7 +409,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     state = Blocks.BARREL.getDefaultState();
                 }
                 state = state.with(BarrelBlock.FACING, Direction.UP);
-                blockEntity = BlockEntityType.BARREL.instantiate();
+                blockEntity = TileEntityType.BARREL.create();
             }
 
             if (blockEntity == null)

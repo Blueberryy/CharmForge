@@ -10,7 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
 import svenhjol.charm.screenhandler.WoodcutterScreenHandler;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class WoodcutterScreen extends HandledScreen<WoodcutterScreenHandler> {
-   private static final Identifier TEXTURE = new Identifier("textures/gui/container/stonecutter.png");
+   private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/stonecutter.png");
    private float scrollAmount;
    private boolean mouseClicked;
    private int scrollOffset;

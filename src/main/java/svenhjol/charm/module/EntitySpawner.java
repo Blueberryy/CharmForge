@@ -1,8 +1,8 @@
 package svenhjol.charm.module;
 
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ClientRegistryHandler;
@@ -14,9 +14,9 @@ import svenhjol.charm.blockentity.EntitySpawnerBlockEntity;
 
 @Module(mod = Charm.MOD_ID, description = "Spawns entities when a player is within range.", alwaysEnabled = true)
 public class EntitySpawner extends CharmModule {
-    public static final Identifier ID = new Identifier(Charm.MOD_ID, "entity_spawner");
+    public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "entity_spawner");
     public static EntitySpawnerBlock ENTITY_SPAWNER;
-    public static BlockEntityType<EntitySpawnerBlockEntity> BLOCK_ENTITY;
+    public static TileEntityType<EntitySpawnerBlockEntity> BLOCK_ENTITY;
 
     @Config(name = "Trigger distance", description = "Player will trigger EntitySpawner blocks when closer than this distance.")
     public static int triggerDistance = 16;
@@ -29,6 +29,6 @@ public class EntitySpawner extends CharmModule {
 
     @Override
     public void clientRegister() {
-        ClientRegistryHandler.setRenderLayer(ENTITY_SPAWNER, RenderLayer.getCutout());
+        ClientRegistryHandler.setRenderLayer(ENTITY_SPAWNER, RenderType.getCutout());
     }
 }

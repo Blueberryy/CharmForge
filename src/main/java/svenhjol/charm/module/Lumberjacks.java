@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import svenhjol.charm.Charm;
@@ -17,7 +17,7 @@ import static svenhjol.charm.base.helper.VillagerHelper.addTrade;
 
 @Module(mod = Charm.MOD_ID, description = "Lumberjacks are villagers that trade wooden items. Their job site is the woodcutter.")
 public class Lumberjacks extends CharmModule {
-    public static Identifier VILLAGER_ID = new Identifier(Charm.MOD_ID, "lumberjack");
+    public static ResourceLocation VILLAGER_ID = new ResourceLocation(Charm.MOD_ID, "lumberjack");
     public static VillagerProfession LUMBERJACK;
     public static PointOfInterestType POIT;
 
@@ -45,14 +45,14 @@ public class Lumberjacks extends CharmModule {
 
         // register lumberjack structures
         StructureSetupCallback.EVENT.register(() -> {
-            addVillageHouse(VillageType.DESERT, new Identifier("charm:village/desert/houses/desert_lumberjack_1"), 10);
-            addVillageHouse(VillageType.DESERT, new Identifier("charm:village/desert/houses/desert_lumberjack_2"), 10);
-            addVillageHouse(VillageType.PLAINS, new Identifier("charm:village/plains/houses/plains_beejack_1"), 10);
-            addVillageHouse(VillageType.PLAINS, new Identifier("charm:village/plains/houses/plains_lumberjack_1"), 5);
-            addVillageHouse(VillageType.PLAINS, new Identifier("charm:village/plains/houses/plains_lumberjack_2"), 10);
-            addVillageHouse(VillageType.SAVANNA, new Identifier("charm:village/savanna/houses/savanna_lumberjack_1"), 10);
-            addVillageHouse(VillageType.SNOWY, new Identifier("charm:village/snowy/houses/snowy_lumberbee_1"), 10);
-            addVillageHouse(VillageType.TAIGA, new Identifier("charm:village/taiga/houses/taiga_lumberjack_1"), 5);
+            addVillageHouse(VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_1"), 10);
+            addVillageHouse(VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_2"), 10);
+            addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack_1"), 10);
+            addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_1"), 5);
+            addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_2"), 10);
+            addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_lumberjack_1"), 10);
+            addVillageHouse(VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberbee_1"), 10);
+            addVillageHouse(VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_lumberjack_1"), 5);
         });
     }
 

@@ -3,7 +3,7 @@ package svenhjol.charm.mixin;
 import com.google.gson.JsonElement;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +19,7 @@ import java.util.TreeMap;
 
 @Mixin(RecipeManager.class)
 public class RecipeManagerMixin {
-    private Map<Identifier, JsonElement> map2 = new TreeMap<>();
+    private Map<ResourceLocation, JsonElement> map2 = new TreeMap<>();
 
     /**
      * Allows RecipeHandler to remove recipes that are no longer
@@ -31,7 +31,7 @@ public class RecipeManagerMixin {
         method = "apply",
         at = @At("HEAD")
     )
-    private void hookApply(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
+    private void hookApply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
         RecipeHandler.filter(map);
         map2 = new TreeMap<>(map);
     }

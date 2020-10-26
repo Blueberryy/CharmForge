@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.minecraft.block.enums.ChestType;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.block.VariantChestBlock;
 import svenhjol.charm.block.VariantTrappedChestBlock;
 import svenhjol.charm.module.VariantChests;
@@ -55,12 +55,12 @@ public class VariantChestClient {
     }
 
 
-    private void addChestTexture(Set<Identifier> textures, IVariantMaterial variant, ChestType chestType) {
+    private void addChestTexture(Set<ResourceLocation> textures, IVariantMaterial variant, ChestType chestType) {
         String chestTypeName = chestType != ChestType.SINGLE ? "_" + chestType.asString().toLowerCase() : "";
         String[] bases = {"trapped", "normal"};
 
         for (String base : bases) {
-            Identifier id = new Identifier(module.mod, "entity/chest/" + variant.asString() + "_" + base + chestTypeName);
+            ResourceLocation id = new ResourceLocation(module.mod, "entity/chest/" + variant.asString() + "_" + base + chestTypeName);
             VariantChestBlockEntityRenderer.addTexture(variant, chestType, id, base.equals("trapped"));
             textures.add(id);
         }

@@ -3,7 +3,7 @@ package svenhjol.charm.event;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NbtIo;
 import svenhjol.charm.Charm;
 
@@ -16,18 +16,18 @@ public interface PlayerLoadDataCallback {
         }
     });
 
-    static CompoundTag readFile(File file) {
-        CompoundTag tag;
+    static CompoundNBT readFile(File file) {
+        CompoundNBT tag;
 
         if (file.exists()) {
             try {
                 tag = NbtIo.readCompressed(file);
             } catch (Exception e) {
                 Charm.LOG.error("Failed to load player data from file: " + file.toString());
-                tag = new CompoundTag();
+                tag = new CompoundNBT();
             }
         } else {
-            tag = new CompoundTag();
+            tag = new CompoundNBT();
         }
 
         return tag;

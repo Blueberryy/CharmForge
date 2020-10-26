@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -31,7 +31,7 @@ public class CrateBlockEntity extends LootableContainerBlockEntity implements Si
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundTag tag) {
+    public void fromTag(BlockState state, CompoundNBT tag) {
         super.fromTag(state, tag);
         this.items = DefaultedList.ofSize(SIZE, ItemStack.EMPTY);
         if (!this.deserializeLootTable(tag))
@@ -39,7 +39,7 @@ public class CrateBlockEntity extends LootableContainerBlockEntity implements Si
     }
 
     @Override
-    public CompoundTag toTag(CompoundTag tag) {
+    public CompoundNBT toTag(CompoundNBT tag) {
         super.toTag(tag);
         if (!this.serializeLootTable(tag))
             Inventories.toTag(tag, this.items, false);

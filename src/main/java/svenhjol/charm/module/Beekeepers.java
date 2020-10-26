@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.village.VillagerProfession;
 import net.minecraft.world.poi.PointOfInterestType;
 import svenhjol.charm.Charm;
@@ -18,7 +18,7 @@ import static svenhjol.charm.base.helper.VillagerHelper.addTrade;
 
 @Module(mod = Charm.MOD_ID, description = "Beekeepers are villagers that trade beekeeping items. Their job site is the beehive.")
 public class Beekeepers extends CharmModule {
-    public static Identifier ID = new Identifier(Charm.MOD_ID, "beekeeper");
+    public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "beekeeper");
     public static VillagerProfession BEEKEEPER;
 
     @Override
@@ -40,11 +40,11 @@ public class Beekeepers extends CharmModule {
 
         // register beekeeper structures
         StructureSetupCallback.EVENT.register(() -> {
-            addVillageHouse(VillageType.PLAINS, new Identifier("charm:village/plains/houses/plains_beekeeper_1"), 10);
-            addVillageHouse(VillageType.DESERT, new Identifier("charm:village/desert/houses/desert_beekeeper_1"), 10);
-            addVillageHouse(VillageType.SAVANNA, new Identifier("charm:village/savanna/houses/savanna_beekeeper_1"), 10);
-            addVillageHouse(VillageType.SAVANNA, new Identifier("charm:village/savanna/houses/savanna_beekeeper_2"), 10);
-            addVillageHouse(VillageType.TAIGA, new Identifier("charm:village/taiga/houses/taiga_beekeeper_1"), 10);
+            addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), 10);
+            addVillageHouse(VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), 10);
+            addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), 10);
+            addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_2"), 10);
+            addVillageHouse(VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_beekeeper_1"), 10);
         });
     }
 }

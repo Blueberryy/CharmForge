@@ -2,7 +2,7 @@ package svenhjol.charm.module;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -14,7 +14,7 @@ import svenhjol.charm.item.GlowBallItem;
 
 @Module(mod = Charm.MOD_ID, description = "Glow Balls can be thrown to produce a light source where they impact.")
 public class GlowBalls extends CharmModule {
-    public static Identifier ID = new Identifier(Charm.MOD_ID, "glow_ball");
+    public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "glow_ball");
     public static GlowBallItem GLOW_BALL;
     public static EntityType<GlowBallEntity> ENTITY;
 

@@ -14,7 +14,7 @@ public class SoundSystemMixin {
         method = "play(Lnet/minecraft/client/sound/SoundInstance;)V",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/sound/SoundLoader;loadStatic(Lnet/minecraft/util/Identifier;)Ljava/util/concurrent/CompletableFuture;"
+            target = "Lnet/minecraft/client/sound/SoundLoader;loadStatic(Lnet/minecraft/util/ResourceLocation;)Ljava/util/concurrent/CompletableFuture;"
         )
     )
     private void hookPlayStatic(SoundInstance soundInstance, CallbackInfo ci) {
@@ -25,7 +25,7 @@ public class SoundSystemMixin {
         method = "play(Lnet/minecraft/client/sound/SoundInstance;)V",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/client/sound/SoundLoader;loadStreamed(Lnet/minecraft/util/Identifier;Z)Ljava/util/concurrent/CompletableFuture;"
+            target = "Lnet/minecraft/client/sound/SoundLoader;loadStreamed(Lnet/minecraft/util/ResourceLocation;Z)Ljava/util/concurrent/CompletableFuture;"
         )
     )
     private void hookPlayStreamed(SoundInstance soundInstance, CallbackInfo ci) {
