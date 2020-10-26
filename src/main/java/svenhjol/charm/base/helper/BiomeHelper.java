@@ -3,18 +3,14 @@ package svenhjol.charm.base.helper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.GenerationSettings;
-import net.minecraft.world.biome.SpawnSettings;
-import net.minecraft.world.biome.SpawnSettings.SpawnEntry;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.mixin.accessor.GenerationSettingsAccessor;
 import svenhjol.charm.mixin.accessor.SpawnSettingsAccessor;
 
@@ -35,16 +31,16 @@ public class BiomeHelper {
     public static List<String> TAIGA = new ArrayList<>();
 
     public static Biome getBiome(ServerWorld world, BlockPos pos) {
-        BiomeAccess biomeAccess = world.getBiomeAccess();
+        BiomeManager biomeAccess = world.getBiomeManager();
         return biomeAccess.getBiome(pos);
     }
 
     public static Biome getBiomeFromBiomeKey(RegistryKey<Biome> biomeKey) {
-        return BuiltinRegistries.BIOME.get(biomeKey);
+        return WorldGenRegistries.BIOME.getValueForKey(biomeKey);
     }
 
     public static Optional<RegistryKey<Biome>> getBiomeKeyAtPosition(ServerWorld world, BlockPos pos) {
-        return world.method_31081(pos);
+        return world.func_242406_i(pos);
     }
 
     public static BlockPos locateBiome(RegistryKey<Biome> biomeKey, ServerWorld world, BlockPos pos) {
@@ -53,10 +49,10 @@ public class BiomeHelper {
     }
 
     public static BlockPos locateBiome(Biome biome, ServerWorld world, BlockPos pos) {
-        return world.locateBiome(biome, pos, 6400, 8);
+        return world.func_241116_a_(biome, pos, 6400, 8);
     }
 
-    public static void addStructureFeature(Biome biome, ConfiguredStructureFeature<?, ?> structureFeature) {
+    public static void addStructureFeature(Biome biome, StructureFeature<?, ?> structureFeature) {
         GenerationSettings settings = biome.getGenerationSettings();
         checkGenerationSettingsMutable(settings);
         ((GenerationSettingsAccessor)settings).getStructureFeatures().add(() -> structureFeature);
@@ -76,7 +72,7 @@ public class BiomeHelper {
      * Evil hack until there's a better way to add structures to biomes
      */
     private static void checkGenerationSettingsMutable(GenerationSettings settings) {
-        List<Supplier<ConfiguredStructureFeature<?, ?>>> existing = ((GenerationSettingsAccessor)settings).getStructureFeatures();
+        List<Supplier<StructureFeature<?, ?>>> existing = ((GenerationSettingsAccessor)settings).getStructureFeatures();
         if (existing instanceof ImmutableList)
             ((GenerationSettingsAccessor)settings).setStructureFeatures(new ArrayList<>(existing));
     }

@@ -3,12 +3,12 @@ package svenhjol.charm.base.helper;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.block.Block;
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.DispenserBehavior;
+import net.minecraft.dispenser.IDispenseItemBehavior;
 import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import svenhjol.charm.mixin.accessor.BlockAccessor;
 import svenhjol.charm.mixin.accessor.DispenserBlockAccessor;
 import svenhjol.charm.mixin.accessor.ItemAccessor;
@@ -21,19 +21,21 @@ public class OverrideHandler {
     private static final Map<Item, String> defaultItemKeys = new HashMap<>();
     private static final Map<Block, String> defaultBlockKeys = new HashMap<>();
 
-    public static Item changeItem(Identifier id, Item item) {
-        int rawId = Registry.ITEM.getRawId(Registry.ITEM.get(id));
-        return (Item)((MutableRegistry)Registry.ITEM).set(rawId, RegistryKey.of(Registry.ITEM.getKey(), id), item, Lifecycle.stable());
+    // TODO: overriding the registry in this way should not be done in Forge
+    public static Item changeItem(ResourceLocation id, Item item) {
+        int rawId = Registry.ITEM.getId(Registry.ITEM.getOrDefault(id));
+        return (Item)((MutableRegistry)Registry.ITEM).register(rawId, RegistryKey.getOrCreateKey(Registry.ITEM.getRegistryKey(), id), item, Lifecycle.stable());
     }
 
-    public static Block changeBlock(Identifier id, Block block) {
-        int rawId = Registry.BLOCK.getRawId(Registry.BLOCK.get(id));
-        return (Block)((MutableRegistry)Registry.BLOCK).set(rawId, RegistryKey.of(Registry.BLOCK.getKey(), id), block, Lifecycle.stable());
+    // TODO: overriding the registry in this way should not be done in Forge
+    public static Block changeBlock(ResourceLocation id, Block block) {
+        int rawId = Registry.BLOCK.getId(Registry.BLOCK.getOrDefault(id));
+        return (Block)((MutableRegistry)Registry.BLOCK).register(rawId, RegistryKey.getOrCreateKey(Registry.BLOCK.getRegistryKey(), id), block, Lifecycle.stable());
     }
 
     public static void changeDispenserBehavior(Item existingItem, Item newItem) {
-        DispenserBehavior splashBehavior = DispenserBlockAccessor.getDispenseBehaviorRegistry().get(existingItem);
-        DispenserBlock.registerBehavior(newItem, splashBehavior);
+        IDispenseItemBehavior splashBehavior = DispenserBlockAccessor.getDispenseBehaviorRegistry().get(existingItem);
+        DispenserBlock.registerDispenseBehavior(newItem, splashBehavior);
     }
 
     public static void changeItemTranslationKey(Item item, String newKey) {

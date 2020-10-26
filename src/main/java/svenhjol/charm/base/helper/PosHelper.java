@@ -1,11 +1,12 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 
 import javax.annotation.Nullable;
@@ -32,23 +33,23 @@ public class PosHelper {
         return d2 * d2 + d3 * d3;
     }
 
-    public static boolean isInsideStructure(ServerWorld world, BlockPos pos, StructureFeature<?> structure) {
-        return world.getStructureAccessor().getStructureAt(pos, true, structure).hasChildren();
+    public static boolean isInsideStructure(ServerWorld world, BlockPos pos, Structure<?> structure) {
+        return world.func_241112_a_().func_235010_a_(pos, true, structure).isValid();
     }
 
     public static boolean isLikeSolid(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return isSolid(world, pos) || state.getMaterial() == Material.LEAVES || state.getMaterial() == Material.SNOW_LAYER || state.getMaterial() == Material.ORGANIC_PRODUCT || state.getMaterial() == Material.PLANT;
+        return isSolid(world, pos) || state.getMaterial() == Material.LEAVES || state.getMaterial() == Material.SNOW || state.getMaterial() == Material.ORGANIC || state.getMaterial() == Material.PLANTS;
     }
 
     public static boolean isLikeAir(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return !state.isOpaque() || state.getMaterial() == Material.WATER || state.getMaterial() == Material.SNOW_LAYER || state.getMaterial() == Material.PLANT || state.getMaterial() == Material.LEAVES || state.getMaterial() == Material.ORGANIC_PRODUCT;
+        return !state.isSolid() || state.getMaterial() == Material.WATER || state.getMaterial() == Material.SNOW || state.getMaterial() == Material.PLANTS || state.getMaterial() == Material.LEAVES || state.getMaterial() == Material.ORGANIC;
     }
 
     public static boolean isSolid(World world, BlockPos pos) {
         BlockState state = world.getBlockState(pos);
-        return state.isOpaque() && !world.isAir(pos) && !state.getMaterial().isLiquid();
+        return state.isSolid() && !world.isAirBlock(pos) && !state.getMaterial().isLiquid();
     }
 
     @Nullable
@@ -57,7 +58,7 @@ public class PosHelper {
 
         for (int y = world.getHeight(); y >= 0; --y) {
             BlockPos n = new BlockPos(pos.getX(), y, pos.getZ());
-            if (world.isAir(n) && !world.isAir(n.down())) {
+            if (world.isAirBlock(n) && !world.isAirBlock(n.down())) {
                 surface = y;
                 break;
             }

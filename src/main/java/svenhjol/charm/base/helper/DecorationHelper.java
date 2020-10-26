@@ -2,8 +2,8 @@ package svenhjol.charm.base.helper;
 
 import net.minecraft.block.*;
 import net.minecraft.entity.EntityType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.base.enums.IVariantMaterial;
 
 import javax.annotation.Nullable;
@@ -12,15 +12,15 @@ import java.util.function.Function;
 
 public class DecorationHelper {
     public static List<Block> BARK = new ArrayList<>();
-    public static List<Identifier> BOOKCASE_LOOT_TABLES = new ArrayList<>();
+    public static List<ResourceLocation> BOOKCASE_LOOT_TABLES = new ArrayList<>();
     public static List<Block> CARPETS = new ArrayList<>();
-    public static List<Identifier> CHEST_LOOT_TABLES = new ArrayList<>();
-    public static List<Identifier> COMMON_LOOT_TABLES = new ArrayList<>();
+    public static List<ResourceLocation> CHEST_LOOT_TABLES = new ArrayList<>();
+    public static List<ResourceLocation> COMMON_LOOT_TABLES = new ArrayList<>();
     public static List<Block> COMMON_ORES = new ArrayList<>();
     public static List<Block> DECORATION_BLOCKS = new ArrayList<>();
     public static List<Block> FLOWERS = new ArrayList<>();
     public static List<Block> FLOWER_POTS = new ArrayList<>();
-    public static List<Identifier> RARE_CHEST_LOOT_TABLES = new ArrayList<>();
+    public static List<ResourceLocation> RARE_CHEST_LOOT_TABLES = new ArrayList<>();
     public static List<Block> RARE_ORES = new ArrayList<>();
     public static List<Block> SAPLINGS = new ArrayList<>();
     public static List<EntityType<?>> SPAWNER_MOBS = new ArrayList<>();
@@ -31,7 +31,7 @@ public class DecorationHelper {
 
     public static Map<Block, Function<BlockState, BlockState>> STATE_CALLBACK = new HashMap<>();
 
-    public static Identifier getRandomLootTable(List<Identifier> lootTables, Random random) {
+    public static ResourceLocation getRandomLootTable(List<ResourceLocation> lootTables, Random random) {
         return lootTables.get(random.nextInt(lootTables.size()));
     }
 

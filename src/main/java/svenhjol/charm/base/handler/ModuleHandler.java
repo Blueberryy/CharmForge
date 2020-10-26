@@ -2,6 +2,7 @@ package svenhjol.charm.base.handler;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.common.ForgeConfig;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;

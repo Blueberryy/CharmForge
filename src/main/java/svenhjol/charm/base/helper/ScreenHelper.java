@@ -1,6 +1,5 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import svenhjol.charm.mixin.accessor.HandledScreenAccessor;
 
 public class ScreenHelper {

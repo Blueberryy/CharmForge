@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 public class CharmBlockItem extends BlockItem {
     private final BiConsumer<ItemStack, Boolean> inventoryTickConsumer;
 
-    public CharmBlockItem(ICharmBlock block, Settings settings) {
+    public CharmBlockItem(ICharmBlock block, Properties settings) {
         super((Block) block, settings);
 
         // callable inventory tick consumer from the block

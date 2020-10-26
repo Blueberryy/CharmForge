@@ -1,9 +1,9 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.structure.processor.StructureProcessor;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.template.StructureProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.List;
 public class StructureHelper {
     public static List<StructureProcessor> SINGLE_POOL_ELEMENT_PROCESSORS = new ArrayList<>();
 
-    public static void addToBiome(List<String> biomeGroup, ConfiguredStructureFeature<?, ?> configuredFeature) {
-        biomeGroup.forEach(id -> BuiltinRegistries.BIOME.getOrEmpty(new Identifier(id))
+    public static void addToBiome(List<String> biomeGroup, StructureFeature<?, ?> configuredFeature) {
+        biomeGroup.forEach(id -> WorldGenRegistries.BIOME.getOptional(new ResourceLocation(id))
             .ifPresent(biome -> BiomeHelper.addStructureFeature(biome, configuredFeature)));
     }
 }

@@ -3,19 +3,15 @@ package svenhjol.charm.base.helper;
 import com.google.common.collect.ImmutableSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.fabricmc.fabric.mixin.object.builder.PointOfInterestTypeAccessor;
-import net.fabricmc.fabric.mixin.object.builder.VillagerProfessionAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemConvertible;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.village.TradeOffer;
-import net.minecraft.village.VillagerProfession;
-import net.minecraft.world.poi.PointOfInterestType;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.village.PointOfInterestType;
 import svenhjol.charm.base.handler.RegistryHandler;
 
 import javax.annotation.Nullable;
@@ -23,17 +19,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static net.minecraft.village.TradeOffers.*;
 
 public class VillagerHelper {
-    public static VillagerProfession addProfession(Identifier id, PointOfInterestType poit, SoundEvent worksound) {
+    public static VillagerProfession addProfession(ResourceLocation id, PointOfInterestType poit, SoundEvent worksound) {
         VillagerProfession profession = VillagerProfessionAccessor.create(id.toString(), poit, ImmutableSet.of(), ImmutableSet.of(), worksound);
         VillagerProfession registeredProfession = RegistryHandler.villagerProfession(id, profession);
         PROFESSION_TO_LEVELED_TRADE.put(profession, new Int2ObjectOpenHashMap<>());
         return registeredProfession;
     }
 
-    public static PointOfInterestType addPointOfInterestType(Identifier id, Block block, int ticketCount) {
+    public static PointOfInterestType addPointOfInterestType(ResourceLocation id, Block block, int ticketCount) {
         PointOfInterestType poit = PointOfInterestTypeAccessor.callCreate(id.toString(), ImmutableSet.copyOf(block.getStateManager().getStates()), ticketCount, 1);
         RegistryHandler.pointOfInterestType(id, poit);
         return PointOfInterestTypeAccessor.callSetup(poit);
@@ -44,7 +39,7 @@ public class VillagerHelper {
         Int2ObjectMap<List<Factory>> mutableTrades = new Int2ObjectOpenHashMap<>();
 
         for (int i = 1; i <= 5; i++) {
-            mutableTrades.put(i, DefaultedList.of());
+            mutableTrades.put(i, NonNullList.create());
         }
 
         fixedTrades.int2ObjectEntrySet().forEach(e -> {
@@ -60,12 +55,12 @@ public class VillagerHelper {
 
     public static void addWanderingTrade(Factory trade, boolean isRare) {
         if (isRare) {
-            List<Factory> rareTrades = DefaultedList.of();
+            List<Factory> rareTrades = NonNullList.create();
             rareTrades.addAll(Arrays.asList(WANDERING_TRADER_TRADES.get(2)));
             rareTrades.add(trade);
             WANDERING_TRADER_TRADES.put(2, rareTrades.toArray(new Factory[0]));
         } else {
-            List<Factory> normalTrades = DefaultedList.of();
+            List<Factory> normalTrades = NonNullList.create();
             normalTrades.addAll(Arrays.asList(WANDERING_TRADER_TRADES.get(1)));
             normalTrades.add(trade);
             WANDERING_TRADER_TRADES.put(1, normalTrades.toArray(new Factory[0]));

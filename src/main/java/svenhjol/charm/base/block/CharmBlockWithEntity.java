@@ -2,25 +2,24 @@ package svenhjol.charm.base.block;
 
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.NonNullList;
 import svenhjol.charm.base.CharmModule;
 
-public abstract class CharmBlockWithEntity extends BlockWithEntity implements ICharmBlock {
+public abstract class CharmBlockWithEntity extends CharmBlock implements ICharmBlock {
     public CharmModule module;
 
-    protected CharmBlockWithEntity(CharmModule module, String name, Settings props) {
-        super(props);
+    protected CharmBlockWithEntity(CharmModule module, String name, Properties props) {
+        super(module, name, props);
         this.module = module;
         register(module, name);
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> list) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         if (enabled())
-            super.addStacksForDisplay(group, list);
+            super.fillItemGroup(group, list);
     }
 
     @Override

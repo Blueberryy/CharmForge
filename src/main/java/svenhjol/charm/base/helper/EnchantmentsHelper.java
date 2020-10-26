@@ -22,6 +22,6 @@ public class EnchantmentsHelper {
     }
 
     public static boolean hasFeatherFalling(LivingEntity entity) {
-        return EnchantmentHelper.getEquipmentLevel(Enchantments.FEATHER_FALLING, entity) > 0;
+        return EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FEATHER_FALLING, entity) > 0;
     }
 }

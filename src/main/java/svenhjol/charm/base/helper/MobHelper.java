@@ -1,17 +1,11 @@
 package svenhjol.charm.base.helper;
 
-import net.fabricmc.fabric.mixin.object.builder.DefaultAttributeRegistryAccessor;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.Heightmap;
+import net.minecraft.world.gen.Heightmap;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.mixin.accessor.GoalSelectorAccessor;
 import svenhjol.charm.mixin.accessor.MobEntityAccessor;
 
@@ -38,7 +32,6 @@ public class MobHelper {
     }
 
     public static void setEntityAttributes(EntityType<? extends LivingEntity> entityType, DefaultAttributeContainer attributes) {
-
         DefaultAttributeRegistryAccessor.getRegistry()
             .put(entityType, attributes);
     }
@@ -46,9 +39,9 @@ public class MobHelper {
     public static boolean spawnMobNearPos(ServerWorld world, BlockPos pos, MobEntity mob, BiConsumer<MobEntity, BlockPos> onSpawn) {
         int range = 4;
         int tries = 8;
-        Random random = world.random;
+        Random random = world.rand;
         List<BlockPos> validPositions = new ArrayList<>();
-        int surface = world.getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ());
+        int surface = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ());
 
         for (int y = surface; y < surface + range; y++) {
             for (int i = range; i > 1; --i) {
@@ -73,9 +66,9 @@ public class MobHelper {
             return false;
         } else {
             BlockPos spawnPos = validPositions.get(random.nextInt(validPositions.size()));
-            mob.refreshPositionAndAngles(spawnPos, 0.0F, 0.0F);
-            mob.initialize(world, world.getLocalDifficulty(spawnPos), SpawnReason.TRIGGERED, null, null);
-            world.spawnEntity(mob);
+            mob.moveToBlockPosAndAngles(spawnPos, 0.0F, 0.0F);
+            mob.onInitialSpawn(world, world.getDifficultyForLocation(spawnPos), SpawnReason.TRIGGERED, null, null);
+            world.addEntity(mob);
             onSpawn.accept(mob, spawnPos);
             return true;
         }

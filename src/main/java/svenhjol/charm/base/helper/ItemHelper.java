@@ -1,7 +1,7 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
@@ -25,7 +25,7 @@ public class ItemHelper {
     }
 
     public static boolean shouldItemDespawn(ItemEntity itemEntity) {
-        Item item = itemEntity.getStack().getItem();
+        Item item = itemEntity.getItem().getItem();
         if (ItemHelper.ITEM_LIFETIME.containsKey(item)) {
             if (itemEntity.getAge() < ItemHelper.ITEM_LIFETIME.get(item))
                 return false;

@@ -1,7 +1,7 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundNBT;
 
 @SuppressWarnings("unused")
 public class ItemNBTHelper {
@@ -25,12 +25,12 @@ public class ItemNBTHelper {
         return tagExists(stack, tag) ? getNBT(stack).getString(tag) : defaultExpected;
     }
 
-    public static CompoundTag getCompound(ItemStack stack, String tag) {
+    public static CompoundNBT getCompound(ItemStack stack, String tag) {
         return getCompound(stack, tag, false);
     }
 
-    public static CompoundTag getCompound(ItemStack stack, String tag, boolean nullify) {
-        return tagExists(stack, tag) ? getNBT(stack).getCompound(tag) : (nullify ? null : new CompoundTag());
+    public static CompoundNBT getCompound(ItemStack stack, String tag, boolean nullify) {
+        return tagExists(stack, tag) ? getNBT(stack).getCompound(tag) : (nullify ? null : new CompoundNBT());
     }
 
     public static void setInt(ItemStack stack, String tag, int i) {
@@ -41,7 +41,7 @@ public class ItemNBTHelper {
         getNBT(stack).putBoolean(tag, b);
     }
 
-    public static void setCompound(ItemStack stack, String tag, CompoundTag cmp) {
+    public static void setCompound(ItemStack stack, String tag, CompoundNBT cmp) {
         getNBT(stack).put(tag, cmp);
     }
 
@@ -62,9 +62,9 @@ public class ItemNBTHelper {
         return !stack.isEmpty() && stack.hasTag() && getNBT(stack).contains(tag);
     }
 
-    public static CompoundTag getNBT(ItemStack stack) {
+    public static CompoundNBT getNBT(ItemStack stack) {
         if (!stack.hasTag()) {
-            stack.setTag(new CompoundTag());
+            stack.setTag(new CompoundNBT());
         }
         return stack.getTag();
     }

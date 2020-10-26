@@ -3,7 +3,7 @@ package svenhjol.charm.base.handler;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.loot.LootTables;
-import net.minecraft.tag.BlockTags;
+import net.minecraft.tags.BlockTags;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.helper.LootHelper;
 
@@ -18,36 +18,36 @@ public class DecorationHandler {
         if (hasInit)
             return;
 
-        CARPETS.addAll(BlockTags.CARPETS.values());
-        FLOWERS.addAll(BlockTags.FLOWERS.values());
-        FLOWER_POTS.addAll(BlockTags.FLOWER_POTS.values());
-        SAPLINGS.addAll(BlockTags.SAPLINGS.values());
-        WOOL.addAll(BlockTags.WOOL.values());
+        CARPETS.addAll(BlockTags.CARPETS.getAllElements());
+        FLOWERS.addAll(BlockTags.FLOWERS.getAllElements());
+        FLOWER_POTS.addAll(BlockTags.FLOWER_POTS.getAllElements());
+        SAPLINGS.addAll(BlockTags.SAPLINGS.getAllElements());
+        WOOL.addAll(BlockTags.WOOL.getAllElements());
 
         VARIANT_MATERIALS.addAll(VanillaVariantMaterial.getTypes());
 
         CHEST_LOOT_TABLES = Arrays.asList(
-            LootTables.ABANDONED_MINESHAFT_CHEST,
-            LootTables.BURIED_TREASURE_CHEST,
-            LootTables.DESERT_PYRAMID_CHEST,
-            LootTables.JUNGLE_TEMPLE_CHEST,
-            LootTables.SIMPLE_DUNGEON_CHEST,
-            LootTables.STRONGHOLD_CORRIDOR_CHEST
+            LootTables.CHESTS_ABANDONED_MINESHAFT,
+            LootTables.CHESTS_BURIED_TREASURE,
+            LootTables.CHESTS_DESERT_PYRAMID,
+            LootTables.CHESTS_JUNGLE_TEMPLE,
+            LootTables.CHESTS_SIMPLE_DUNGEON,
+            LootTables.CHESTS_STRONGHOLD_CORRIDOR
         );
 
         COMMON_LOOT_TABLES.addAll(Arrays.asList(
-            LootTables.JUNGLE_TEMPLE_DISPENSER_CHEST,
-            LootTables.IGLOO_CHEST_CHEST
+            LootTables.CHESTS_JUNGLE_TEMPLE_DISPENSER,
+            LootTables.CHESTS_IGLOO_CHEST
         ));
 
         COMMON_LOOT_TABLES.addAll(LootHelper.getVanillaVillageLootTables());
 
         RARE_CHEST_LOOT_TABLES.addAll(Arrays.asList(
-            LootTables.RUINED_PORTAL_CHEST
+            LootTables.RUINED_PORTAL
         ));
 
         BOOKCASE_LOOT_TABLES.addAll(Arrays.asList(
-            LootTables.STRONGHOLD_LIBRARY_CHEST
+            LootTables.CHESTS_STRONGHOLD_LIBRARY
         ));
 
         COMMON_ORES.addAll(Arrays.asList(

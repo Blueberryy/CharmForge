@@ -1,7 +1,7 @@
 package svenhjol.charm.base.handler;
 
 import com.google.gson.JsonElement;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class RecipeHandler {
-    public static void filter(Map<Identifier, JsonElement> recipes) {
+    public static void filter(Map<ResourceLocation, JsonElement> recipes) {
         Map<String, CharmModule> loadedModules = ModuleHandler.getLoadedModules();
 
         for (String modId : loadedModules.keySet()) {
@@ -23,7 +23,7 @@ public class RecipeHandler {
             });
 
             // fetch all the recipes that match the mod's ID
-            List<Identifier> modRecipes = recipes.keySet().stream().filter(r -> r.getNamespace().equals(modId)).collect(Collectors.toList());
+            List<ResourceLocation> modRecipes = recipes.keySet().stream().filter(r -> r.getNamespace().equals(modId)).collect(Collectors.toList());
 
             modRecipes.forEach(recipeId -> {
                 String path = recipeId.getPath();
@@ -39,7 +39,7 @@ public class RecipeHandler {
         }
     }
 
-    public static Iterator<Map.Entry<Identifier, JsonElement>> sortedRecipes(Map<Identifier, JsonElement> recipes) {
+    public static Iterator<Map.Entry<ResourceLocation, JsonElement>> sortedRecipes(Map<ResourceLocation, JsonElement> recipes) {
         return Stream.concat(
             recipes.entrySet().stream().filter(r -> !r.getKey().getNamespace().equals("minecraft")),
             recipes.entrySet().stream().filter(r -> r.getKey().getNamespace().equals("minecraft"))

@@ -1,9 +1,9 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -25,14 +25,14 @@ public class DataBlockHelper {
         return state;
     }
 
-    public static Identifier getLootTable(String data, Identifier fallback) {
-        Identifier lootTable = fallback;
+    public static ResourceLocation getLootTable(String data, ResourceLocation fallback) {
+        ResourceLocation lootTable = fallback;
         String loot = getValue("loot", data, "");
 
         if (!loot.isEmpty()) {
-            List<Identifier> tables = LootHelper.getAllLootTables();
+            List<ResourceLocation> tables = LootHelper.getAllLootTables();
 
-            for (Identifier res : tables) {
+            for (ResourceLocation res : tables) {
                 String[] s = res.getPath().split("/");
                 if (loot.contains(s[s.length - 1])) {
                     lootTable = res;

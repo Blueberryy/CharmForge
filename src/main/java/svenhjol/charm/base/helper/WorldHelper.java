@@ -1,8 +1,8 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 
 public class WorldHelper {
@@ -12,7 +12,7 @@ public class WorldHelper {
         // try a couple of times I guess?
         boolean result = false;
         for (int i = 0; i <= 2; i++) {
-            result = world.setChunkForced(chunkPos.getStartX(), chunkPos.getStartZ(), true);
+            result = world.forceChunk(chunkPos.getXStart(), chunkPos.getZStart(), true);
             if (result) break;
         }
         if (result)
@@ -23,7 +23,7 @@ public class WorldHelper {
 
     public static boolean removeForcedChunk(ServerWorld world, BlockPos pos) {
         ChunkPos chunkPos = new ChunkPos(pos);
-        boolean result = world.setChunkForced(chunkPos.getStartX(), chunkPos.getStartZ(), false);
+        boolean result = world.forceChunk(chunkPos.getXStart(), chunkPos.getZStart(), false);
         if (!result) {
             Charm.LOG.error("Could not unload forced chunk - this is probably really bad.");
         } else {
@@ -33,18 +33,18 @@ public class WorldHelper {
     }
 
     public static void clearWeather(ServerWorld world) {
-        clearWeather(world, world.random.nextInt(12000) + 3600);
+        clearWeather(world, world.rand.nextInt(12000) + 3600);
     }
 
     public static void clearWeather(ServerWorld world, int duration) {
-        world.setWeather(duration, 0, false, false);
+        world.func_241113_a_(duration, 0, false, false);
     }
 
     public static void stormyWeather(ServerWorld world) {
-        stormyWeather(world, world.random.nextInt(12000) + 3600);
+        stormyWeather(world, world.rand.nextInt(12000) + 3600);
     }
 
     public static void stormyWeather(ServerWorld world, int duration) {
-        world.setWeather(0, duration, true, true);
+        world.func_241113_a_(0, duration, true, true);
     }
 }

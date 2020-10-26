@@ -1,23 +1,13 @@
 package svenhjol.charm.base.structure;
 
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.ChestBlockEntity;
-import net.minecraft.block.entity.LootableContainerBlockEntity;
-import net.minecraft.block.entity.MobSpawnerBlockEntity;
-import net.minecraft.block.enums.StructureBlockMode;
 import net.minecraft.entity.EntityType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.structure.Structure.StructureBlockInfo;
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.structure.processor.StructureProcessor;
-import net.minecraft.structure.processor.StructureProcessorType;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.gen.feature.template.StructureProcessor;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -104,7 +94,7 @@ public class DataBlockProcessor extends StructureProcessor {
         public BlockState state;
         public BlockPos pos;
         public WorldView world;
-        public CompoundTag tag;
+        public CompoundNBT tag;
         public Random fixedRandom; // fixed according to parent template
         public Random random; // random according to the replaced block hashcode
         public float chance;
@@ -172,9 +162,9 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void armorStand() {
             EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.instantiate();
             if (blockEntity == null) return;
-            this.tag = new CompoundTag();
+            this.tag = new CompoundNBT();
 
-            blockEntity.entity = new Identifier("minecraft:armor_stand");
+            blockEntity.entity = new ResourceLocation("minecraft:armor_stand");
             blockEntity.meta = this.data;
             blockEntity.rotation = this.rotation;
             blockEntity.toTag(this.tag);
@@ -188,7 +178,7 @@ public class DataBlockProcessor extends StructureProcessor {
             String type = getValue("type", this.data, "");
             if (type.isEmpty()) return;
 
-            Identifier typeId = new Identifier(type);
+            ResourceLocation typeId = new ResourceLocation(type);
             Optional<Block> optionalBlock = Registry.BLOCK.getOrEmpty(typeId);
 
             if (!optionalBlock.isPresent())
@@ -211,7 +201,7 @@ public class DataBlockProcessor extends StructureProcessor {
                         return;
 
                     blockEntity.setLootTable(DecorationHelper.getRandomLootTable(BOOKCASE_LOOT_TABLES, random), random.nextLong());
-                    this.tag = new CompoundTag();
+                    this.tag = new CompoundNBT();
                     blockEntity.toTag(this.tag);
                 }
             } else if (ModuleHandler.enabled("charm:variant_bookshelves") && variantMaterial != VanillaVariantMaterial.OAK) {
@@ -251,13 +241,13 @@ public class DataBlockProcessor extends StructureProcessor {
 
             state = setFacing(state, ChestBlock.FACING, getValue("facing", data, "north"));
 
-            Identifier lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_CHEST_CHANCE ? RARE_CHEST_LOOT_TABLES : CHEST_LOOT_TABLES, random);
+            ResourceLocation lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_CHEST_CHANCE ? RARE_CHEST_LOOT_TABLES : CHEST_LOOT_TABLES, random);
             ChestBlockEntity blockEntity = BlockEntityType.CHEST.instantiate();
             if (blockEntity == null)
                 return;
 
             blockEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
-            tag = new CompoundTag();
+            tag = new CompoundNBT();
             blockEntity.toTag(tag);
         }
 
@@ -271,12 +261,12 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void entity() {
             EntitySpawnerBlockEntity blockEntity = EntitySpawner.BLOCK_ENTITY.instantiate();
             if (blockEntity == null) return;
-            tag = new CompoundTag();
+            tag = new CompoundNBT();
 
             String type = getValue("type", this.data, "");
             if (type.isEmpty()) return;
 
-            Identifier typeId = new Identifier(type);
+            ResourceLocation typeId = new ResourceLocation(type);
 
             if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
                 return;
@@ -325,9 +315,9 @@ public class DataBlockProcessor extends StructureProcessor {
 
             String type = getValue("type", this.data, "");
             if (type.isEmpty()) return;
-            tag = new CompoundTag();
+            tag = new CompoundNBT();
 
-            blockEntity.entity = new Identifier(type);
+            blockEntity.entity = new ResourceLocation(type);
             blockEntity.health = getValue("health", this.data, 0.0D);
             blockEntity.persist = getValue("persist", this.data, true);
             blockEntity.count = getValue("count", this.data, 1);
@@ -342,7 +332,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
             String type = getValue("type", this.data, "");
             if (!type.isEmpty()) {
-                Identifier typeId = new Identifier(type);
+                ResourceLocation typeId = new ResourceLocation(type);
                 if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
                     return;
 
@@ -371,7 +361,7 @@ public class DataBlockProcessor extends StructureProcessor {
                 entity = SPAWNER_MOBS.size() > 0 ? SPAWNER_MOBS.get(random.nextInt(SPAWNER_MOBS.size())) : null;
             } else {
                 // try and use the specified entity
-                Identifier typeId = new Identifier(type);
+                ResourceLocation typeId = new ResourceLocation(type);
                 if (!Registry.ENTITY_TYPE.getOrEmpty(typeId).isPresent())
                     return;
 
@@ -386,7 +376,7 @@ public class DataBlockProcessor extends StructureProcessor {
             MobSpawnerBlockEntity blockEntity = BlockEntityType.MOB_SPAWNER.instantiate();
             if (blockEntity != null) {
                 blockEntity.getLogic().setEntityId(entity);
-                tag = new CompoundTag();
+                tag = new CompoundNBT();
                 blockEntity.toTag(this.tag);
             }
         }
@@ -417,9 +407,9 @@ public class DataBlockProcessor extends StructureProcessor {
             if (blockEntity == null)
                 return;
 
-            Identifier lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
+            ResourceLocation lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
             blockEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
-            tag = new CompoundTag();
+            tag = new CompoundNBT();
             blockEntity.toTag(tag);
         }
 

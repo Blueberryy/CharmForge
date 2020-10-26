@@ -3,14 +3,14 @@ package svenhjol.charm.base.block;
 import net.minecraft.block.FallingBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.NonNullList;
 import svenhjol.charm.base.CharmModule;
 
 @SuppressWarnings({"NullableProblems", "unused"})
 public abstract class CharmFallingBlock extends FallingBlock implements ICharmFallingBlock {
     protected CharmModule module;
 
-    public CharmFallingBlock(CharmModule module, String name, Settings props) {
+    public CharmFallingBlock(CharmModule module, String name, Properties props) {
         super(props);
         this.module = module;
         register(module, name);
@@ -22,9 +22,9 @@ public abstract class CharmFallingBlock extends FallingBlock implements ICharmFa
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> items) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (enabled())
-            super.addStacksForDisplay(group, items);
+            super.fillItemGroup(group, items);
     }
 
     @Override

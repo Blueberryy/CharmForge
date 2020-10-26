@@ -2,11 +2,7 @@ package svenhjol.charm.base.structure;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.structure.pool.StructurePool;
-import net.minecraft.structure.pool.StructurePoolElement;
-import net.minecraft.structure.pool.StructurePools;
-import net.minecraft.structure.processor.StructureProcessorLists;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +47,7 @@ public abstract class BaseStructure {
         return modId + ":" + mainFolder + "/" + structureName + "/" + piece;
     }
 
-    protected Identifier getPoolPath(String pool) {
-        return new Identifier(modId, mainFolder + "/" + structureName + "/" + pool);
+    protected ResourceLocation getPoolPath(String pool) {
+        return new ResourceLocation(modId, mainFolder + "/" + structureName + "/" + pool);
     }
 }

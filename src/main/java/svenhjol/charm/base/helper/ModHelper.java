@@ -1,11 +1,10 @@
 package svenhjol.charm.base.helper;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.fml.ModList;
 
 public class ModHelper {
     public static boolean isLoaded(String mod) {
-        FabricLoader instance = FabricLoader.getInstance();
-        boolean result = instance.isModLoaded(mod);
-        return result;
+        ModList modList = ModList.get();
+        return modList.isLoaded(mod);
     }
 }

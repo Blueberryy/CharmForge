@@ -1,7 +1,7 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 
@@ -14,7 +14,7 @@ public class PlayerHelper {
      * @return True if able to add to player inv, false if dropped
      */
     public static boolean addOrDropStack(PlayerEntity player, ItemStack stack) {
-        if (!player.inventory.insertStack(stack)) {
+        if (!player.inventory.addItemStackToInventory(stack)) {
             player.dropItem(stack, true);
             return false;
         }
@@ -22,11 +22,11 @@ public class PlayerHelper {
     }
 
     public static void openInventory() {
-        MinecraftClient mc = MinecraftClient.getInstance();
+        Minecraft mc = Minecraft.getInstance();
 
         if (mc.player == null)
             return;
 
-        mc.openScreen(new InventoryScreen(mc.player));
+        mc.displayGuiScreen(new InventoryScreen(mc.player));
     }
 }

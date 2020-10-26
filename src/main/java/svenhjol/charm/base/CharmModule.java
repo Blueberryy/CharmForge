@@ -1,8 +1,8 @@
 package svenhjol.charm.base;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public abstract class CharmModule {
         return this.getClass().getSimpleName();
     }
 
-    public List<Identifier> getRecipesToRemove() {
+    public List<ResourceLocation> getRecipesToRemove() {
         return new ArrayList<>();
     }
 
@@ -47,7 +47,7 @@ public abstract class CharmModule {
         // run on server on world load, only executed if module enabled
     }
 
-    public void clientJoinWorld(MinecraftClient client) {
+    public void clientJoinWorld(Minecraft client) {
         // run on client on world load, only executed if module enabled
     }
 

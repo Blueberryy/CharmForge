@@ -1,10 +1,9 @@
 package svenhjol.charm.base.block;
 
-import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.*;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.mixin.accessor.*;
@@ -15,7 +14,7 @@ public interface ICharmBlock {
     boolean enabled();
 
     default void register(CharmModule module, String name) {
-        Identifier id = new Identifier(module.mod, name);
+        ResourceLocation id = new ResourceLocation(module.mod, name);
         RegistryHandler.block(id, (Block)this);
         createBlockItem(id);
     }
@@ -28,14 +27,14 @@ public interface ICharmBlock {
         return 64;
     }
 
-    default void createBlockItem(Identifier id) {
-        Item.Settings settings = new Item.Settings();
+    default void createBlockItem(ResourceLocation id) {
+        Item.Properties settings = new Item.Properties();
 
         ItemGroup itemGroup = getItemGroup();
         if (itemGroup != null)
             settings.group(itemGroup);
 
-        settings.maxCount(getMaxStackSize());
+        settings.maxStackSize(getMaxStackSize());
 
         CharmBlockItem blockItem = new CharmBlockItem(this, settings);
         RegistryHandler.item(id, blockItem);
@@ -53,7 +52,7 @@ public interface ICharmBlock {
         ((FireBlockAccessor) Blocks.FIRE).invokeRegisterFlammableBlock((Block)this, encouragement, flammability);
     }
 
-    default void setEffectiveTool(Class<? extends MiningToolItem> clazz) {
+    default void setEffectiveTool(Class<? extends ToolItem> clazz) {
         if (clazz == PickaxeItem.class)
             PickaxeItemAccessor.getEffectiveBlocks().add((Block)this);
 

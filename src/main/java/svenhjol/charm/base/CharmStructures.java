@@ -2,7 +2,7 @@ package svenhjol.charm.base;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Blocks;
-import net.minecraft.structure.processor.BlockIgnoreStructureProcessor;
+import net.minecraft.world.gen.feature.template.BlockIgnoreStructureProcessor;
 import svenhjol.charm.base.helper.StructureHelper;
 import svenhjol.charm.base.structure.DataBlockProcessor;
 

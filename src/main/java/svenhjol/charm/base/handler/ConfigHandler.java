@@ -19,6 +19,7 @@ import java.util.Map;
 
 public class ConfigHandler {
 
+    // TODO: should probably use toml
     public static void createConfig(String mod, Map<String, CharmModule> modules) {
         Map<String, Map<String, Object>> finalConfig = new LinkedHashMap<>();
 
