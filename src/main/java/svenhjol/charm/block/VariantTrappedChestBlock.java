@@ -11,7 +11,7 @@ import net.minecraft.stat.Stat;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -44,7 +44,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> items) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
         if (enabled())
             super.addStacksForDisplay(group, items);
     }

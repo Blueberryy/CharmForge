@@ -10,7 +10,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.world.World;
 import svenhjol.charm.entity.GlowBallEntity;
 import svenhjol.charm.base.CharmModule;
@@ -26,7 +26,7 @@ public class GlowBallItem extends EnderPearlItem implements ICharmItem {
     }
 
     @Override
-    public void appendStacks(ItemGroup group, DefaultedList<ItemStack> stacks) {
+    public void appendStacks(ItemGroup group, NonNullList<ItemStack> stacks) {
         if (enabled())
             super.appendStacks(group, stacks);
     }

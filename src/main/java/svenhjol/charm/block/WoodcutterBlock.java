@@ -15,7 +15,7 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -47,7 +47,7 @@ public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> list) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> list) {
         if (enabled())
             super.addStacksForDisplay(group, list);
     }

@@ -4,7 +4,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
 
@@ -23,7 +23,7 @@ public class GoldBarsBlock extends PaneBlock implements ICharmBlock {
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> items) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
         if (enabled())
             super.addStacksForDisplay(group, items);
     }

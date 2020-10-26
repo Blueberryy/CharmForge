@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.text.OrderedText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.block.CrateBlock;
 import svenhjol.charm.blockentity.CrateBlockEntity;
@@ -60,7 +60,7 @@ public class CratesClient {
             return false;
 
         CrateBlockEntity crate = (CrateBlockEntity) blockEntity;
-        DefaultedList<ItemStack> items = crate.getInvStackList();
+        NonNullList<ItemStack> items = crate.getInvStackList();
 
         int size = crate.size();
 

@@ -13,7 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.Direction;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.screenhandler.CrateScreenHandler;
@@ -24,7 +24,7 @@ import java.util.stream.IntStream;
 public class CrateBlockEntity extends LootableContainerBlockEntity implements SidedInventory {
     public static int SIZE = 9;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
-    private DefaultedList<ItemStack> items = DefaultedList.ofSize(SIZE, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
 
     public CrateBlockEntity() {
         super(Crates.BLOCK_ENTITY);
@@ -33,7 +33,7 @@ public class CrateBlockEntity extends LootableContainerBlockEntity implements Si
     @Override
     public void fromTag(BlockState state, CompoundNBT tag) {
         super.fromTag(state, tag);
-        this.items = DefaultedList.ofSize(SIZE, ItemStack.EMPTY);
+        this.items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
         if (!this.deserializeLootTable(tag))
             Inventories.fromTag(tag, this.items);
     }
@@ -48,12 +48,12 @@ public class CrateBlockEntity extends LootableContainerBlockEntity implements Si
     }
 
     @Override
-    public DefaultedList<ItemStack> getInvStackList() {
+    public NonNullList<ItemStack> getInvStackList() {
         return this.items;
     }
 
     @Override
-    protected void setInvStackList(DefaultedList<ItemStack> list) {
+    protected void setInvStackList(NonNullList<ItemStack> list) {
         this.items = list;
     }
 

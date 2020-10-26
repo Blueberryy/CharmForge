@@ -6,7 +6,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.world.BlockView;
 import svenhjol.charm.blockentity.VariantChestBlockEntity;
 import svenhjol.charm.module.VariantChests;
@@ -36,7 +36,7 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> items) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
         if (enabled())
             super.addStacksForDisplay(group, items);
     }

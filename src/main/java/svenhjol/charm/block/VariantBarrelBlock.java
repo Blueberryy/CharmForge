@@ -8,7 +8,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import svenhjol.charm.module.VariantBarrels;
@@ -43,7 +43,7 @@ public class VariantBarrelBlock extends BarrelBlock implements ICharmBlock {
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> list) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> list) {
         if (enabled())
             super.addStacksForDisplay(group, list);
     }

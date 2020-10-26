@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.text.OrderedText;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.event.RenderTooltipCallback;
 import svenhjol.charm.handler.TooltipInventoryHandler;
@@ -57,7 +57,7 @@ public class ShulkerBoxTooltipsClient {
             return false;
 
         ShulkerBoxBlockEntity shulkerbox = (ShulkerBoxBlockEntity) blockEntity;
-        DefaultedList<ItemStack> items = ((ShulkerBoxBlockEntityAccessor)shulkerbox).getInventory();
+        NonNullList<ItemStack> items = ((ShulkerBoxBlockEntityAccessor)shulkerbox).getInventory();
 
         int size = shulkerbox.size();
 

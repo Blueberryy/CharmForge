@@ -11,7 +11,7 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
@@ -107,7 +107,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, DefaultedList<ItemStack> items) {
+    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
         // don't
     }
 
