@@ -23,9 +23,9 @@ public abstract class BaseLanternBlock extends LanternBlock implements ICharmBlo
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> list) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         if (enabled())
-            super.addStacksForDisplay(group, list);
+            super.fillItemGroup(group, list);
     }
 
     @Override

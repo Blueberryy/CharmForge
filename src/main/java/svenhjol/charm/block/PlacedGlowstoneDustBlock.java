@@ -107,7 +107,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         // don't
     }
 

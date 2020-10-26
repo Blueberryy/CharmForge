@@ -36,7 +36,7 @@ public class EntitySpawnerBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> list) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         // don't
     }
 

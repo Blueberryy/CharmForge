@@ -44,9 +44,9 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     }
 
     @Override
-    public void addStacksForDisplay(ItemGroup group, NonNullList<ItemStack> items) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         if (enabled())
-            super.addStacksForDisplay(group, items);
+            super.fillItemGroup(group, items);
     }
 
     @Override
