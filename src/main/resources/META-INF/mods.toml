@@ -1,0 +1,28 @@
+modLoader="javafml"
+loaderVersion="[34,)"
+issueTrackerURL="http://github.com/svenhjol/Charm/issues"
+displayURL="https://svenhjol.github.io/Charm/"
+license="All rights reserved" # Fucking hell, Forge. Way to break all the deps.
+
+[[mods]]
+modId="charm"
+version="${mod_version}"
+displayName="Charm"
+description='''
+Smaller things.
+'''
+authors="svenhjol, warlordwossman, Coranthes"
+
+[[dependencies.charm]]
+    modId="forge"
+    mandatory=true
+    versionRange="[34.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.charm]]
+    modId="quark"
+    mandatory=false
+    versionRange="[r2.4,)"
+    ordering="BEFORE"
+    side="BOTH"
