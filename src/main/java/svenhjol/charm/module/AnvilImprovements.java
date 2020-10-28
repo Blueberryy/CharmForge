@@ -1,10 +1,10 @@
 package svenhjol.charm.module;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.Property;
+import net.minecraft.util.IntReferenceHolder;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
@@ -22,9 +22,9 @@ public class AnvilImprovements extends CharmModule {
         return ModuleHandler.enabled("charm:anvil_improvements") && AnvilImprovements.removeTooExpensive;
     }
 
-    public static boolean allowTakeWithoutXp(PlayerEntity player, Property levelCost) {
+    public static boolean allowTakeWithoutXp(PlayerEntity player, IntReferenceHolder levelCost) {
         return ModuleHandler.enabled("charm:anvil_improvements")
-            && (player.abilities.creativeMode || ((player.experienceLevel >= levelCost.get()) && levelCost.get() > -1));
+            && (player.abilities.isCreativeMode || ((player.experienceLevel >= levelCost.get()) && levelCost.get() > -1));
     }
 
     public static boolean tryDamageAnvil() {

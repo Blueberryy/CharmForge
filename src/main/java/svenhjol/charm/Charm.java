@@ -1,6 +1,6 @@
 package svenhjol.charm;
 
-import net.fabricmc.api.ModInitializer;
+import net.minecraftforge.fml.common.Mod;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.base.CharmStructures;
 import svenhjol.charm.base.CharmTags;
@@ -11,12 +11,12 @@ import svenhjol.charm.module.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Charm implements ModInitializer {
+@Mod(Charm.MOD_ID)
+public class Charm {
     public static final String MOD_ID = "charm";
     public static LogHandler LOG = new LogHandler("Charm");
 
-    @Override
-    public void onInitialize() {
+    public Charm() {
         ModuleHandler.AVAILABLE_MODULES.put(Charm.MOD_ID, new ArrayList<>(Arrays.asList(
             AnvilImprovements.class,
             ArmorInvisibility.class,

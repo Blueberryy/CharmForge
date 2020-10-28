@@ -11,7 +11,7 @@ import svenhjol.charm.module.AnvilImprovements;
 @Mixin(AnvilBlock.class)
 public class AnvilBlockMixin {
     @Inject(
-        method = "getLandingState",
+        method = "damage",
         at = @At("HEAD"),
         cancellable = true
     )
