@@ -1,12 +1,9 @@
 package svenhjol.charm.mixin;
 
-import net.minecraft.client.recipebook.ClientRecipeBook;
-import net.minecraft.client.recipebook.RecipeBookGroup;
-import net.minecraft.recipe.Recipe;
+import net.minecraft.client.util.ClientRecipeBook;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import svenhjol.charm.module.Kilns;
 import svenhjol.charm.module.Woodcutters;
 

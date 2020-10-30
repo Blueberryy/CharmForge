@@ -1,13 +1,8 @@
 package svenhjol.charm.mixin;
 
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.EnchantmentScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.util.registry.Registry;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,6 +16,7 @@ import svenhjol.charm.base.helper.EnchantmentsHelper;
 import java.util.List;
 import java.util.Random;
 
+// TODO: remove this and use Forge's getEnchantPowerBonus
 @Mixin(EnchantmentScreenHandler.class)
 public abstract class EnchantmentScreenHandlerMixin {
     @Shadow @Final private ScreenHandlerContext context;

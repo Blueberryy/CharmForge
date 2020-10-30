@@ -18,9 +18,11 @@ public class EnchantingTableBlockMixin {
      *
      * If present, returns true to enable the rune particle to be rendered.
      * Falls back to vanilla behavior if not.
+     *
+     * TODO: remove this and use Forge's getEnchantPowerBonus
      */
     @Redirect(
-        method = "randomDisplayTick",
+        method = "animateTick",
         at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/block/BlockState;isOf(Lnet/minecraft/block/Block;)Z"

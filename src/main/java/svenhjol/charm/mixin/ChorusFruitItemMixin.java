@@ -13,7 +13,7 @@ import svenhjol.charm.module.BlockOfEnderPearls;
 @Mixin(ChorusFruitItem.class)
 public class ChorusFruitItemMixin {
     @Inject(
-        method = "finishUsing",
+        method = "onItemUseFinish",
         at = @At("HEAD"),
         cancellable = true
     )

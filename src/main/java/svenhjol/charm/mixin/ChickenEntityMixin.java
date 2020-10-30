@@ -10,11 +10,11 @@ import svenhjol.charm.module.ChickensDropFeathers;
 
 @Mixin(ChickenEntity.class)
 public class ChickenEntityMixin {
-    @Shadow public int eggLayTime;
+    @Shadow public int timeUntilNextEgg;
 
-    @Inject(method = "tickMovement", at = @At("RETURN"))
+    @Inject(method = "livingTick", at = @At("RETURN"))
     private void hookTickMovement(CallbackInfo ci) {
-        if (this.eggLayTime <= 1)
+        if (this.timeUntilNextEgg <= 1)
             ChickensDropFeathers.tryDropFeather((ChickenEntity)(Object)this);
     }
 }

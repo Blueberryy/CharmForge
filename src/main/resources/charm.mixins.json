@@ -6,8 +6,8 @@
   "mixins": [
     "AnvilBlockMixin",
     "RepairContainerMixin",
-    "BarrelBlockEntityMixin",
-    "BeaconBlockEntityMixin",
+    "BarrelTileEntityMixin",
+    "BeaconTileEntityMixin",
     "CampfireBlockMixin",
     "ChickenEntityMixin",
     "ChorusFruitItemMixin",

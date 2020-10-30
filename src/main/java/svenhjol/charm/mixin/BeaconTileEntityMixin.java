@@ -1,9 +1,8 @@
 package svenhjol.charm.mixin;
 
-import net.minecraft.block.entity.BeaconBlockEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,13 +10,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import svenhjol.charm.module.BeaconsHealMobs;
 
-@Mixin(BeaconBlockEntity.class)
-public abstract class BeaconBlockEntityMixin extends BlockEntity {
+@Mixin(BeaconTileEntity.class)
+public abstract class BeaconTileEntityMixin extends TileEntity {
     @Shadow private int level;
     @Shadow private StatusEffect primary;
     @Shadow private StatusEffect secondary;
 
-    public BeaconBlockEntityMixin(BlockEntityType<?> type) {
+    public BeaconTileEntityMixin(TileEntityType<?> type) {
         super(type);
     }
 

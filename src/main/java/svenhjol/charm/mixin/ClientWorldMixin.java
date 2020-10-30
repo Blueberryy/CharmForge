@@ -17,9 +17,11 @@ public class ClientWorldMixin {
      * Inspired by Forge's EntityJoinWorldEvent which
      * provides a hook at the same point in the code,
      * except allows it to be cancellable.
+     *
+     * TODO: remove this and use EntityJoinWorldEvent
      */
     @Inject(
-        method = "addEntityPrivate",
+        method = "addEntityImpl",
         at = @At("HEAD")
     )
     private void hookAddEntityPrivate(int id, Entity entity, CallbackInfo ci) {
