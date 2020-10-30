@@ -1,43 +1,48 @@
 package svenhjol.charm.mixin.accessor;
 
-import net.minecraft.client.render.RenderPhase;
+import net.minecraft.client.renderer.RenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(RenderPhase.class)
-public interface RenderPhaseAccessor {
+@Mixin(RenderState.class)
+public interface RenderStateAccessor {
     @Accessor("COLOR_MASK")
-    static RenderPhase.WriteMaskState getColorMask() {
+    static RenderState.WriteMaskState getColorMask() {
         throw new IllegalStateException();
     }
 
     @Accessor("DISABLE_CULLING")
-    static RenderPhase.Cull getDisableCulling() {
+    static RenderState.Cull getDisableCulling() {
         throw new IllegalStateException();
     }
 
     @Accessor("EQUAL_DEPTH_TEST")
-    static RenderPhase.DepthTest getEqualDepthTest() {
+    static RenderState.DepthTest getEqualDepthTest() {
         throw new IllegalStateException();
     }
 
     @Accessor("GLINT_TRANSPARENCY")
-    static RenderPhase.Transparency getGlintTransparency() {
+    static RenderState.Transparency getGlintTransparency() {
         throw new IllegalStateException();
     }
 
     @Accessor("GLINT_TEXTURING")
-    static RenderPhase.Texturing getGlintTexturing() {
+    static RenderState.Texturing getGlintTexturing() {
         throw new IllegalStateException();
     }
 
     @Accessor("ENTITY_GLINT_TEXTURING")
-    static RenderPhase.Texturing getEntityGlintTexturing() {
+    static RenderState.Texturing getEntityGlintTexturing() {
         throw new IllegalStateException();
     }
 
     @Accessor("ITEM_TARGET")
-    static RenderPhase.Target getItemTarget() {
+    static RenderState.Target getItemTarget() {
+        throw new IllegalStateException();
+    }
+
+    @Accessor("VIEW_OFFSET_Z_LAYERING")
+    static RenderState.Layering getViewOffsetZLayering() {
         throw new IllegalStateException();
     }
 }
