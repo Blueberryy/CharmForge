@@ -64,7 +64,7 @@ public class HoeHarvesting extends CharmModule {
                     Block.dropStack(world, pos, drop);
             }
 
-            world.syncGlobalEvent(2001, pos, Block.getRawIdFromState(newState));
+            world.playEvent(2001, pos, Block.getStateId(newState));
             world.setBlockState(pos, newState);
 
             // damage the hoe a bit

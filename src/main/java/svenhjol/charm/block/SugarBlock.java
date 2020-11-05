@@ -2,20 +2,20 @@ package svenhjol.charm.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ShovelItem;
-import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmFallingBlock;
 
 public class SugarBlock extends CharmFallingBlock {
     public SugarBlock(CharmModule module) {
-        super(module, "sugar_block", Settings
-            .create(Material.AGGREGATE)
+        super(module, "sugar_block", Properties
+            .create(Material.SAND)
             .sound(SoundType.SAND)
             .hardnessAndResistance(0.5F)
         );
@@ -56,7 +56,7 @@ public class SugarBlock extends CharmFallingBlock {
         }
 
         if (waterBelow) {
-            world.syncGlobalEvent(2001, pos, Block.getRawIdFromState(world.getBlockState(pos)));
+            world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
             world.removeBlock(pos, true);
         }
 
