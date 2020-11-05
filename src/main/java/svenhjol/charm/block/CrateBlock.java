@@ -156,12 +156,12 @@ public class CrateBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public boolean hasComparatorOutput(BlockState state) {
+    public boolean hasComparatorInputOverride(BlockState state) {
         return true;
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
+    public int getComparatorInputOverride(BlockState state, World world, BlockPos pos) {
         return Container.calcRedstoneFromInventory((IInventory)world.getTileEntity(pos));
     }
 
