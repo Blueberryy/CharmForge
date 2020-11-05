@@ -4,7 +4,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.PaneBlock;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.NonNullList;
+import net.minecraft.util.NonNullList;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
 
@@ -12,7 +12,7 @@ public class GoldBarsBlock extends PaneBlock implements ICharmBlock {
     private CharmModule module;
 
     public GoldBarsBlock(CharmModule module) {
-        super(Settings.copy(Blocks.IRON_BARS));
+        super(Properties.from(Blocks.IRON_BARS));
         this.module = module;
         this.register(module, "gold_bars");
     }
