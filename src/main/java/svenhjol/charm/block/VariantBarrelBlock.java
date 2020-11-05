@@ -24,7 +24,7 @@ public class VariantBarrelBlock extends BarrelBlock implements ICharmBlock {
     protected IVariantMaterial type;
 
     public VariantBarrelBlock(CharmModule module, IVariantMaterial type) {
-        super(AbstractBlock.Settings.copy(Blocks.BARREL));
+        super(AbstractBlock.Properties.copy(Blocks.BARREL));
 
         this.module = module;
         this.type = type;

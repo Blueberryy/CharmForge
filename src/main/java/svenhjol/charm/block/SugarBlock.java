@@ -15,7 +15,7 @@ import svenhjol.charm.base.block.CharmFallingBlock;
 public class SugarBlock extends CharmFallingBlock {
     public SugarBlock(CharmModule module) {
         super(module, "sugar_block", Settings
-            .of(Material.AGGREGATE)
+            .create(Material.AGGREGATE)
             .sound(SoundType.SAND)
             .hardnessAndResistance(0.5F)
         );

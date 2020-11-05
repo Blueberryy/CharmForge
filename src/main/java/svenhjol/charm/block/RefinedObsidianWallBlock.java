@@ -10,7 +10,7 @@ public class RefinedObsidianWallBlock extends WallBlock implements ICharmBlock {
     private CharmModule module;
 
     public RefinedObsidianWallBlock(CharmModule module) {
-        super(AbstractBlock.Settings.copy(RefinedObsidian.REFINED_OBSIDIAN));
+        super(AbstractBlock.Properties.copy(RefinedObsidian.REFINED_OBSIDIAN));
         this.register(module, "refined_obsidian_wall");
         this.module = module;
     }

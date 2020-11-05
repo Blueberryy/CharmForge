@@ -15,7 +15,7 @@ import svenhjol.charm.base.block.CharmFallingBlock;
 public class RedstoneSandBlock extends CharmFallingBlock {
     public RedstoneSandBlock(CharmModule module) {
         super(module, "redstone_sand", Block.Settings
-            .of(Material.AGGREGATE)
+            .create(Material.AGGREGATE)
             .sound(SoundType.SAND)
             .hardnessAndResistance(0.5F)
         );

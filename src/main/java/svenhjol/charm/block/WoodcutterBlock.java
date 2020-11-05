@@ -30,7 +30,7 @@ public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     private static final Text TITLE = new TranslationTextComponent("container.charm.woodcutter");
 
     public WoodcutterBlock(CharmModule module) {
-        super(AbstractBlock.Settings.copy(Blocks.STONECUTTER));
+        super(AbstractBlock.Properties.copy(Blocks.STONECUTTER));
         register(module, "woodcutter");
         this.module = module;
 

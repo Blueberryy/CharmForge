@@ -1,24 +1,24 @@
 package svenhjol.charm.block;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.AbstractFurnaceBlock;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.entity.TileEntity;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import svenhjol.charm.TileEntity.KilnTileEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
+import svenhjol.charm.tileentity.KilnTileEntity;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -27,28 +27,21 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
     protected CharmModule module;
 
     public KilnBlock(CharmModule module) {
-        super(AbstractBlock.Settings
-            .of(Material.STONE)
-            .requiresTool()
+        super(AbstractBlock.Properties
+            .create(Material.ROCK)
             .hardnessAndResistance(3.5F)
-            .luminance(l -> l.get(Properties.LIT) ? 13 : 0));
+            .setLightLevel(l -> l.get(BlockStateProperties.LIT) ? 13 : 0));
 
         this.module = module;
         this.register(module, "kiln");
     }
 
     @Override
-    protected void openScreen(World world, BlockPos pos, PlayerEntity player) {
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if (TileEntity instanceof KilnTileEntity) {
-            player.openHandledScreen((NamedScreenHandlerFactory)TileEntity);
+    protected void interactWith(World worldIn, BlockPos pos, PlayerEntity player) {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+        if (tileentity instanceof KilnTileEntity) {
+            player.openContainer((INamedContainerProvider)tileentity);
         }
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        return new KilnTileEntity();
     }
 
     @Override
@@ -67,5 +60,11 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
 
             world.addParticle(ParticleTypes.SMOKE, x, y + 1.1D, z, 0.0D, 0.0D, 0.0D);
         }
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(IBlockReader worldIn) {
+        return new KilnTileEntity();
     }
 }

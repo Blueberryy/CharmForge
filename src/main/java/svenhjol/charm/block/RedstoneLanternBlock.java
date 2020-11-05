@@ -19,7 +19,7 @@ public class RedstoneLanternBlock extends BaseLanternBlock {
     public static BooleanProperty LIT = Properties.LIT;
 
     public RedstoneLanternBlock(CharmModule module) {
-        super(module, "redstone_lantern", AbstractBlock.Settings.copy(Blocks.LANTERN)
+        super(module, "redstone_lantern", AbstractBlock.Properties.copy(Blocks.LANTERN)
             .luminance(p -> p.get(Properties.LIT) ? 15 : 0));
 
         this.setDefaultState(this.getDefaultState().with(LIT, false));

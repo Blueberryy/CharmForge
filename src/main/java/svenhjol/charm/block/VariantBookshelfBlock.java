@@ -8,7 +8,7 @@ import svenhjol.charm.base.enums.IVariantMaterial;
 
 public class VariantBookshelfBlock extends CharmBlock {
     public VariantBookshelfBlock(CharmModule module, IVariantMaterial type) {
-        super(module, type.asString() + "_bookshelf", AbstractBlock.Settings.copy(Blocks.BOOKSHELF));
+        super(module, type.asString() + "_bookshelf", AbstractBlock.Properties.copy(Blocks.BOOKSHELF));
 
         /** @see net.minecraft.block.FireBlock */
         if (type.isFlammable())

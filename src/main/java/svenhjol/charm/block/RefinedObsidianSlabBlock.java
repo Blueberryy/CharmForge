@@ -10,7 +10,7 @@ public class RefinedObsidianSlabBlock extends SlabBlock implements ICharmBlock {
     private CharmModule module;
 
     public RefinedObsidianSlabBlock(CharmModule module) {
-        super(AbstractBlock.Settings.copy(RefinedObsidian.REFINED_OBSIDIAN));
+        super(AbstractBlock.Properties.copy(RefinedObsidian.REFINED_OBSIDIAN));
         this.register(module, "refined_obsidian_slab");
         this.module = module;
     }
