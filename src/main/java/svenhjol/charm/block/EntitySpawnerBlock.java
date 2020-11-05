@@ -1,27 +1,31 @@
 package svenhjol.charm.block;
 
-import net.minecraft.block.*;
-import net.minecraft.block.entity.TileEntity;
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
-import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
 
 import javax.annotation.Nullable;
 
 public class EntitySpawnerBlock extends CharmBlockWithEntity {
     public EntitySpawnerBlock(CharmModule module) {
-        super(module, "entity_spawner", AbstractBlock.Settings
-            .of(Material.AIR)
-            .noCollision()
-            .dropsNothing());
+        super(module, "entity_spawner", AbstractBlock.Properties
+            .create(Material.AIR)
+            .notSolid()
+            .noDrops());
     }
 
     @Nullable
