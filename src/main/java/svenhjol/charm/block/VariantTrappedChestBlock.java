@@ -64,13 +64,13 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
+    public int getWeakPower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
         return MathHelper.clamp(ChestTileEntity.getPlayersLookingInChestCount(world, pos), 0, 15);
     }
 
     @Override
     public int getStrongRedstonePower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
-        return direction == Direction.UP ? state.getWeakRedstonePower(world, pos, direction) : 0;
+        return direction == Direction.UP ? state.getWeakPower(world, pos, direction) : 0;
     }
 
     @Override
@@ -79,7 +79,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     }
 
     @Override
-    public boolean emitsRedstonePower(BlockState state) {
+    public boolean canProvidePower(BlockState state) {
         return true;
     }
 
