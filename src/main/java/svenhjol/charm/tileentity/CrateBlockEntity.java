@@ -82,12 +82,12 @@ public class CrateTileEntity extends LockableLootTileEntity implements ISidedInv
     @Nullable
     @Override
     public Text getCustomName() {
-        return new TranslatableText("container.charm.crate");
+        return new TranslationTextComponent("container.charm.crate");
     }
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("container.charm.crate");
+        return new TranslationTextComponent("container.charm.crate");
     }
 
     @Override

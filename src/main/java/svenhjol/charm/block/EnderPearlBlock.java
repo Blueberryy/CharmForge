@@ -20,7 +20,7 @@ public class EnderPearlBlock extends CharmBlock {
     public EnderPearlBlock(CharmModule module) {
         super(module, "ender_pearl_block", AbstractBlock.Settings
             .of(Material.GLASS)
-            .sounds(BlockSoundGroup.GLASS)
+            .sounds(SoundType.GLASS)
             .strength(2.0F)
         );
 

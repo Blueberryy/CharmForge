@@ -10,7 +10,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
@@ -24,7 +24,7 @@ public class PathToDirt extends CharmModule {
         UseBlockCallback.EVENT.register(this::convertPath);
     }
 
-    private ActionResult convertPath(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+    private ActionResult convertPath(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
         ItemStack stack = player.getStackInHand(hand);
 

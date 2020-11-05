@@ -9,7 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tag.ItemTags;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.village.TradeOffer;
 import net.minecraft.village.TradeOffers;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -117,7 +117,7 @@ public class BeekeeperTradeOffers {
             ItemStack in1 = new ItemStack(Items.EMERALD, count);
             ItemStack out = new ItemStack(Items.BEEHIVE);
 
-            BeehiveTileEntity TileEntity = new BeehiveTileEntity();
+            BeehiveTileEntity tileEntity = new BeehiveTileEntity();
 
             for (int i = 0; i < 1; i++) {
                 BeeEntity bee = new BeeEntity(EntityType.BEE, entity.world);
@@ -130,7 +130,7 @@ public class BeekeeperTradeOffers {
             honeyTag.putInt("honey_level", 0);
             out.putSubTag("TileEntityTag", beesTag);
             out.putSubTag("BlockStateTag", honeyTag);
-            out.setCustomName(new TranslatableText("item.charm.populated_beehive"));
+            out.setCustomName(new TranslationTextComponent("item.charm.populated_beehive"));
 
             return new TradeOffer(in1, out, 1, 10, 0.2F);
         }

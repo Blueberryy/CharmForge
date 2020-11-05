@@ -186,7 +186,7 @@ public class MineshaftImprovements extends CharmModule {
 
                     world.setBlockState(blockpos, state, 2);
 
-                    TileEntity TileEntity = world.getTileEntity(blockpos);
+                    TileEntity tileEntity = world.getTileEntity(blockpos);
                     if (TileEntity instanceof CrateTileEntity) {
                         ((CrateTileEntity) TileEntity).setLootTable(loot, rand.nextLong());
                         TileEntity.toTag(new CompoundNBT());

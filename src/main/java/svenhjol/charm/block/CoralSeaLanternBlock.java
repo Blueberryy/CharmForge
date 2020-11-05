@@ -7,6 +7,6 @@ import svenhjol.charm.base.enums.ICoralMaterial;
 
 public class CoralSeaLanternBlock extends CharmBlock {
     public CoralSeaLanternBlock(CharmModule module, ICoralMaterial type) {
-        super(module, type.asString() + "_sea_lantern", Settings.copy(Blocks.SEA_LANTERN));
+        super(module, type.getString() + "_sea_lantern", Properties.from(Blocks.SEA_LANTERN));
     }
 }

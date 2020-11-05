@@ -26,7 +26,7 @@ public class EntitySpawnerBlock extends CharmBlockWithEntity {
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockView world) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new EntitySpawnerTileEntity();
     }
 

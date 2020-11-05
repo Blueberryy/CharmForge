@@ -12,11 +12,11 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.NonNullList;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.screenhandler.WoodcutterScreenHandler;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 
 public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     private CharmModule module;
-    private static final Text TITLE = new TranslatableText("container.charm.woodcutter");
+    private static final Text TITLE = new TranslationTextComponent("container.charm.woodcutter");
 
     public WoodcutterBlock(CharmModule module) {
         super(AbstractBlock.Settings.copy(Blocks.STONECUTTER));
@@ -37,7 +37,7 @@ public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
         setEffectiveTool(AxeItem.class);
     }
 
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (world.isRemote) {
             return ActionResult.SUCCESS;
         } else {

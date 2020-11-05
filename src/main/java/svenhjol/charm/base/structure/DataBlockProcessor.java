@@ -170,7 +170,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void armorStand() {
-            EntitySpawnerTileEntity TileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (TileEntity == null) return;
             this.tag = new CompoundNBT();
 
@@ -206,7 +206,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     .with(BookcaseBlock.SLOTS, BookcaseTileEntity.SIZE); // make it have the "full" texture
 
                 if (random.nextFloat() < BOOKCASE_LOOT_CHANCE) {
-                    BookcaseTileEntity TileEntity = Bookcases.BLOCK_ENTITY.create();
+                    BookcaseTileEntity tileEntity = Bookcases.BLOCK_ENTITY.create();
                     if (TileEntity == null)
                         return;
 
@@ -252,7 +252,7 @@ public class DataBlockProcessor extends StructureProcessor {
             state = setFacing(state, ChestBlock.FACING, getValue("facing", data, "north"));
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_CHEST_CHANCE ? RARE_CHEST_LOOT_TABLES : CHEST_LOOT_TABLES, random);
-            ChestTileEntity TileEntity = TileEntityType.CHEST.create();
+            ChestTileEntity tileEntity = TileEntityType.CHEST.create();
             if (TileEntity == null)
                 return;
 
@@ -269,7 +269,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void entity() {
-            EntitySpawnerTileEntity TileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (TileEntity == null) return;
             tag = new CompoundNBT();
 
@@ -320,7 +320,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void mob() {
             if (!withChance(MOB_CHANCE)) return;
 
-            EntitySpawnerTileEntity TileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
             if (TileEntity == null) return;
 
             String type = getValue("type", this.data, "");
@@ -383,7 +383,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
             state = Blocks.SPAWNER.getDefaultState();
 
-            MobSpawnerTileEntity TileEntity = TileEntityType.MOB_SPAWNER.create();
+            MobSpawnerTileEntity tileEntity = TileEntityType.MOB_SPAWNER.create();
             if (TileEntity != null) {
                 TileEntity.getSpawnerBaseLogic().setEntityType(entity);
                 tag = new CompoundNBT();
@@ -394,7 +394,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void storage() {
             if (!withChance(STORAGE_CHANCE)) return;
 
-            LockableLootTileEntity TileEntity;
+            LockableLootTileEntity tileEntity;
             IVariantMaterial woodType = DecorationHelper.getRandomVariantMaterial(random);
 
             if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {

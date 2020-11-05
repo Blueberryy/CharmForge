@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.map.MapIcon;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.village.TradeOffer;
@@ -150,8 +150,8 @@ public class WanderingTraderImprovements extends CharmModule {
             if (nearestStructure == null)
                 return null;
 
-            TranslatableText structureName = new TranslatableText("structure.charm." + structure.getName());
-            TranslatableText mapName = new TranslatableText("filled_map.charm.trader_map", structureName);
+            TranslationTextComponent structureName = new TranslationTextComponent("structure.charm." + structure.getName());
+            TranslationTextComponent mapName = new TranslationTextComponent("filled_map.charm.trader_map", structureName);
             return MapHelper.getMap(world, nearestStructure, mapName, MapIcon.Type.TARGET_X, color);
         }
 
@@ -180,7 +180,7 @@ public class WanderingTraderImprovements extends CharmModule {
             if (nearestBiome == null)
                 return null;
 
-            TranslatableText mapName = new TranslatableText("filled_map.charm.trader_map", new TranslatableText("biome.minecraft." + biomeName));
+            TranslationTextComponent mapName = new TranslationTextComponent("filled_map.charm.trader_map", new TranslationTextComponent("biome.minecraft." + biomeName));
             return MapHelper.getMap(world, nearestBiome, mapName, MapIcon.Type.TARGET_X, color);
         }
 

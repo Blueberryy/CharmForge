@@ -9,7 +9,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.Stats;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
@@ -58,7 +58,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     @Override
     public TileEntity createTileEntity(BlockView worldIn) {
         VariantTrappedChestTileEntity chest = new VariantTrappedChestTileEntity();
-        chest.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_trapped_chest"));
+        chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.asString() + "_trapped_chest"));
 
         return chest;
     }

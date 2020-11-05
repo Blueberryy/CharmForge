@@ -5,7 +5,7 @@ import net.minecraft.block.ChestBlock;
 import net.minecraft.block.entity.TileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.collection.NonNullList;
 import net.minecraft.world.BlockView;
 import svenhjol.charm.TileEntity.VariantChestTileEntity;
@@ -50,7 +50,7 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
     @Override
     public TileEntity createTileEntity(BlockView worldIn) {
         VariantChestTileEntity chest = new VariantChestTileEntity();
-        chest.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_chest"));
+        chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.asString() + "_chest"));
         return chest;
     }
 

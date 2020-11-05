@@ -55,12 +55,12 @@ public class BookcaseTileEntity extends LockableLootTileEntity implements ISided
     @Nullable
     @Override
     public Text getCustomName() {
-        return new TranslatableText("container.charm.bookcase");
+        return new TranslationTextComponent("container.charm.bookcase");
     }
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("container.charm.bookcase");
+        return new TranslationTextComponent("container.charm.bookcase");
     }
 
     @Override

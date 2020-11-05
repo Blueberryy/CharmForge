@@ -13,7 +13,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -47,9 +47,9 @@ public class PlaceableGlowstoneDust extends CharmModule {
         if (hitResult.getType() != HitResult.Type.BLOCK)
             return false;
 
-        BlockHitResult blockHitResult = (BlockHitResult)hitResult;
-        BlockPos pos = blockHitResult.getBlockPos();
-        Direction side = blockHitResult.getSide();
+        BlockRayTraceResult BlockRayTraceResult = (BlockRayTraceResult)hitResult;
+        BlockPos pos = BlockRayTraceResult.getBlockPos();
+        Direction side = BlockRayTraceResult.getSide();
         BlockState state = world.getBlockState(pos);
         BlockPos offsetPos = pos.offset(side);
 
@@ -69,7 +69,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
         return false;
     }
 
-    private ActionResult tryPlaceDust(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+    private ActionResult tryPlaceDust(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
         ItemStack stack = player.getStackInHand(hand);
 
         if (world != null && stack.getItem() == Items.GLOWSTONE_DUST) {

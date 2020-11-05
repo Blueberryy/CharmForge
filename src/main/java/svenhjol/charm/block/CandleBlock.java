@@ -1,38 +1,29 @@
 package svenhjol.charm.block;
 
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
-import svenhjol.charm.module.Candles;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
+import svenhjol.charm.module.Candles;
 
 import java.util.Random;
 
-public class CandleBlock extends CharmBlock implements Waterloggable {
+public class CandleBlock extends CharmBlock implements IWaterLoggable {
     protected static final VoxelShape SHAPE = Block.createCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 9.0D, 10.0D);
     public static final BooleanProperty LIT = Properties.LIT;
     public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
@@ -41,7 +32,7 @@ public class CandleBlock extends CharmBlock implements Waterloggable {
     public CandleBlock(CharmModule module) {
         super(module, "candle", AbstractBlock.Settings
             .of(Material.ORGANIC_PRODUCT)
-            .sounds(BlockSoundGroup.WOOL)
+            .sounds(SoundType.WOOL)
             .luminance(s -> s.get(LIT) ? Candles.lightLevel : 0)
             .strength(0.5F));
 
@@ -62,16 +53,16 @@ public class CandleBlock extends CharmBlock implements Waterloggable {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockHitResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         ItemStack held = player.getStackInHand(handIn);
         if (held.getItem() == Items.FLINT_AND_STEEL
             && !state.get(LIT)
             && !state.get(WATERLOGGED)
         ) {
             worldIn.setBlockState(pos, state.with(LIT, true));
-            return ActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
-        return ActionResult.PASS;
+        return ActionResultType.PASS;
     }
 
     @Override

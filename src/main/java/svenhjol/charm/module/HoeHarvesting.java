@@ -14,7 +14,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
@@ -39,7 +39,7 @@ public class HoeHarvesting extends CharmModule {
         UseBlockCallback.EVENT.register(this::tryHarvest);
     }
 
-    public ActionResult tryHarvest(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+    public ActionResult tryHarvest(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
         ItemStack held = player.getStackInHand(hand);
         BlockPos pos = hitResult.getBlockPos();
 

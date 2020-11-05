@@ -16,7 +16,7 @@ public class SugarBlock extends CharmFallingBlock {
     public SugarBlock(CharmModule module) {
         super(module, "sugar_block", Settings
             .of(Material.AGGREGATE)
-            .sounds(BlockSoundGroup.SAND)
+            .sounds(SoundType.SAND)
             .strength(0.5F)
         );
 

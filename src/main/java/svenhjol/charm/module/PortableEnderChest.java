@@ -8,7 +8,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.PortableEnderChestClient;
@@ -19,7 +19,7 @@ import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "Allows access to chest contents if the player has an Ender Chest in their inventory.")
 public class PortableEnderChest extends CharmModule {
-    private static final Text LABEL = new TranslatableText("container.charm.portable_ender_chest");
+    private static final Text LABEL = new TranslationTextComponent("container.charm.portable_ender_chest");
     public static final ResourceLocation MSG_SERVER_OPEN_ENDER_CHEST = new ResourceLocation(Charm.MOD_ID, "server_open_ender_chest");
     public static PortableEnderChestClient client;
 

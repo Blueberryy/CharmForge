@@ -39,7 +39,7 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
 
     @Override
     protected void openScreen(World world, BlockPos pos, PlayerEntity player) {
-        TileEntity TileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world.getTileEntity(pos);
         if (TileEntity instanceof KilnTileEntity) {
             player.openHandledScreen((NamedScreenHandlerFactory)TileEntity);
         }
@@ -47,7 +47,7 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockView world) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new KilnTileEntity();
     }
 

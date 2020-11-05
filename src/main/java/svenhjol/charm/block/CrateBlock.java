@@ -3,33 +3,26 @@ package svenhjol.charm.block;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.entity.TileEntity;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.entity.ItemEntity;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import svenhjol.charm.TileEntity.CrateTileEntity;
-import svenhjol.charm.module.Crates;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.module.Crates;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -40,20 +33,25 @@ public class CrateBlock extends CharmBlockWithEntity {
     private IVariantMaterial type;
 
     public CrateBlock(CharmModule module, IVariantMaterial type) {
-        super(module, type.asString() + "_crate", AbstractBlock.Settings
-            .of(Material.WOOD)
-            .sounds(BlockSoundGroup.WOOD)
-            .strength(1.5F));
+        super(module, type.getString() + "_crate", AbstractBlock.Properties
+            .create(Material.WOOD)
+            .sound(SoundType.WOOD)
+            .hardnessAndResistance(1.5F));
 
         this.type = type;
     }
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockView world) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         CrateTileEntity crate = new CrateTileEntity();
-        crate.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_crate"));
+        crate.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.getString() + "_crate"));
         return crate;
+    }
+
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
     }
 
     @Override
@@ -67,9 +65,9 @@ public class CrateBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        if (itemStack.hasCustomName()) {
-            TileEntity TileEntity = world.getTileEntity(pos);
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        if (itemStack.hasDisplayName()) {
+            TileEntity tileEntity = world.getTileEntity(pos);
 
             if (TileEntity instanceof CrateTileEntity) {
                 ((CrateTileEntity)TileEntity).setCustomName(itemStack.getName());
@@ -79,7 +77,7 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        TileEntity TileEntity = world.getTileEntity(pos);
+        TileEntity tileEntity = world.getTileEntity(pos);
         if (TileEntity instanceof CrateTileEntity) {
             CrateTileEntity crate = (CrateTileEntity)TileEntity;
 
@@ -90,7 +88,7 @@ public class CrateBlock extends CharmBlockWithEntity {
                 if (!tag.isEmpty())
                     stack.putSubTag(BLOCK_ENTITY_TAG, tag);
 
-                if (crate.hasCustomName())
+                if (crate.hasDisplayName())
                     stack.setCustomName(crate.getCustomName());
 
                 ItemEntity entity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
@@ -106,7 +104,7 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
-        TileEntity TileEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
+        TileEntity tileEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
         if (TileEntity instanceof CrateTileEntity) {
             CrateTileEntity crate = (CrateTileEntity)TileEntity;
 
@@ -120,11 +118,11 @@ public class CrateBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote && !player.isSpectator()) {
 
             // original implementation with loot check
-            TileEntity TileEntity = world.getTileEntity(pos);
+            TileEntity tileEntity = world.getTileEntity(pos);
             if (TileEntity instanceof CrateTileEntity) {
                 CrateTileEntity crate = (CrateTileEntity)TileEntity;
                 crate.checkLootInteraction(player);
@@ -145,9 +143,9 @@ public class CrateBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+    public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity TileEntity = world.getTileEntity(pos);
+            TileEntity tileEntity = world.getTileEntity(pos);
             if (TileEntity instanceof CrateTileEntity)
                 world.updateComparators(pos, state.getBlock());
 

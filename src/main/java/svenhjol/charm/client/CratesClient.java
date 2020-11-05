@@ -55,7 +55,7 @@ public class CratesClient {
             tag.putString("id", "charm:crate");
         }
         BlockItem blockItem = (BlockItem) stack.getItem();
-        TileEntity TileEntity = TileEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
+        TileEntity tileEntity = TileEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
         if (TileEntity == null)
             return false;
 

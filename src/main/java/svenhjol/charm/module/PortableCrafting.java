@@ -7,7 +7,7 @@ import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.PortableCraftingClient;
@@ -18,7 +18,7 @@ import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "Allows crafting from inventory if the player has a crafting table in their inventory.")
 public class PortableCrafting extends CharmModule {
-    private static final Text LABEL = new TranslatableText("container.charm.portable_crafting_table");
+    private static final Text LABEL = new TranslationTextComponent("container.charm.portable_crafting_table");
     public static final ResourceLocation MSG_SERVER_OPEN_CRAFTING = new ResourceLocation(Charm.MOD_ID, "server_open_crafting");
     public static PortableCraftingClient client;
 

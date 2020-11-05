@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 public interface BlockItemRenderCallback {
     Event<BlockItemRenderCallback> EVENT = EventFactory.createArrayBacked(BlockItemRenderCallback.class, (listeners) -> (block) -> {
         for (BlockItemRenderCallback listener : listeners) {
-            TileEntity TileEntity = listener.interact(block);
+            TileEntity tileEntity = listener.interact(block);
             if (TileEntity != null)
                 return TileEntity;
         }

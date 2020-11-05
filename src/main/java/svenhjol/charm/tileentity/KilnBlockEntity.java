@@ -5,7 +5,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import svenhjol.charm.module.Kilns;
 import svenhjol.charm.screenhandler.KilnScreenHandler;
 
@@ -16,7 +16,7 @@ public class KilnTileEntity extends AbstractFurnaceTileEntity {
 
     @Override
     protected Text getContainerName() {
-        return new TranslatableText("container.charm.kiln");
+        return new TranslationTextComponent("container.charm.kiln");
     }
 
     @Override

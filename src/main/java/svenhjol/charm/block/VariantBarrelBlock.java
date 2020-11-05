@@ -7,7 +7,7 @@ import net.minecraft.block.entity.BarrelTileEntity;
 import net.minecraft.block.entity.TileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
@@ -55,9 +55,9 @@ public class VariantBarrelBlock extends BarrelBlock implements ICharmBlock {
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockView world) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         BarrelTileEntity barrel = BarrelTileEntityAccessor.invokeConstructor(VariantBarrels.BLOCK_ENTITY);
-        barrel.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_barrel"));
+        barrel.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.asString() + "_barrel"));
         return barrel;
     }
 }

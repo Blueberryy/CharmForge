@@ -16,7 +16,7 @@ public class GunpowderBlock extends CharmFallingBlock {
     public GunpowderBlock(CharmModule module) {
         super(module, "gunpowder_block", Settings
             .of(Material.AGGREGATE)
-            .sounds(BlockSoundGroup.SAND)
+            .sounds(SoundType.SAND)
             .strength(0.5F)
         );
 
