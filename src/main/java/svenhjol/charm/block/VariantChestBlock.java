@@ -2,17 +2,17 @@ package svenhjol.charm.block;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.TileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.text.TranslationTextComponent;
-import net.minecraft.util.collection.NonNullList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
-import svenhjol.charm.TileEntity.VariantChestTileEntity;
-import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.module.VariantChests;
+import svenhjol.charm.tileentity.VariantChestTileEntity;
 
 import javax.annotation.Nullable;
 
@@ -22,12 +22,12 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
     private final IVariantMaterial type;
 
     public VariantChestBlock(CharmModule module, IVariantMaterial type) {
-        super(Settings.copy(Blocks.CHEST), () -> VariantChests.NORMAL_BLOCK_ENTITY);
+        super(Properties.from(Blocks.CHEST), () -> VariantChests.NORMAL_BLOCK_ENTITY);
 
         this.module = module;
         this.type = type;
 
-        this.register(module, type.asString() + "_chest");
+        this.register(module, type.getString() + "_chest");
     }
 
     @Override
@@ -48,9 +48,9 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(IBlockReader worldIn) {
+    public TileEntity createNewTileEntity(IBlockReader worldIn) {
         VariantChestTileEntity chest = new VariantChestTileEntity();
-        chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.asString() + "_chest"));
+        chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.getString() + "_chest"));
         return chest;
     }
 

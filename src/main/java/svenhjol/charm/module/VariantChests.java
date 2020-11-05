@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.entity.TileEntityType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -11,9 +11,9 @@ import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.VariantChestBlock;
 import svenhjol.charm.block.VariantTrappedChestBlock;
-import svenhjol.charm.TileEntity.VariantChestTileEntity;
-import svenhjol.charm.TileEntity.VariantChestClient;
-import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
+import svenhjol.charm.tileentity.VariantChestClient;
+import svenhjol.charm.tileentity.VariantChestTileEntity;
+import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
 
 import java.util.HashMap;
 import java.util.Map;
