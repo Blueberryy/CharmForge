@@ -1,44 +1,48 @@
 package svenhjol.charm.block;
 
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggable {
+public class PlacedGlowstoneDustBlock extends CharmBlock implements IWaterLoggable {
     public static final Map<Direction, VoxelShape> SHAPE = new HashMap<>();
-    public static final DirectionProperty FACING = FacingBlock.FACING;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public PlacedGlowstoneDustBlock(CharmModule module) {
-        super(module, "placed_glowstone_dust", Settings.copy(Blocks.REDSTONE_WIRE)
-            .luminance(l -> 8));
+        super(module, "placed_glowstone_dust", Properties.from(Blocks.REDSTONE_WIRE)
+            .setLightLevel(l -> 8));
 
         this.setDefaultState(getDefaultState().with(WATERLOGGED, false));
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         return SHAPE.get(state.get(FACING));
     }
 
@@ -46,12 +50,12 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     public BlockState getStateForPlacement(BlockItemUseContext context) {
         BlockState state = this.getDefaultState();
         World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
+        BlockPos pos = context.getPos();
 
-        FluidState fluidstate = context.getWorld().getFluidState(context.getBlockPos());
+        FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
         boolean isWaterlogged = fluidstate.getFluid() == Fluids.WATER;
 
-        Direction[] directions = context.getPlacementDirections();
+        Direction[] directions = context.getNearestLookingDirections();
         for (Direction direction : directions) {
             Direction opposite = direction.getOpposite();
             state = state.with(FACING, opposite);
@@ -67,16 +71,16 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     @Override
     public BlockState updatePostPlacement(BlockState state, Direction direction, BlockState newState, IWorld world, BlockPos pos, BlockPos posFrom) {
         if (state.get(WATERLOGGED))
-            world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.getPendingFluidTicks().scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 
         return direction.getOpposite() == state.get(FACING) && !state.isValidPosition(world, pos) ? Blocks.AIR.getDefaultState() : state;
     }
 
     @Override
     public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-        if (!state.get(Properties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
+        if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
             worldIn.setBlockState(pos, state.with(WATERLOGGED, true), 3);
-            worldIn.getFluidTickScheduler().schedule(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+            worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
             return true;
         } else {
             return false;
@@ -88,12 +92,12 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
         Direction direction = state.get(FACING);
         BlockPos blockPos = pos.offset(direction.getOpposite());
         BlockState blockState = world.getBlockState(blockPos);
-        return blockState.isSideSolidFullSquare(world, blockPos, direction);
+        return blockState.isSolidSide(world, blockPos, direction);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 
     @Override

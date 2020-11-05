@@ -48,7 +48,7 @@ public class EntitySpawnerBlock extends CharmBlockWithEntity {
         return BlockRenderType.INVISIBLE;
     }
 
-    public VoxelShape getOutlineShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         return VoxelShapes.empty();
     }
 }
