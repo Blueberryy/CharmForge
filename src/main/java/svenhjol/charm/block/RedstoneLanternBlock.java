@@ -4,7 +4,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -26,8 +26,8 @@ public class RedstoneLanternBlock extends BaseLanternBlock {
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState state = super.getPlacementState(ctx);
+    public BlockState getStateForPlacement(BlockItemUseContext ctx) {
+        BlockState state = super.getStateForPlacement(ctx);
         if (state != null)
             return state.with(LIT, ctx.getWorld().isReceivingRedstonePower(ctx.getBlockPos()));
 
@@ -42,7 +42,7 @@ public class RedstoneLanternBlock extends BaseLanternBlock {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(LIT);
     }

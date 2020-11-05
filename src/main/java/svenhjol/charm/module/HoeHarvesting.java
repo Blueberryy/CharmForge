@@ -40,7 +40,7 @@ public class HoeHarvesting extends CharmModule {
     }
 
     public ActionResult tryHarvest(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
-        ItemStack held = player.getStackInHand(hand);
+        ItemStack held = player.getHeldItem(hand);
         BlockPos pos = hitResult.getBlockPos();
 
         if (!world.isRemote && held.getItem() instanceof HoeItem) {

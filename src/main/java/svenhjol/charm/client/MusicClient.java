@@ -46,7 +46,7 @@ public class MusicClient {
             addCreativeMusicCondition();
 
         UseBlockCallback.EVENT.register(((player, world, hand, hitResult) -> {
-            stopRecord(player, hitResult.getBlockPos(), player.getStackInHand(hand));
+            stopRecord(player, hitResult.getBlockPos(), player.getHeldItem(hand));
             return ActionResult.PASS;
         }));
 

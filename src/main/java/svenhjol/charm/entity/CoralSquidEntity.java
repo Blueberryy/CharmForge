@@ -31,9 +31,9 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
+import net.minecraft.world.ServerIWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.IWorldReader;
 import svenhjol.charm.Charm;
 import svenhjol.charm.module.CoralSquids;
 
@@ -74,14 +74,14 @@ public class CoralSquidEntity extends WaterCreatureEntity {
 
     @Nullable
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundNBT entityTag) {
+    public EntityData initialize(ServerIWorld world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundNBT entityTag) {
         entityData = super.initialize(world, difficulty, spawnReason, entityData, entityTag);
         setCoralSquidType(random.nextInt(5));
         return entityData;
     }
 
     @Override
-    public boolean canSpawn(WorldView world) {
+    public boolean canSpawn(IWorldReader world) {
         // don't spawn on surface of water
         if (!world.getBlockState(this.getBlockPos().up()).isOf(Blocks.WATER))
             return false;

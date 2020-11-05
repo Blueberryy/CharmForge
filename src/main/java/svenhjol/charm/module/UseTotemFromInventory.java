@@ -27,6 +27,6 @@ public class UseTotemFromInventory extends CharmModule {
             }
         }
 
-        return entity.getStackInHand(hand);
+        return entity.getHeldItem(hand);
     }
 }

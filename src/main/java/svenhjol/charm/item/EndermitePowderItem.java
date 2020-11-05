@@ -26,7 +26,7 @@ public class EndermitePowderItem extends CharmItem {
 
     @Override
     public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack stack = playerIn.getStackInHand(handIn);
+        ItemStack stack = playerIn.getHeldItem(handIn);
 
         if (!DimensionHelper.isDimension(worldIn, new ResourceLocation("the_end")))
             return TypedActionResult.fail(stack);

@@ -70,7 +70,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
     }
 
     private ActionResult tryPlaceDust(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
-        ItemStack stack = player.getStackInHand(hand);
+        ItemStack stack = player.getHeldItem(hand);
 
         if (world != null && stack.getItem() == Items.GLOWSTONE_DUST) {
             player.swingHand(hand);

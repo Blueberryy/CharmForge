@@ -15,7 +15,7 @@ import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.IBlockReader;
 import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
 import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.base.CharmModule;
@@ -56,7 +56,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
 
     @Nullable
     @Override
-    public TileEntity createTileEntity(BlockView worldIn) {
+    public TileEntity createTileEntity(IBlockReader worldIn) {
         VariantTrappedChestTileEntity chest = new VariantTrappedChestTileEntity();
         chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.asString() + "_trapped_chest"));
 
@@ -64,12 +64,12 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    public int getWeakRedstonePower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
         return MathHelper.clamp(ChestTileEntity.getPlayersLookingInChestCount(world, pos), 0, 15);
     }
 
     @Override
-    public int getStrongRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    public int getStrongRedstonePower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
         return direction == Direction.UP ? state.getWeakRedstonePower(world, pos, direction) : 0;
     }
 

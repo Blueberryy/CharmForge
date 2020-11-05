@@ -121,7 +121,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
                 MobEntity m = (MobEntity) spawned;
                 if (persist) m.setPersistent();
                 if (health > 0) m.setHealth((float) health);
-                m.initialize((ServerWorldAccess)world, world.getLocalDifficulty(pos), SpawnReason.TRIGGERED, null, null);
+                m.initialize((ServerIWorld)world, world.getLocalDifficulty(pos), SpawnReason.TRIGGERED, null, null);
             }
 
             world.spawnEntity(spawned);

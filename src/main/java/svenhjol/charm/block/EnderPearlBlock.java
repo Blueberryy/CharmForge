@@ -37,8 +37,8 @@ public class EnderPearlBlock extends CharmBlock {
      */
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        super.randomDisplayTick(state, world, pos, random);
+    public void animateTick(BlockState state, World world, BlockPos pos, Random random) {
+        super.animateTick(state, world, pos, random);
         if (random.nextInt(10) == 0) {
             world.addParticle(ParticleTypes.PORTAL, (double)pos.getX() + random.nextDouble(), (double)pos.getY() + 1.1D, (double)pos.getZ() + random.nextDouble(), 0.0D, 0.0D, 0.0D);
         }

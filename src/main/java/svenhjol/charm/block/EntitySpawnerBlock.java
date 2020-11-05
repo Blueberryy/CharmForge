@@ -9,7 +9,7 @@ import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.IBlockReader;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
 import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
@@ -44,7 +44,7 @@ public class EntitySpawnerBlock extends CharmBlockWithEntity {
         return BlockRenderType.INVISIBLE;
     }
 
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getOutlineShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         return VoxelShapes.empty();
     }
 }

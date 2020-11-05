@@ -8,7 +8,7 @@ import net.minecraft.item.ShovelItem;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.IBlockReader;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmFallingBlock;
 
@@ -34,7 +34,7 @@ public class RedstoneSandBlock extends CharmFallingBlock {
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+    public int getWeakRedstonePower(BlockState state, IBlockReader world, BlockPos pos, Direction direction) {
         return 15;
     }
 }

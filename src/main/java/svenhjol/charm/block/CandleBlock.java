@@ -1,19 +1,28 @@
 package svenhjol.charm.block;
 
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,37 +33,37 @@ import svenhjol.charm.module.Candles;
 import java.util.Random;
 
 public class CandleBlock extends CharmBlock implements IWaterLoggable {
-    protected static final VoxelShape SHAPE = Block.createCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 9.0D, 10.0D);
-    public static final BooleanProperty LIT = Properties.LIT;
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-    private final ParticleEffect flame;
+    protected static final VoxelShape SHAPE = Block.makeCuboidShape(6.0D, 0.0D, 6.0D, 10.0D, 9.0D, 10.0D);
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    private final IParticleData flame;
 
     public CandleBlock(CharmModule module) {
-        super(module, "candle", AbstractBlock.Settings
-            .of(Material.ORGANIC_PRODUCT)
-            .sounds(SoundType.WOOL)
-            .luminance(s -> s.get(LIT) ? Candles.lightLevel : 0)
-            .strength(0.5F));
+        super(module, "candle", AbstractBlock.Properties
+            .create(Material.ORGANIC)
+            .sound(SoundType.CLOTH)
+            .setLightLevel(s -> s.get(LIT) ? Candles.lightLevel : 0)
+            .hardnessAndResistance(0.5F));
 
         this.flame = ParticleTypes.FLAME;
         this.setDefaultState(getDefaultState().with(LIT, Candles.litWhenPlaced).with(WATERLOGGED, false));
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView worldIn, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
         return SHAPE;
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext context) {
-        FluidState fluidstate = context.getWorld().getFluidState(context.getBlockPos());
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+        FluidState fluidstate = context.getWorld().getFluidState(context.getPos());
         boolean flag = fluidstate.getFluid() == Fluids.WATER;
-        return super.getPlacementState(context).with(WATERLOGGED, Boolean.valueOf(flag));
+        return super.getStateForPlacement(context).with(WATERLOGGED, flag);
     }
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        ItemStack held = player.getStackInHand(handIn);
+        ItemStack held = player.getHeldItem(handIn);
         if (held.getItem() == Items.FLINT_AND_STEEL
             && !state.get(LIT)
             && !state.get(WATERLOGGED)
@@ -66,21 +75,21 @@ public class CandleBlock extends CharmBlock implements IWaterLoggable {
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState stateIn, Direction facing, BlockState facingState, WorldAccess worldIn, BlockPos currentPos, BlockPos facingPos) {
+    public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
         if (stateIn.get(WATERLOGGED)) {
-            worldIn.getFluidTickScheduler().schedule(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+            worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
         }
 
-        return facing == Direction.DOWN && !this.canPlaceAt(stateIn, worldIn, currentPos)
+        return facing == Direction.DOWN && !this.isValidPosition(stateIn, worldIn, currentPos)
             ? Blocks.AIR.getDefaultState()
-            : super.getStateForNeighborUpdate(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+            : super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @Override
-    public boolean tryFillWithFluid(WorldAccess worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-        if (!state.get(Properties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
+    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+        if (!state.get(BlockStateProperties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
             worldIn.setBlockState(pos, state.with(WATERLOGGED, true).with(LIT, false), 3);
-            worldIn.getFluidTickScheduler().schedule(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+            worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
             return true;
         } else {
             return false;
@@ -88,18 +97,18 @@ public class CandleBlock extends CharmBlock implements IWaterLoggable {
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView worldIn, BlockPos pos) {
-        return Block.sideCoversSmallSquare(worldIn, pos.down(), Direction.UP);
+    public boolean isValidPosition(BlockState state, IWorldReader worldIn, BlockPos pos) {
+        return Block.hasEnoughSolidSide(worldIn, pos.down(), Direction.UP);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random rand) {
+    public void animateTick(BlockState state, World world, BlockPos pos, Random rand) {
         if (state.get(CandleBlock.LIT) && !state.get(CandleBlock.WATERLOGGED)) {
             double d0 = (double)pos.getX() + 0.48D;
             double d1 = (double)pos.getY() + 0.68D;
@@ -112,7 +121,7 @@ public class CandleBlock extends CharmBlock implements IWaterLoggable {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(LIT, WATERLOGGED);
     }
 }

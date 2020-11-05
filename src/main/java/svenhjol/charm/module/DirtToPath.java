@@ -26,7 +26,7 @@ public class DirtToPath extends CharmModule {
 
     private ActionResult convertDirt(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
         BlockPos pos = hitResult.getBlockPos();
-        ItemStack stack = player.getStackInHand(hand);
+        ItemStack stack = player.getHeldItem(hand);
 
         if (world != null && stack.getItem() instanceof ShovelItem) {
             BlockState state = world.getBlockState(pos);

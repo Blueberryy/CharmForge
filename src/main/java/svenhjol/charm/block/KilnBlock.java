@@ -14,7 +14,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import svenhjol.charm.TileEntity.KilnTileEntity;
 import svenhjol.charm.base.CharmModule;
@@ -57,7 +57,7 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
     }
 
     @OnlyIn(Dist.CLIENT)
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
+    public void animateTick(BlockState state, World world, BlockPos pos, Random random) {
         if (state.get(LIT)) {
             double x = pos.getX() + 0.5D;
             double y = pos.getY();

@@ -42,7 +42,7 @@ public class BatBucketItem extends CharmItem {
         BlockPos pos = context.getBlockPos();
         Direction facing = context.getSide();
         Hand hand = context.getHand();
-        ItemStack held = player.getStackInHand(hand);
+        ItemStack held = player.getHeldItem(hand);
 
         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_BAT_TAKEOFF, SoundCategory.NEUTRAL, 1.0F, 1.0F);
 

@@ -40,7 +40,7 @@
     "accessor.PlayerEntityAccessor",
     "accessor.PointOfInterestTypeAccessor",
     "accessor.RepairContainerAccessor",
-    "accessor.ServerWorldAccessor",
+    "accessor.ServerIWorldor",
     "accessor.ShovelItemAccessor",
     "accessor.ShulkerBoxTileEntityAccessor",
     "accessor.SlotAccessor",

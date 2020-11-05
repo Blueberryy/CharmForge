@@ -4,7 +4,7 @@ import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -15,10 +15,10 @@ import net.minecraft.util.collection.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 
@@ -38,12 +38,12 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getOutlineShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         return SHAPE.get(state.get(FACING));
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext context) {
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
         BlockState state = this.getDefaultState();
         World world = context.getWorld();
         BlockPos pos = context.getBlockPos();
@@ -56,7 +56,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
             Direction opposite = direction.getOpposite();
             state = state.with(FACING, opposite);
 
-            if (state.canPlaceAt(world, pos)) {
+            if (state.isValidPosition(world, pos)) {
                 return state.with(WATERLOGGED, isWaterlogged);
             }
         }
@@ -65,15 +65,15 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
+    public BlockState updatePostPlacement(BlockState state, Direction direction, BlockState newState, IWorld world, BlockPos pos, BlockPos posFrom) {
         if (state.get(WATERLOGGED))
             world.getFluidTickScheduler().schedule(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
 
-        return direction.getOpposite() == state.get(FACING) && !state.canPlaceAt(world, pos) ? Blocks.AIR.getDefaultState() : state;
+        return direction.getOpposite() == state.get(FACING) && !state.isValidPosition(world, pos) ? Blocks.AIR.getDefaultState() : state;
     }
 
     @Override
-    public boolean tryFillWithFluid(WorldAccess worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+    public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
         if (!state.get(Properties.WATERLOGGED) && fluidStateIn.getFluid() == Fluids.WATER) {
             worldIn.setBlockState(pos, state.with(WATERLOGGED, true), 3);
             worldIn.getFluidTickScheduler().schedule(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
@@ -84,7 +84,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+    public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos) {
         Direction direction = state.get(FACING);
         BlockPos blockPos = pos.offset(direction.getOpposite());
         BlockState blockState = world.getBlockState(blockPos);
@@ -97,7 +97,7 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(FACING, WATERLOGGED);
     }
 
@@ -112,11 +112,11 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements Waterloggabl
     }
 
     static {
-        SHAPE.put(Direction.UP, Block.createCuboidShape(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D));
-        SHAPE.put(Direction.DOWN, Block.createCuboidShape(3.0D, 16.0D, 3.0D, 13.0D, 15.0D, 13.0D));
-        SHAPE.put(Direction.EAST, Block.createCuboidShape(0.0D, 3.0D, 3.0D, 1.0D, 13.0D, 13.0D));
-        SHAPE.put(Direction.SOUTH, Block.createCuboidShape(3.0D, 3.0D, 0.0D, 13.0D, 13.0D, 1.0D));
-        SHAPE.put(Direction.WEST, Block.createCuboidShape(16.0D, 3.0D, 3.0D, 15.0D, 13.0D, 13.0D));
-        SHAPE.put(Direction.NORTH, Block.createCuboidShape(3.0D, 3.0D, 16.0D, 13.0D, 13.0D, 15.0D));
+        SHAPE.put(Direction.UP, Block.makeCuboidShape(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D));
+        SHAPE.put(Direction.DOWN, Block.makeCuboidShape(3.0D, 16.0D, 3.0D, 13.0D, 15.0D, 13.0D));
+        SHAPE.put(Direction.EAST, Block.makeCuboidShape(0.0D, 3.0D, 3.0D, 1.0D, 13.0D, 13.0D));
+        SHAPE.put(Direction.SOUTH, Block.makeCuboidShape(3.0D, 3.0D, 0.0D, 13.0D, 13.0D, 1.0D));
+        SHAPE.put(Direction.WEST, Block.makeCuboidShape(16.0D, 3.0D, 3.0D, 15.0D, 13.0D, 13.0D));
+        SHAPE.put(Direction.NORTH, Block.makeCuboidShape(3.0D, 3.0D, 16.0D, 13.0D, 13.0D, 15.0D));
     }
 }

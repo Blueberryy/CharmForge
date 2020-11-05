@@ -7,7 +7,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
-import svenhjol.charm.mixin.accessor.ServerWorldAccessor;
+import svenhjol.charm.mixin.accessor.ServerIWorldor;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -51,8 +51,8 @@ public class SleepImprovements extends CharmModule {
             world.setTimeOfDay(l - l % 24000L);
         }
 
-        ((ServerWorldAccessor)world).invokeWakeUpAllPlayers();
+        ((ServerIWorldor)world).invokeWakeUpAllPlayers();
         if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
-            ((ServerWorldAccessor)world).invokeResetRainAndThunder();
+            ((ServerIWorldor)world).invokeResetRainAndThunder();
     }
 }

@@ -55,7 +55,7 @@ public class BatBuckets extends CharmModule {
             && ((BatEntity)entity).getHealth() > 0
         ) {
             BatEntity bat = (BatEntity)entity;
-            ItemStack held = player.getStackInHand(hand);
+            ItemStack held = player.getHeldItem(hand);
 
             if (held.isEmpty() || held.getItem() != Items.BUCKET)
                 return ActionResult.PASS;

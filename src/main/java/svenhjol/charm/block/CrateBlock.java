@@ -169,7 +169,7 @@ public class CrateBlock extends CharmBlockWithEntity {
     }
 
     @Override
-    public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
+    public ItemStack getPickStack(IBlockReader world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
         CrateTileEntity crate = (CrateTileEntity)world.getTileEntity(pos);
 
