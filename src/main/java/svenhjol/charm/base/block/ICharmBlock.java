@@ -49,20 +49,20 @@ public interface ICharmBlock {
     }
 
     default void setFireInfo(int encouragement, int flammability) {
-        ((FireBlockAccessor) Blocks.FIRE).invokeRegisterFlammableBlock((Block)this, encouragement, flammability);
+        ((FireBlockAccessor) Blocks.FIRE).invokeSetFireInfo((Block)this, encouragement, flammability);
     }
 
     default void setEffectiveTool(Class<? extends ToolItem> clazz) {
         if (clazz == PickaxeItem.class)
-            PickaxeItemAccessor.getEffectiveBlocks().add((Block)this);
+            PickaxeItemAccessor.getEffectiveOn().add((Block)this);
 
         if (clazz == AxeItem.class)
-            AxeItemAccessor.getEffectiveBlocks().add((Block)this);
+            AxeItemAccessor.getEffectiveOnBlocks().add((Block)this);
 
         if (clazz == ShovelItem.class)
             ShovelItemAccessor.getEffectiveBlocks().add((Block)this);
 
         if (clazz == HoeItem.class)
-            HoeItemAccessor.getEffectiveBlocks().add((Block)this);
+            HoeItemAccessor.getEffectiveOnBlocks().add((Block)this);
     }
 }

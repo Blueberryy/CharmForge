@@ -115,7 +115,7 @@ public class WanderingTraderImprovements extends CharmModule {
         public TradeOffer create(Entity trader, Random rand) {
             TraderMap traderMap = traderMaps.get(rand.nextInt(traderMaps.size()));
 
-            if (!trader.world.isClient) {
+            if (!trader.world.isRemote) {
                 ItemStack map = traderMap.getMap((ServerWorld) trader.world, trader.getBlockPos());
                 if (map != null) {
                     ItemStack in1 = new ItemStack(Items.EMERALD, traderMap.getCost(rand));

@@ -41,7 +41,7 @@ public class StrayImprovements extends CharmModule {
 
     private ActionResult tryDrop(Entity entity, DamageSource source, int lootingLevel) {
         if (dropIce
-            && !entity.world.isClient
+            && !entity.world.isRemote
             && entity instanceof StrayEntity
         ) {
             World world = entity.getEntityWorld();

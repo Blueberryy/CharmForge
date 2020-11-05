@@ -41,7 +41,7 @@ public class HuskImprovements extends CharmModule {
 
     private ActionResult tryDrop(Entity entity, DamageSource source, int lootingLevel) {
         if (dropSand
-            && !entity.world.isClient
+            && !entity.world.isRemote
             && entity instanceof HuskEntity
         ) {
             World world = entity.getEntityWorld();

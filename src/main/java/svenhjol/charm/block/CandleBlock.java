@@ -107,7 +107,7 @@ public class CandleBlock extends CharmBlock implements Waterloggable {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random rand) {
         if (state.get(CandleBlock.LIT) && !state.get(CandleBlock.WATERLOGGED)) {
             double d0 = (double)pos.getX() + 0.48D;

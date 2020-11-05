@@ -31,7 +31,7 @@ public class InventoryTidyingClient {
     public static final int TOP = 12;
     public static final List<TexturedButtonWidget> sortingButtons = new ArrayList<>();
 
-    public final List<Class<? extends Screen>> blockEntityScreens = new ArrayList<>();
+    public final List<Class<? extends Screen>> TileEntityScreens = new ArrayList<>();
     public final List<Class<? extends Screen>> blacklistScreens = new ArrayList<>();
 
     public final Map<Class<? extends Screen>, Map<Integer, Integer>> screenTweaks = new HashMap<>();
@@ -45,7 +45,7 @@ public class InventoryTidyingClient {
         screenTweaks.put(MerchantScreen.class, new HashMap<Integer, Integer>() {{ put(100, 0); }});
         screenTweaks.put(InventoryScreen.class, new HashMap<Integer, Integer>() {{ put(0, 76); }});
 
-        blockEntityScreens.addAll(Arrays.asList(
+        TileEntityScreens.addAll(Arrays.asList(
             GenericContainerScreen.class,
             HopperScreen.class,
             ShulkerBoxScreen.class,
@@ -89,7 +89,7 @@ public class InventoryTidyingClient {
 
             List<Slot> slots = screenHandler.slots;
             for (Slot slot : slots) {
-                if (blockEntityScreens.contains(screen.getClass()) && ((SlotAccessor)slot).getIndex() == 0) {
+                if (TileEntityScreens.contains(screen.getClass()) && ((SlotAccessor)slot).getSlotIndex() == 0) {
                     this.addSortingButton(screen, x, y + slot.y, click -> sendSortMessage(BE));
                 }
 

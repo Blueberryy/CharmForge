@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
-import net.minecraft.block.entity.BarrelBlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.BarrelTileEntity;
+import net.minecraft.block.entity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -19,7 +19,7 @@ public class VariantBarrels extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "barrel");
     public static final Map<IVariantMaterial, VariantBarrelBlock> BARREL_BLOCKS = new HashMap<>();
 
-    public static BlockEntityType<BarrelBlockEntity> BLOCK_ENTITY;
+    public static TileEntityType<BarrelTileEntity> BLOCK_ENTITY;
 
     @Override
     public void register() {
@@ -27,6 +27,6 @@ public class VariantBarrels extends CharmModule {
             BARREL_BLOCKS.put(type, new VariantBarrelBlock(this, type));
         }
 
-        BLOCK_ENTITY = RegistryHandler.blockEntity(ID, BarrelBlockEntity::new);
+        BLOCK_ENTITY = RegistryHandler.TileEntity(ID, BarrelTileEntity::new);
     }
 }

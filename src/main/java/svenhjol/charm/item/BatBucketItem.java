@@ -46,7 +46,7 @@ public class BatBucketItem extends CharmItem {
 
         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_BAT_TAKEOFF, SoundCategory.NEUTRAL, 1.0F, 1.0F);
 
-        if (!world.isClient && !player.isCreative()) {
+        if (!world.isRemote && !player.isCreative()) {
 
             double x = pos.getX() + 0.5F + facing.getOffsetX();
             double y = pos.getY() + 0.25F + (world.random.nextFloat() / 2.0F) + facing.getOffsetY();
@@ -71,7 +71,7 @@ public class BatBucketItem extends CharmItem {
         player.swingHand(hand);
 
         // send message to client to start glowing
-        if (!world.isClient) {
+        if (!world.isRemote) {
             PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
             data.writeDouble(BatBuckets.glowingRange);
             data.writeInt(BatBuckets.glowingTime);

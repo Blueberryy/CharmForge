@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.entity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -11,9 +11,9 @@ import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.VariantChestBlock;
 import svenhjol.charm.block.VariantTrappedChestBlock;
-import svenhjol.charm.blockentity.VariantChestBlockEntity;
-import svenhjol.charm.blockentity.VariantChestClient;
-import svenhjol.charm.blockentity.VariantTrappedChestBlockEntity;
+import svenhjol.charm.TileEntity.VariantChestTileEntity;
+import svenhjol.charm.TileEntity.VariantChestClient;
+import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +26,8 @@ public class VariantChests extends CharmModule {
     public static final Map<IVariantMaterial, VariantChestBlock> NORMAL_CHEST_BLOCKS = new HashMap<>();
     public static final Map<IVariantMaterial, VariantTrappedChestBlock> TRAPPED_CHEST_BLOCKS = new HashMap<>();
 
-    public static BlockEntityType<VariantChestBlockEntity> NORMAL_BLOCK_ENTITY;
-    public static BlockEntityType<VariantTrappedChestBlockEntity> TRAPPED_BLOCK_ENTITY;
+    public static TileEntityType<VariantChestTileEntity> NORMAL_BLOCK_ENTITY;
+    public static TileEntityType<VariantTrappedChestTileEntity> TRAPPED_BLOCK_ENTITY;
 
     @Override
     public void register() {
@@ -36,8 +36,8 @@ public class VariantChests extends CharmModule {
             TRAPPED_CHEST_BLOCKS.put(type, new VariantTrappedChestBlock(this, type));
         }
 
-        NORMAL_BLOCK_ENTITY = RegistryHandler.blockEntity(NORMAL_ID, VariantChestBlockEntity::new, NORMAL_CHEST_BLOCKS.values().toArray(new Block[0]));
-        TRAPPED_BLOCK_ENTITY = RegistryHandler.blockEntity(TRAPPED_ID, VariantTrappedChestBlockEntity::new, TRAPPED_CHEST_BLOCKS.values().toArray(new Block[0]));
+        NORMAL_BLOCK_ENTITY = RegistryHandler.TileEntity(NORMAL_ID, VariantChestTileEntity::new, NORMAL_CHEST_BLOCKS.values().toArray(new Block[0]));
+        TRAPPED_BLOCK_ENTITY = RegistryHandler.TileEntity(TRAPPED_ID, VariantTrappedChestTileEntity::new, TRAPPED_CHEST_BLOCKS.values().toArray(new Block[0]));
     }
 
     @Override

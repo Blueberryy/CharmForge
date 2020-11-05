@@ -48,7 +48,7 @@ public class EndermitePowder extends CharmModule {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void clientRegister() {
         new EndermitePowderClient(this);
     }
@@ -60,7 +60,7 @@ public class EndermitePowder extends CharmModule {
     }
 
     private ActionResult tryDrop(Entity entity, DamageSource source, int lootingLevel) {
-        if (!entity.world.isClient && entity instanceof EndermiteEntity) {
+        if (!entity.world.isRemote && entity instanceof EndermiteEntity) {
             World world = entity.getEntityWorld();
             BlockPos pos = entity.getBlockPos();
             int amount = ItemHelper.getAmountWithLooting(world.random, maxDrops, lootingLevel, (float)lootingBoost);

@@ -1,14 +1,14 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import svenhjol.charm.mixin.accessor.HandledScreenAccessor;
+import svenhjol.charm.mixin.accessor.ContainerScreenAccessor;
 
 public class ScreenHelper {
     public static int getX(ContainerScreen<?> screen) {
-        return ((HandledScreenAccessor)screen).getX();
+        return ((ContainerScreenAccessor)screen).getGuiLeft();
     }
 
     public static int getY(ContainerScreen<?> screen) {
-        return ((HandledScreenAccessor)screen).getY();
+        return ((ContainerScreenAccessor)screen).getGuiTop();
     }
 }

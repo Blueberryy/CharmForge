@@ -55,13 +55,13 @@ public class PlayerState extends CharmModule {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void clientRegister() {
         client = new PlayerStateClient();
 
         // send a state update request on a heartbeat (serverStateInterval)
         PlayerTickCallback.EVENT.register((player -> {
-            if (player.world.isClient && player.world.getTime() % serverStateInverval == 0)
+            if (player.world.isRemote && player.world.getTime() % serverStateInverval == 0)
                 ClientSidePacketRegistry.INSTANCE.sendToServer(MSG_SERVER_UPDATE_PLAYER_STATE, new PacketByteBuf(Unpooled.buffer()));
         }));
 
@@ -124,7 +124,7 @@ public class PlayerState extends CharmModule {
     /**
      * Unpack the received server data from the NBT tag.
      */
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static void clientCallback(CompoundNBT data) {
         client.mineshaft = data.getBoolean("mineshaft");
         client.stronghold = data.getBoolean("stronghold");

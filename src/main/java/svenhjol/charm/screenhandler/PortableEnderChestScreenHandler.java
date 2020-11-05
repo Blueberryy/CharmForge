@@ -24,7 +24,7 @@ public class PortableEnderChestScreenHandler extends GenericContainerScreenHandl
     public void close(PlayerEntity player) {
         super.close(player);
 
-        if (!player.world.isClient && Core.inventoryButtonReturn)
+        if (!player.world.isRemote && Core.inventoryButtonReturn)
             ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, Core.MSG_SERVER_OPEN_INVENTORY, new PacketByteBuf(Unpooled.buffer()));
     }
 }

@@ -97,22 +97,22 @@ public class WoodcutterScreenHandler extends ScreenHandler {
         this.addProperty(this.selectedRecipe);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public int getSelectedRecipe() {
         return this.selectedRecipe.get();
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public List<WoodcuttingRecipe> getAvailableRecipes() {
         return this.availableRecipes;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public int getAvailableRecipeCount() {
         return this.availableRecipes.size();
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean canCraft() {
         return this.inputSlot.hasStack() && !this.availableRecipes.isEmpty();
     }
@@ -169,7 +169,7 @@ public class WoodcutterScreenHandler extends ScreenHandler {
         return Woodcutters.SCREEN_HANDLER;
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void setContentsChangedListener(Runnable runnable) {
         this.contentsChangedListener = runnable;
     }

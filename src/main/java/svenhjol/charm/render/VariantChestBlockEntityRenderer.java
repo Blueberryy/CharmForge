@@ -1,50 +1,49 @@
 package svenhjol.charm.render;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.ChestType;
-import net.minecraft.client.block.ChestAnimationProgress;
-import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
-import net.minecraft.client.util.SpriteResourceLocation;
+import net.minecraft.client.renderer.Atlases;
+import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.tileentity.ChestTileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.state.properties.ChestType;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import svenhjol.charm.blockentity.VariantChestBlockEntity;
-import svenhjol.charm.blockentity.VariantTrappedChestBlockEntity;
+import svenhjol.charm.TileEntity.VariantChestTileEntity;
+import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class VariantChestBlockEntityRenderer<T extends VariantChestBlockEntity & ChestAnimationProgress> extends ChestBlockEntityRenderer<T> {
-    private static final Map<IVariantMaterial, Map<ChestType, SpriteResourceLocation>> normalTextures = new HashMap<>();
-    private static final Map<IVariantMaterial, Map<ChestType, SpriteResourceLocation>> trappedTextures = new HashMap<>();
+public class VariantChestTileEntityRenderer<T extends VariantChestTileEntity> extends ChestTileEntityRenderer<T> {
+    private static final Map<IVariantMaterial, Map<ChestType, RenderMaterial>> normalTextures = new HashMap<>();
+    private static final Map<IVariantMaterial, Map<ChestType, RenderMaterial>> trappedTextures = new HashMap<>();
 
-    public VariantChestBlockEntityRenderer(BlockEntityRenderDispatcher dispatcher) {
+    public VariantChestTileEntityRenderer(TileEntityRendererDispatcher dispatcher) {
         super(dispatcher);
     }
 
     public static void addTexture(IVariantMaterial material, ChestType chestType, ResourceLocation id, boolean trapped) {
-        Map<IVariantMaterial, Map<ChestType, SpriteResourceLocation>> textures = trapped
-            ? VariantChestBlockEntityRenderer.trappedTextures
-            : VariantChestBlockEntityRenderer.normalTextures;
+        Map<IVariantMaterial, Map<ChestType, RenderMaterial>> textures = trapped
+            ? VariantChestTileEntityRenderer.trappedTextures
+            : VariantChestTileEntityRenderer.normalTextures;
 
         if (!textures.containsKey(material))
             textures.put(material, new HashMap<>());
 
-        textures.get(material).put(chestType, new SpriteResourceLocation(TexturedRenderLayers.CHEST_ATLAS_TEXTURE, id));
+        textures.get(material).put(chestType, new RenderMaterial(Atlases.CHEST_ATLAS, id));
     }
 
     @Nullable
-    public static SpriteResourceLocation getMaterial(BlockEntity blockEntity, ChestType chestType) {
-        if (!(blockEntity instanceof VariantChestBlockEntity))
+    public static RenderMaterial getChestMaterial(TileEntity tileEntity, ChestType chestType) {
+        if (!(tileEntity instanceof VariantChestTileEntity))
             return null;
 
-        Map<IVariantMaterial, Map<ChestType, SpriteResourceLocation>> textures = blockEntity instanceof VariantTrappedChestBlockEntity
+        Map<IVariantMaterial, Map<ChestType, RenderMaterial>> textures = tileEntity instanceof VariantTrappedChestTileEntity
             ? trappedTextures
             : normalTextures;
 
-        IVariantMaterial material = ((VariantChestBlockEntity)blockEntity).getMaterialType();
+        IVariantMaterial material = ((VariantChestTileEntity)tileEntity).getMaterialType();
 
         if (textures.containsKey(material))
             return textures.get(material).getOrDefault(chestType, null);

@@ -3,8 +3,8 @@ package svenhjol.charm.block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ChestBlockEntity;
+import net.minecraft.block.entity.TileEntity;
+import net.minecraft.block.entity.ChestTileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stat.Stat;
@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.BlockView;
-import svenhjol.charm.blockentity.VariantTrappedChestBlockEntity;
+import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
 import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
@@ -56,8 +56,8 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView worldIn) {
-        VariantTrappedChestBlockEntity chest = new VariantTrappedChestBlockEntity();
+    public TileEntity createTileEntity(BlockView worldIn) {
+        VariantTrappedChestTileEntity chest = new VariantTrappedChestTileEntity();
         chest.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_trapped_chest"));
 
         return chest;
@@ -65,7 +65,7 @@ public class VariantTrappedChestBlock extends ChestBlock implements ICharmBlock,
 
     @Override
     public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return MathHelper.clamp(ChestBlockEntity.getPlayersLookingInChestCount(world, pos), 0, 15);
+        return MathHelper.clamp(ChestTileEntity.getPlayersLookingInChestCount(world, pos), 0, 15);
     }
 
     @Override

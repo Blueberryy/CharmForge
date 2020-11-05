@@ -25,7 +25,7 @@ public class GlowBallEntity extends ThrownItemEntity {
         super(GlowBalls.ENTITY, owner, world);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public GlowBallEntity(World world, double x, double y, double z) {
         super(GlowBalls.ENTITY, x, y, z, world);
     }
@@ -40,7 +40,7 @@ public class GlowBallEntity extends ThrownItemEntity {
         super.onCollision(hitResult);
         this.remove();
 
-        if (!world.isClient) {
+        if (!world.isRemote) {
             boolean result = PlaceableGlowstoneDust.tryPlaceDust(world, hitResult);
 
             if (result)

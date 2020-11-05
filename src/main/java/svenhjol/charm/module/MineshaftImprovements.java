@@ -4,24 +4,22 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.LanternBlock;
 import net.minecraft.block.SlabBlock;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.structure.MineshaftGenerator.MineshaftCorridor;
-import net.minecraft.structure.MineshaftGenerator.MineshaftRoom;
-import net.minecraft.structure.StructurePiece;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.StructureWorldAccess;
-import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.util.math.MutableBoundingBox;
+import net.minecraft.world.ISeedReader;
+import net.minecraft.world.gen.ChunkGenerator;
+import net.minecraft.world.gen.feature.structure.MineshaftPieces;
+import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraft.world.gen.feature.structure.StructurePiece;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.handler.ModuleHandler;
-import svenhjol.charm.blockentity.CrateBlockEntity;
+import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.StructurePieceAccessor;
@@ -112,27 +110,27 @@ public class MineshaftImprovements extends CharmModule {
         ));
 
         crateLootTables.addAll(Arrays.asList(
-            LootTables.ABANDONED_MINESHAFT_CHEST,
-            LootTables.SIMPLE_DUNGEON_CHEST,
-            LootTables.VILLAGE_CARTOGRAPHER_CHEST,
-            LootTables.VILLAGE_MASON_CHEST,
-            LootTables.VILLAGE_TOOLSMITH_CHEST,
-            LootTables.VILLAGE_WEAPONSMITH_CHEST
+            LootTables.CHESTS_ABANDONED_MINESHAFT,
+            LootTables.CHESTS_SIMPLE_DUNGEON,
+            LootTables.CHESTS_VILLAGE_VILLAGE_CARTOGRAPHER,
+            LootTables.CHESTS_VILLAGE_VILLAGE_MASON,
+            LootTables.CHESTS_VILLAGE_VILLAGE_TOOLSMITH,
+            LootTables.CHESTS_VILLAGE_VILLAGE_WEAPONSMITH
         ));
     }
 
-    public static void generatePiece(StructurePiece piece, StructureWorldAccess world, StructureAccessor accessor, ChunkGenerator chunkGenerator, Random rand, BlockBox box, ChunkPos chunkPos, BlockPos blockPos) {
+    public static void generatePiece(StructurePiece piece, ISeedReader world, StructureManager accessor, ChunkGenerator chunkGenerator, Random rand, MutableBoundingBox box, ChunkPos chunkPos, BlockPos blockPos) {
         if (!isEnabled)
             return;
 
-        if (piece instanceof MineshaftCorridor) {
-            corridor((MineshaftCorridor)piece, world, accessor, chunkGenerator, rand, box, chunkPos, blockPos);
-        } else if (piece instanceof MineshaftRoom) {
-            room((MineshaftRoom)piece, world, accessor, chunkGenerator, rand, box, chunkPos, blockPos);
+        if (piece instanceof MineshaftPieces.Corridor) {
+            corridor((MineshaftPieces.Corridor)piece, world, accessor, chunkGenerator, rand, box, chunkPos, blockPos);
+        } else if (piece instanceof MineshaftPieces.Room) {
+            room((MineshaftPieces.Room)piece, world, accessor, chunkGenerator, rand, box, chunkPos, blockPos);
         }
     }
 
-    private static void corridor(MineshaftCorridor piece, StructureWorldAccess world, StructureAccessor accessor, ChunkGenerator chunkGenerator, Random rand, BlockBox box, ChunkPos chunkPos, BlockPos blockPos) {
+    private static void corridor(MineshaftPieces.Corridor piece, ISeedReader world, StructureManager accessor, ChunkGenerator chunkGenerator, Random rand, MutableBoundingBox box, ChunkPos chunkPos, BlockPos blockPos) {
         int bx = box.maxX - box.minX;
         int bz = box.maxZ - box.minZ;
 
@@ -144,10 +142,10 @@ public class MineshaftImprovements extends CharmModule {
                     continue; // rarely, spawn some block in the middle of the corridor
                 for (int z = 0; z < bz; z++) {
                     if (validFloorBlock(piece, world, x, 0, z, box) && rand.nextFloat() < floorBlockChance) {
-                        ((StructurePieceAccessor)piece).callAddBlock(world, getFloorBlock(rand), x, 0, z, box);
+                        ((StructurePieceAccessor)piece).invokeSetBlockState(world, getFloorBlock(rand), x, 0, z, box);
                     }
                     if (validCeilingBlock(piece, world, x, 2, z, box) && rand.nextFloat() < ceilingBlockChance) {
-                        ((StructurePieceAccessor)piece).callAddBlock(world, getCeilingBlock(rand), x, 2, z, box);
+                        ((StructurePieceAccessor)piece).invokeSetBlockState(world, getCeilingBlock(rand), x, 2, z, box);
                     }
                 }
             }
@@ -166,7 +164,7 @@ public class MineshaftImprovements extends CharmModule {
                         for (int iz = -1; iz <= 1; iz++) {
                             boolean valid = validFloorBlock(piece, world, ix, iy, iz, box);
                             if (valid && rand.nextFloat() < 0.75F)
-                                ((StructurePieceAccessor)piece).callAddBlock(world, rand.nextFloat() < 0.5 ? block1 : block2, ix, iy, iz, box);
+                                ((StructurePieceAccessor)piece).invokeSetBlockState(world, rand.nextFloat() < 0.5 ? block1 : block2, ix, iy, iz, box);
                         }
                     }
                 }
@@ -176,9 +174,9 @@ public class MineshaftImprovements extends CharmModule {
         if (generateCrates && ModuleHandler.enabled("charm:crates") && rand.nextFloat() < crateChance) {
             if (rand.nextFloat() < 0.9F) {
                 int r = rand.nextInt(3) + 12;
-                int y = ((StructurePieceAccessor)piece).callApplyYTransform(0);
-                int x = ((StructurePieceAccessor)piece).callApplyXTransform(1, r);
-                int z = ((StructurePieceAccessor)piece).callApplyZTransform(1, r);
+                int y = ((StructurePieceAccessor)piece).invokeGetYWithOffset(0);
+                int x = ((StructurePieceAccessor)piece).invokeGetXWithOffset(1, r);
+                int z = ((StructurePieceAccessor)piece).invokeGetZWithOffset(1, r);
 
                 BlockPos blockpos = new BlockPos(x, y, z);
 
@@ -188,17 +186,17 @@ public class MineshaftImprovements extends CharmModule {
 
                     world.setBlockState(blockpos, state, 2);
 
-                    BlockEntity blockEntity = world.getBlockEntity(blockpos);
-                    if (blockEntity instanceof CrateBlockEntity) {
-                        ((CrateBlockEntity) blockEntity).setLootTable(loot, rand.nextLong());
-                        blockEntity.toTag(new CompoundNBT());
+                    TileEntity TileEntity = world.getTileEntity(blockpos);
+                    if (TileEntity instanceof CrateTileEntity) {
+                        ((CrateTileEntity) TileEntity).setLootTable(loot, rand.nextLong());
+                        TileEntity.toTag(new CompoundNBT());
                     }
                 }
             }
         }
     }
 
-    private static void room(MineshaftRoom piece, ServerWorldAccess world, StructureAccessor accessor, ChunkGenerator chunkGenerator, Random rand, BlockBox box, ChunkPos chunkPos, BlockPos blockPos) {
+    private static void room(MineshaftPieces.Room piece, ISeedReader world, StructureManager accessor, ChunkGenerator chunkGenerator, Random rand, MutableBoundingBox box, ChunkPos chunkPos, BlockPos blockPos) {
         if (generateRoomBlocks) {
             int bx = box.maxX - box.minX;
             int bz = box.maxZ - box.minZ;
@@ -221,7 +219,7 @@ public class MineshaftImprovements extends CharmModule {
                             }
                             BlockPos pos = new BlockPos(((StructurePieceAccessor)piece).getBoundingBox().minX + x, ((StructurePieceAccessor)piece).getBoundingBox().minY + y, ((StructurePieceAccessor)piece).getBoundingBox().minZ + z);
 
-                            if (world.isAir(pos)
+                            if (world.isAirBlock(pos)
                                 && world.getBlockState(pos.down()).isFullCube(world, pos.down())
                                 && !world.isSkyVisibleAllowingSea(pos)) {
                                 world.setBlockState(pos, state, 11);
@@ -233,21 +231,21 @@ public class MineshaftImprovements extends CharmModule {
         }
     }
 
-    private static boolean validCeilingBlock(StructurePiece piece, ServerWorldAccess world, int x, int y, int z, BlockBox box) {
+    private static boolean validCeilingBlock(StructurePiece piece, ISeedReader world, int x, int y, int z, MutableBoundingBox box) {
         BlockPos blockpos = new BlockPos(
-            ((StructurePieceAccessor)piece).callApplyXTransform(x, z),
-            ((StructurePieceAccessor)piece).callApplyYTransform(y),
-            ((StructurePieceAccessor)piece).callApplyZTransform(x, z));
+            ((StructurePieceAccessor)piece).invokeGetXWithOffset(x, z),
+            ((StructurePieceAccessor)piece).invokeGetYWithOffset(y),
+            ((StructurePieceAccessor)piece).invokeGetZWithOffset(x, z));
         return box.contains(blockpos)
             && world.getBlockState(blockpos.up()).isOpaque()
             && world.isAir(blockpos.down());
     }
 
-    private static boolean validFloorBlock(StructurePiece piece, ServerWorldAccess world, int x, int y, int z, BlockBox box) {
+    private static boolean validFloorBlock(StructurePiece piece, ISeedReader world, int x, int y, int z, MutableBoundingBox box) {
         BlockPos blockpos = new BlockPos(
-            ((StructurePieceAccessor)piece).callApplyXTransform(x, z),
-            ((StructurePieceAccessor)piece).callApplyYTransform(y),
-            ((StructurePieceAccessor)piece).callApplyZTransform(x, z)
+            ((StructurePieceAccessor)piece).invokeGetXWithOffset(x, z),
+            ((StructurePieceAccessor)piece).invokeGetYWithOffset(y),
+            ((StructurePieceAccessor)piece).invokeGetZWithOffset(x, z)
         );
 
         boolean vecInside = box.contains(blockpos);

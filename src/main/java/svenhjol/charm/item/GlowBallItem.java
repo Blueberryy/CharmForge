@@ -36,7 +36,7 @@ public class GlowBallItem extends EnderPearlItem implements ICharmItem {
         world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
         user.getItemCooldownManager().set(this, 10);
 
-        if (!world.isClient) {
+        if (!world.isRemote) {
             GlowBallEntity entity = new GlowBallEntity(world, user);
             entity.setItem(itemStack);
             entity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.5F, 1.0F);
@@ -48,7 +48,7 @@ public class GlowBallItem extends EnderPearlItem implements ICharmItem {
             itemStack.decrement(1);
         }
 
-        return TypedActionResult.success(itemStack, world.isClient());
+        return TypedActionResult.success(itemStack, world.isRemote());
     }
 
     @Override

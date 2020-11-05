@@ -61,7 +61,7 @@ public class BlockOfEnderPearls extends CharmModule {
         if (!(entity instanceof PlayerEntity))
             return false; // don't want non-players teleporting!
 
-        if (entity.world.isClient)
+        if (entity.world.isRemote)
             return false; // must be on server side
 
         ServerPlayerEntity player = (ServerPlayerEntity)entity;

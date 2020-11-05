@@ -29,7 +29,7 @@ public class CaveSpidersDropCobwebs extends CharmModule {
     }
 
     public ActionResult tryDropCobweb(LivingEntity entity, DamageSource source, int lootingLevel) {
-        if (!entity.world.isClient
+        if (!entity.world.isRemote
             && entity instanceof CaveSpiderEntity
         ) {
             World world = entity.getEntityWorld();

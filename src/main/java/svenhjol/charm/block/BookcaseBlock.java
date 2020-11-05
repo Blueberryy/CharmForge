@@ -14,7 +14,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import svenhjol.charm.blockentity.BookcaseBlockEntity;
+import svenhjol.charm.TileEntity.BookcaseTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
@@ -22,7 +22,7 @@ import svenhjol.charm.base.enums.IVariantMaterial;
 import javax.annotation.Nullable;
 
 public class BookcaseBlock extends CharmBlockWithEntity {
-    public static final IntegerProperty SLOTS = IntegerProperty.create("slots", 0, BookcaseBlockEntity.SIZE);
+    public static final IntegerProperty SLOTS = IntegerProperty.create("slots", 0, BookcaseTileEntity.SIZE);
 
     protected CharmModule module;
     protected IVariantMaterial type;
@@ -39,11 +39,11 @@ public class BookcaseBlock extends CharmBlockWithEntity {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient && !player.isSpectator()) {
+        if (!world.isRemote && !player.isSpectator()) {
 
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof BookcaseBlockEntity) {
-                BookcaseBlockEntity bookcase = (BookcaseBlockEntity)blockEntity;
+            TileEntity TileEntity = world.getTileEntity(pos);
+            if (TileEntity instanceof BookcaseTileEntity) {
+                BookcaseTileEntity bookcase = (BookcaseTileEntity)TileEntity;
                 bookcase.checkLootInteraction(player);
                 player.openHandledScreen(bookcase);
             }
@@ -55,8 +55,8 @@ public class BookcaseBlock extends CharmBlockWithEntity {
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
-            BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof BookcaseBlockEntity) {
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof BookcaseTileEntity) {
                 ItemScatterer.spawn(world, pos, (Inventory) tile);
                 world.updateComparators(pos, this);
             }
@@ -66,9 +66,9 @@ public class BookcaseBlock extends CharmBlockWithEntity {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (stack.hasCustomName()) {
-            BlockEntity tile = world.getBlockEntity(pos);
-            if (tile instanceof BookcaseBlockEntity)
-                ((BookcaseBlockEntity) tile).setCustomName(stack.getName());
+            TileEntity tile = world.getTileEntity(pos);
+            if (tile instanceof BookcaseTileEntity)
+                ((BookcaseTileEntity) tile).setCustomName(stack.getName());
         }
     }
 
@@ -94,8 +94,8 @@ public class BookcaseBlock extends CharmBlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        BookcaseBlockEntity bookcase = new BookcaseBlockEntity();
+    public TileEntity createTileEntity(BlockView world) {
+        BookcaseTileEntity bookcase = new BookcaseTileEntity();
         bookcase.setCustomName(new TranslatableText("block." + module.mod + "." + type.getString() + "_bookcase"));
         return bookcase;
     }

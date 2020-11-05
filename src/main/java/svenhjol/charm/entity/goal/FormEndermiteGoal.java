@@ -64,7 +64,7 @@ public class FormEndermiteGoal extends WanderAroundGoal {
     @Override
     public void start() {
         World world = silverfish.getEntityWorld();
-        if (world.isClient)
+        if (world.isRemote)
             return;
 
         BlockPos silverfishPos = getSilverfishPosition(silverfish);

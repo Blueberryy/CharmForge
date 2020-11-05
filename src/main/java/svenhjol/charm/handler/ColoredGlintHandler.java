@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
-import svenhjol.charm.mixin.accessor.BufferBuilderStorageAccessor;
+import svenhjol.charm.mixin.accessor.RenderTypeBuffersMixin;
 import svenhjol.charm.mixin.accessor.MinecraftAccessor;
 import svenhjol.charm.mixin.accessor.RenderStateAccessor;
 
@@ -57,9 +57,9 @@ public class ColoredGlintHandler {
     public static RenderType createGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getGlintTexturing())
             .build(false));
@@ -71,9 +71,9 @@ public class ColoredGlintHandler {
     public static RenderType createEntityGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("entity_glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getEntityGlintTexturing())
             .target(RenderStateAccessor.getItemTarget())
@@ -86,9 +86,9 @@ public class ColoredGlintHandler {
     public static RenderType createArmorGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("armor_glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getGlintTexturing())
             .layering(RenderStateAccessor.getViewOffsetZLayering())
@@ -101,9 +101,9 @@ public class ColoredGlintHandler {
     public static RenderType createArmorEntityGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("armor_entity_glint_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getEntityGlintTexturing())
             .layering(RenderStateAccessor.getViewOffsetZLayering())
@@ -116,9 +116,9 @@ public class ColoredGlintHandler {
     public static RenderType createDirectGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("glint_direct_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getGlintTexturing())
             .build(false));
@@ -130,9 +130,9 @@ public class ColoredGlintHandler {
     public static RenderType createDirectEntityGlint(DyeColor dyeColor, ResourceLocation texture) {
         RenderType renderLayer = RenderType.of("entity_glint_direct_" + dyeColor.getName(), VertexFormats.POSITION_TEXTURE, 7, 256, RenderType.MultiPhaseParameters.builder()
             .texture(new RenderState.Texture(texture, true, false))
-            .writeMaskState(RenderStateAccessor.getColorMask())
-            .cull(RenderStateAccessor.getDisableCulling())
-            .depthTest(RenderStateAccessor.getEqualDepthTest())
+            .writeMaskState(RenderStateAccessor.getColorWrite())
+            .cull(RenderStateAccessor.getCullDisabled())
+            .depthTest(RenderStateAccessor.getDepthEqual())
             .transparency(RenderStateAccessor.getGlintTransparency())
             .texturing(RenderStateAccessor.getEntityGlintTexturing())
             .target(RenderStateAccessor.getItemTarget())
@@ -220,7 +220,7 @@ public class ColoredGlintHandler {
     }
 
     private static SortedMap<RenderType, BufferBuilder> getEntityBuilders() {
-        BufferBuilderStorage bufferBuilders = ((MinecraftAccessor) Minecraft.getInstance()).getBufferBuilders();
-        return ((BufferBuilderStorageAccessor)bufferBuilders).getEntityBuilders();
+        BufferBuilderStorage bufferBuilders = ((MinecraftAccessor) Minecraft.getInstance()).getRenderTypeBuffers();
+        return ((RenderTypeBuffersMixin)bufferBuilders).getFixedBuffers();
     }
 }

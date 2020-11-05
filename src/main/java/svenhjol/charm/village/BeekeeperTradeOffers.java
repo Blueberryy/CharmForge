@@ -1,6 +1,6 @@
 package svenhjol.charm.village;
 
-import net.minecraft.block.entity.BeehiveBlockEntity;
+import net.minecraft.block.entity.BeehiveTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
@@ -117,18 +117,18 @@ public class BeekeeperTradeOffers {
             ItemStack in1 = new ItemStack(Items.EMERALD, count);
             ItemStack out = new ItemStack(Items.BEEHIVE);
 
-            BeehiveBlockEntity blockEntity = new BeehiveBlockEntity();
+            BeehiveTileEntity TileEntity = new BeehiveTileEntity();
 
             for (int i = 0; i < 1; i++) {
                 BeeEntity bee = new BeeEntity(EntityType.BEE, entity.world);
-                blockEntity.tryEnterHive(bee, false, 0);
+                TileEntity.tryEnterHive(bee, false, 0);
             }
 
             CompoundNBT beesTag = new CompoundNBT();
             CompoundNBT honeyTag = new CompoundNBT();
-            beesTag.put("Bees", blockEntity.getBees());
+            beesTag.put("Bees", TileEntity.getBees());
             honeyTag.putInt("honey_level", 0);
-            out.putSubTag("BlockEntityTag", beesTag);
+            out.putSubTag("TileEntityTag", beesTag);
             out.putSubTag("BlockStateTag", honeyTag);
             out.setCustomName(new TranslatableText("item.charm.populated_beehive"));
 

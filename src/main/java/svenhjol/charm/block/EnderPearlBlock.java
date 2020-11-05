@@ -36,7 +36,7 @@ public class EnderPearlBlock extends CharmBlock {
      * Copypasta from MyceliumBlock
      */
     @Override
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
         if (random.nextInt(10) == 0) {

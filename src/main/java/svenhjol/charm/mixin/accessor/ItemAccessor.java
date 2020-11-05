@@ -7,10 +7,10 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(Item.class)
 public interface ItemAccessor {
     @Accessor
-    int getMaxCount();
+    int getMaxStackSize();
 
     @Accessor
-    void setMaxCount(int maxCount);
+    void setMaxStackSize(int maxCount);
 
     @Accessor()
     void setTranslationKey(String key);

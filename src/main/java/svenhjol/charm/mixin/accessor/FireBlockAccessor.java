@@ -14,5 +14,5 @@ public interface FireBlockAccessor {
      * {@link ICharmBlock#setFireInfo(int, int)}
      */
     @Invoker
-    void invokeRegisterFlammableBlock(Block block, int encouragement, int flammability);
+    void invokeSetFireInfo(Block block, int encouragement, int flammability);
 }

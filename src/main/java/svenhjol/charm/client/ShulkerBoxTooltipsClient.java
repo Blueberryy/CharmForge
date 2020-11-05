@@ -2,8 +2,8 @@ package svenhjol.charm.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.ShulkerBoxBlockEntity;
+import net.minecraft.block.entity.TileEntity;
+import net.minecraft.block.entity.ShulkerBoxTileEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -17,7 +17,7 @@ import net.minecraft.util.collection.NonNullList;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.event.RenderTooltipCallback;
 import svenhjol.charm.handler.TooltipInventoryHandler;
-import svenhjol.charm.mixin.accessor.ShulkerBoxBlockEntityAccessor;
+import svenhjol.charm.mixin.accessor.ShulkerBoxTileEntityAccessor;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
@@ -42,7 +42,7 @@ public class ShulkerBoxTooltipsClient {
         if (!stack.hasTag())
             return false;
 
-        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
+        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "TileEntityTag", true);
 
         if (tag == null)
             return false;
@@ -52,12 +52,12 @@ public class ShulkerBoxTooltipsClient {
             tag.putString("id", "minecraft:shulker_box");
         }
         BlockItem blockItem = (BlockItem) stack.getItem();
-        BlockEntity blockEntity = BlockEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
-        if (blockEntity == null)
+        TileEntity TileEntity = TileEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
+        if (TileEntity == null)
             return false;
 
-        ShulkerBoxBlockEntity shulkerbox = (ShulkerBoxBlockEntity) blockEntity;
-        NonNullList<ItemStack> items = ((ShulkerBoxBlockEntityAccessor)shulkerbox).getInventory();
+        ShulkerBoxTileEntity shulkerbox = (ShulkerBoxTileEntity) TileEntity;
+        NonNullList<ItemStack> items = ((ShulkerBoxTileEntityAccessor)shulkerbox).getItems();
 
         int size = shulkerbox.size();
 

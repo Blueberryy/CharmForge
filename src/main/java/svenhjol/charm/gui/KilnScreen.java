@@ -8,7 +8,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.screenhandler.KilnScreenHandler;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class KilnScreen extends AbstractFurnaceScreen<KilnScreenHandler> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/smoker.png");
 

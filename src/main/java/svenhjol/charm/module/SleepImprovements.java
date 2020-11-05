@@ -51,8 +51,8 @@ public class SleepImprovements extends CharmModule {
             world.setTimeOfDay(l - l % 24000L);
         }
 
-        ((ServerWorldAccessor)world).callWakeSleepingPlayers();
+        ((ServerWorldAccessor)world).invokeWakeUpAllPlayers();
         if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
-            ((ServerWorldAccessor)world).callResetWeather();
+            ((ServerWorldAccessor)world).invokeResetRainAndThunder();
     }
 }

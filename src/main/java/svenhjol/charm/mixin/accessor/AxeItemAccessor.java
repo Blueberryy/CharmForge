@@ -9,8 +9,8 @@ import java.util.Set;
 
 @Mixin(AxeItem.class)
 public interface AxeItemAccessor {
-    @Accessor("EFFECTIVE_BLOCKS")
-    static Set<Block> getEffectiveBlocks() {
+    @Accessor("EFFECTIVE_ON_BLOCKS")
+    static Set<Block> getEffectiveOnBlocks() {
         throw new IllegalStateException();
     }
 }

@@ -75,7 +75,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
         if (world != null && stack.getItem() == Items.GLOWSTONE_DUST) {
             player.swingHand(hand);
 
-            if (!world.isClient) {
+            if (!world.isRemote) {
                 boolean result = tryPlaceDust(world, hitResult);
 
                 if (result) {

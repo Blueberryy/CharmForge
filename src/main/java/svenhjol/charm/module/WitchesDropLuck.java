@@ -29,7 +29,7 @@ public class WitchesDropLuck extends CharmModule {
     }
 
     public ActionResult tryDrop(LivingEntity entity, DamageSource damageSource, int lootingLevel) {
-        if (!entity.world.isClient
+        if (!entity.world.isRemote
             && entity instanceof WitchEntity
             && damageSource.getAttacker() instanceof PlayerEntity
             && entity.world.random.nextFloat() <= (dropChance + lootingBoost * lootingLevel)

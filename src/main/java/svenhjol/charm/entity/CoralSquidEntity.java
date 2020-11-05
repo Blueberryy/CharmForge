@@ -196,7 +196,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
         this.prevTentacleAngle = this.tentacleAngle;
         this.thrustTimer += this.thrustTimerSpeed;
         if ((double)this.thrustTimer > 6.283185307179586D) {
-            if (this.world.isClient) {
+            if (this.world.isRemote) {
                 this.thrustTimer = 6.2831855F;
             } else {
                 this.thrustTimer = (float)((double)this.thrustTimer - 6.283185307179586D);
@@ -224,7 +224,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
                 this.turningSpeed *= 0.99F;
             }
 
-            if (!this.world.isClient) {
+            if (!this.world.isRemote) {
                 this.setVelocity((double)(this.swimX * this.swimVelocityScale), (double)(this.swimY * this.swimVelocityScale), (double)(this.swimZ * this.swimVelocityScale));
             }
 
@@ -236,7 +236,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
             this.tiltAngle += (-((float)MathHelper.atan2((double)g, vec3d.y)) * 57.295776F - this.tiltAngle) * 0.1F;
         } else {
             this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.thrustTimer)) * 3.1415927F * 0.25F;
-            if (!this.world.isClient) {
+            if (!this.world.isRemote) {
                 double d = this.getVelocity().y;
                 if (this.hasStatusEffect(StatusEffects.LEVITATION)) {
                     d = 0.05D * (double)(this.getStatusEffect(StatusEffects.LEVITATION).getAmplifier() + 1);
@@ -256,7 +256,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
         this.move(MovementType.SELF, this.getVelocity());
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public void handleStatus(byte status) {
         if (status == 19) {
             this.thrustTimer = 0.0F;

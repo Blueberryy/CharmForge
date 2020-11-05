@@ -26,7 +26,7 @@ public class Beekeepers extends CharmModule {
         BEEKEEPER = VillagerHelper.addProfession(ID, PointOfInterestType.BEEHIVE, SoundEvents.BLOCK_BEEHIVE_WORK);
 
         // HACK: set ticketCount so that villager can use it as job site
-        ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setTicketCount(1);
+        ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setMaxFreeTickets(1);
 
         // register beekeeper trades
         addTrade(BEEKEEPER, 1, new BeekeeperTradeOffers.EmeraldsForFlowers());

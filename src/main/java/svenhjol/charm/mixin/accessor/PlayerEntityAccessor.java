@@ -8,11 +8,11 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(PlayerEntity.class)
 public interface PlayerEntityAccessor {
     @Invoker()
-    void callSetShoulderEntityLeft(CompoundNBT tag);
+    void invokeSetLeftShoulderEntity(CompoundNBT tag);
 
     @Invoker()
-    void callSetShoulderEntityRight(CompoundNBT tag);
+    void invokeSetRightShoulderEntity(CompoundNBT tag);
 
     @Invoker()
-    void callDropShoulderEntity(CompoundNBT tag);
+    void invokeSpawnShoulderEntity(CompoundNBT tag);
 }

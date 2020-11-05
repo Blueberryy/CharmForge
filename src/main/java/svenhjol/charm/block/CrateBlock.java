@@ -4,7 +4,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.TileEntity;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -25,7 +25,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import svenhjol.charm.blockentity.CrateBlockEntity;
+import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class CrateBlock extends CharmBlockWithEntity {
-    private static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
+    private static final String BLOCK_ENTITY_TAG = "TileEntityTag";
     private static final ResourceLocation CONTENTS = new ResourceLocation("contents");
     private IVariantMaterial type;
 
@@ -50,8 +50,8 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        CrateBlockEntity crate = new CrateBlockEntity();
+    public TileEntity createTileEntity(BlockView world) {
+        CrateTileEntity crate = new CrateTileEntity();
         crate.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_crate"));
         return crate;
     }
@@ -69,21 +69,21 @@ public class CrateBlock extends CharmBlockWithEntity {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (itemStack.hasCustomName()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            TileEntity TileEntity = world.getTileEntity(pos);
 
-            if (blockEntity instanceof CrateBlockEntity) {
-                ((CrateBlockEntity)blockEntity).setCustomName(itemStack.getName());
+            if (TileEntity instanceof CrateTileEntity) {
+                ((CrateTileEntity)TileEntity).setCustomName(itemStack.getName());
             }
         }
     }
 
     @Override
     public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof CrateBlockEntity) {
-            CrateBlockEntity crate = (CrateBlockEntity)blockEntity;
+        TileEntity TileEntity = world.getTileEntity(pos);
+        if (TileEntity instanceof CrateTileEntity) {
+            CrateTileEntity crate = (CrateTileEntity)TileEntity;
 
-            if (!world.isClient && player.isCreative() && !crate.isEmpty()) {
+            if (!world.isRemote && player.isCreative() && !crate.isEmpty()) {
                 ItemStack stack = new ItemStack(getBlockByMaterial(this.type));
                 CompoundNBT tag = crate.toTag(new CompoundNBT());
 
@@ -106,9 +106,9 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
-        BlockEntity blockEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
-        if (blockEntity instanceof CrateBlockEntity) {
-            CrateBlockEntity crate = (CrateBlockEntity)blockEntity;
+        TileEntity TileEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
+        if (TileEntity instanceof CrateTileEntity) {
+            CrateTileEntity crate = (CrateTileEntity)TileEntity;
 
             builder = builder.putDrop(CONTENTS, ((context, consumer) -> {
                 for (int i = 0; i < crate.size(); i++) {
@@ -121,12 +121,12 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!world.isClient && !player.isSpectator()) {
+        if (!world.isRemote && !player.isSpectator()) {
 
             // original implementation with loot check
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CrateBlockEntity) {
-                CrateBlockEntity crate = (CrateBlockEntity)blockEntity;
+            TileEntity TileEntity = world.getTileEntity(pos);
+            if (TileEntity instanceof CrateTileEntity) {
+                CrateTileEntity crate = (CrateTileEntity)TileEntity;
                 crate.checkLootInteraction(player);
                 player.openHandledScreen(crate);
             }
@@ -147,8 +147,8 @@ public class CrateBlock extends CharmBlockWithEntity {
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
-            if (blockEntity instanceof CrateBlockEntity)
+            TileEntity TileEntity = world.getTileEntity(pos);
+            if (TileEntity instanceof CrateTileEntity)
                 world.updateComparators(pos, state.getBlock());
 
             super.onStateReplaced(state, world, pos, newState, moved);
@@ -167,13 +167,13 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+        return ScreenHandler.calculateComparatorOutput(world.getTileEntity(pos));
     }
 
     @Override
     public ItemStack getPickStack(BlockView world, BlockPos pos, BlockState state) {
         ItemStack stack = super.getPickStack(world, pos, state);
-        CrateBlockEntity crate = (CrateBlockEntity)world.getBlockEntity(pos);
+        CrateTileEntity crate = (CrateTileEntity)world.getTileEntity(pos);
 
         if (crate == null)
             return ItemStack.EMPTY;

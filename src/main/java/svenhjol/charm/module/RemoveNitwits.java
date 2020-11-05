@@ -18,7 +18,7 @@ public class RemoveNitwits extends CharmModule {
     }
 
     private ActionResult changeNitwitProfession(Entity entity) {
-        if (!entity.world.isClient
+        if (!entity.world.isRemote
             && entity instanceof VillagerEntity
         ) {
             VillagerEntity villager = (VillagerEntity) entity;

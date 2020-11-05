@@ -49,7 +49,7 @@ public class RedstoneLanternBlock extends BaseLanternBlock {
 
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean notify) {
-        if (!world.isClient) {
+        if (!world.isRemote) {
             boolean flag = state.get(LIT);
             if (flag != world.isReceivingRedstonePower(pos)) {
                 if (flag) {

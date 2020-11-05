@@ -33,7 +33,7 @@ public class DirtToPath extends CharmModule {
             if (state.getBlock() == Blocks.DIRT) {
                 player.swingHand(hand);
 
-                if (!world.isClient) {
+                if (!world.isRemote) {
                     world.setBlockState(pos, Blocks.GRASS_PATH.getDefaultState(), 11);
                     world.playSound(null, pos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
 

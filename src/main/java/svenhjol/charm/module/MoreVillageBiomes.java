@@ -55,7 +55,7 @@ public class MoreVillageBiomes extends CharmModule {
     }
 
     private ActionResult changeVillagerSkin(Entity entity) {
-        if (!entity.world.isClient
+        if (!entity.world.isRemote
             && entity instanceof VillagerEntity
             && entity.updateNeeded
             && entity.age == 0

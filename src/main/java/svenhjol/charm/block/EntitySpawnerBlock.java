@@ -1,7 +1,7 @@
 package svenhjol.charm.block;
 
 import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.TileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -12,7 +12,7 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
-import svenhjol.charm.blockentity.EntitySpawnerBlockEntity;
+import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
 
 import javax.annotation.Nullable;
 
@@ -26,8 +26,8 @@ public class EntitySpawnerBlock extends CharmBlockWithEntity {
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView world) {
-        return new EntitySpawnerBlockEntity();
+    public TileEntity createTileEntity(BlockView world) {
+        return new EntitySpawnerTileEntity();
     }
 
     @Override

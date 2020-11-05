@@ -17,7 +17,7 @@ import svenhjol.charm.base.helper.EnchantmentsHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
-import svenhjol.charm.blockentity.BookcaseBlockEntity;
+import svenhjol.charm.TileEntity.BookcaseTileEntity;
 import svenhjol.charm.gui.BookcaseScreen;
 import svenhjol.charm.screenhandler.BookcaseScreenHandler;
 
@@ -29,7 +29,7 @@ public class Bookcases extends CharmModule {
     public static final Map<IVariantMaterial, BookcaseBlock> BOOKCASE_BLOCKS = new HashMap<>();
 
     public static ContainerType<BookcaseScreenHandler> SCREEN_HANDLER;
-    public static TileEntityType<BookcaseBlockEntity> BLOCK_ENTITY;
+    public static TileEntityType<BookcaseTileEntity> BLOCK_ENTITY;
 
     public static List<Class<? extends Item>> validItems = new ArrayList<>();
 
@@ -61,7 +61,7 @@ public class Bookcases extends CharmModule {
         });
 
         SCREEN_HANDLER = RegistryHandler.screenHandler(ID, BookcaseScreenHandler::new);
-        BLOCK_ENTITY = RegistryHandler.blockEntity(ID, BookcaseBlockEntity::new);
+        BLOCK_ENTITY = RegistryHandler.TileEntity(ID, BookcaseTileEntity::new);
     }
 
     @Override

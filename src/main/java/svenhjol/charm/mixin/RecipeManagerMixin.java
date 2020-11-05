@@ -1,10 +1,10 @@
 package svenhjol.charm.mixin;
 
 import com.google.gson.JsonElement;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -31,7 +31,7 @@ public class RecipeManagerMixin {
         method = "apply",
         at = @At("HEAD")
     )
-    private void hookApply(Map<ResourceLocation, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo ci) {
+    private void hookApply(Map<ResourceLocation, JsonElement> map, IResourceManager resourceManager, IProfiler profiler, CallbackInfo ci) {
         RecipeHandler.filter(map);
         map2 = new TreeMap<>(map);
     }

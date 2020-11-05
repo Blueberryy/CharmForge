@@ -50,7 +50,7 @@ public class BatBuckets extends CharmModule {
     }
 
     private ActionResult tryCapture(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult hitResult) {
-        if (!entity.world.isClient
+        if (!entity.world.isRemote
             && entity instanceof BatEntity
             && ((BatEntity)entity).getHealth() > 0
         ) {

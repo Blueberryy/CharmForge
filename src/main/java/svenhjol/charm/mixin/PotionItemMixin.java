@@ -11,7 +11,7 @@ import svenhjol.charm.module.RemovePotionGlint;
 @Mixin(PotionItem.class)
 public class PotionItemMixin {
     @Inject(
-        method = "hasGlint",
+        method = "hasEffect",
         at = @At("HEAD"),
         cancellable = true
     )

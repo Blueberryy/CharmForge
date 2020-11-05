@@ -16,7 +16,7 @@ import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.CrateBlock;
-import svenhjol.charm.blockentity.CrateBlockEntity;
+import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.client.CratesClient;
 import svenhjol.charm.gui.CrateScreen;
 import svenhjol.charm.screenhandler.CrateScreenHandler;
@@ -29,7 +29,7 @@ public class Crates extends CharmModule {
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
 
     public static ContainerType<CrateScreenHandler> SCREEN_HANDLER;
-    public static TileEntityType<CrateBlockEntity> BLOCK_ENTITY;
+    public static TileEntityType<CrateTileEntity> BLOCK_ENTITY;
 
     // add blocks and items to these lists to blacklist them from crates
     public static final List<Class<? extends Block>> INVALID_CRATE_BLOCKS = new ArrayList<>();
@@ -51,7 +51,7 @@ public class Crates extends CharmModule {
         INVALID_SHULKER_BOX_BLOCKS.add(CrateBlock.class);
 
         SCREEN_HANDLER = RegistryHandler.screenHandler(ID, CrateScreenHandler::new);
-        BLOCK_ENTITY = RegistryHandler.blockEntity(ID, CrateBlockEntity::new);
+        BLOCK_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;
     }

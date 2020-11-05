@@ -1,7 +1,7 @@
 package svenhjol.charm.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.TileEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -14,7 +14,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.collection.NonNullList;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.block.CrateBlock;
-import svenhjol.charm.blockentity.CrateBlockEntity;
+import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.event.RenderTooltipCallback;
 import svenhjol.charm.handler.TooltipInventoryHandler;
 import svenhjol.charm.module.Crates;
@@ -45,7 +45,7 @@ public class CratesClient {
         if (!stack.hasTag())
             return false;
 
-        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
+        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "TileEntityTag", true);
 
         if (tag == null)
             return false;
@@ -55,11 +55,11 @@ public class CratesClient {
             tag.putString("id", "charm:crate");
         }
         BlockItem blockItem = (BlockItem) stack.getItem();
-        BlockEntity blockEntity = BlockEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
-        if (blockEntity == null)
+        TileEntity TileEntity = TileEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
+        if (TileEntity == null)
             return false;
 
-        CrateBlockEntity crate = (CrateBlockEntity) blockEntity;
+        CrateTileEntity crate = (CrateTileEntity) TileEntity;
         NonNullList<ItemStack> items = crate.getInvStackList();
 
         int size = crate.size();

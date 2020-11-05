@@ -25,18 +25,18 @@ public class ParrotsStayOnShoulder extends CharmModule {
     }
 
     public void dismountParrot(PlayerEntity player) {
-        if (!player.world.isClient
+        if (!player.world.isRemote
             && player.world.getTime() % 10 == 0
             && player.isSneaking()
         ) {
             final ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
             if (!serverPlayer.getShoulderEntityLeft().isEmpty()) {
-                ((PlayerEntityAccessor)serverPlayer).callDropShoulderEntity(serverPlayer.getShoulderEntityLeft());
-                ((PlayerEntityAccessor)serverPlayer).callSetShoulderEntityLeft(new CompoundNBT());
+                ((PlayerEntityAccessor)serverPlayer).invokeSpawnShoulderEntity(serverPlayer.getShoulderEntityLeft());
+                ((PlayerEntityAccessor)serverPlayer).invokeSetLeftShoulderEntity(new CompoundNBT());
             }
             if (!serverPlayer.getShoulderEntityRight().isEmpty()) {
-                ((PlayerEntityAccessor)serverPlayer).callDropShoulderEntity(serverPlayer.getShoulderEntityRight());
-                ((PlayerEntityAccessor)serverPlayer).callSetShoulderEntityRight(new CompoundNBT());
+                ((PlayerEntityAccessor)serverPlayer).invokeSpawnShoulderEntity(serverPlayer.getShoulderEntityRight());
+                ((PlayerEntityAccessor)serverPlayer).invokeSetRightShoulderEntity(new CompoundNBT());
             }
         }
     }

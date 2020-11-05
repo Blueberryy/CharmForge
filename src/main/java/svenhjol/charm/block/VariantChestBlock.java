@@ -2,13 +2,13 @@ package svenhjol.charm.block;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ChestBlock;
-import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.TileEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.collection.NonNullList;
 import net.minecraft.world.BlockView;
-import svenhjol.charm.blockentity.VariantChestBlockEntity;
+import svenhjol.charm.TileEntity.VariantChestTileEntity;
 import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
@@ -48,8 +48,8 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockView worldIn) {
-        VariantChestBlockEntity chest = new VariantChestBlockEntity();
+    public TileEntity createTileEntity(BlockView worldIn) {
+        VariantChestTileEntity chest = new VariantChestTileEntity();
         chest.setCustomName(new TranslatableText("block." + module.mod + "." + type.asString() + "_chest"));
         return chest;
     }

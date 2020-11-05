@@ -1,9 +1,6 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -21,7 +18,7 @@ public class Woodcutters extends CharmModule {
     public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "woodcutter");
     public static WoodcutterBlock WOODCUTTER;
     public static ScreenHandlerType<WoodcutterScreenHandler> SCREEN_HANDLER;
-    public static RecipeType<WoodcuttingRecipe> RECIPE_TYPE;
+    public static IRecipeType<WoodcuttingRecipe> RECIPE_TYPE;
     public static RecipeSerializer<WoodcuttingRecipe> RECIPE_SERIALIZER;
 
     @Override

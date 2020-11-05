@@ -17,7 +17,7 @@ import svenhjol.charm.screenhandler.WoodcutterScreenHandler;
 
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class WoodcutterScreen extends HandledScreen<WoodcutterScreenHandler> {
    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/stonecutter.png");
    private float scrollAmount;

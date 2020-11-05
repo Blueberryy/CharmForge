@@ -1,21 +1,15 @@
 package svenhjol.charm.client;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.JukeboxBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.BackgroundMusicSelector;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
-import net.minecraft.sound.MusicSound;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -34,9 +28,9 @@ import java.util.Random;
 @SuppressWarnings("unused")
 public class MusicClient {
     private final CharmModule module;
-    private SoundInstance musicToStop = null;
+    private ISound musicToStop = null;
     private int ticksBeforeStop = 0;
-    private static SoundInstance currentMusic;
+    private static ISound currentMusic;
     private static ResourceLocation currentDim = null;
     private static int timeUntilNextMusic = 100;
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
@@ -75,7 +69,7 @@ public class MusicClient {
     }
 
     public void stopRecord(Entity entity, BlockPos pos, ItemStack stack) {
-        if (entity.world.isClient
+        if (entity.world.isRemote
             && entity instanceof PlayerEntity
             && stack.getItem() instanceof MusicDiscItem
         ) {
@@ -107,8 +101,8 @@ public class MusicClient {
         }
     }
 
-    public static boolean handleTick(SoundInstance current) {
-        MinecraftClient mc = MinecraftClient.getInstance();
+    public static boolean handleTick(ISound current) {
+        Minecraft mc = Minecraft.getInstance();
 
         if (mc.world == null) return false;
         MusicCondition ambient = getMusicCondition();
@@ -140,19 +134,19 @@ public class MusicClient {
 
     public static boolean handleStop() {
         if (currentMusic != null) {
-            MinecraftClient.getInstance().getSoundManager().stop(currentMusic);
+            Minecraft.getInstance().getSoundManager().stop(currentMusic);
             currentMusic = null;
             timeUntilNextMusic = 0;
         }
         return true;
     }
 
-    public static boolean handlePlaying(MusicSound music) {
+    public static boolean handlePlaying(BackgroundMusicSelector music) {
         return currentMusic != null && music.getSound().getId().equals(currentMusic.getId());
     }
 
     public static void forceStop() {
-        MinecraftClient.getInstance().getSoundManager().stop(currentMusic);
+        Minecraft.getInstance().getSoundManager().stop(currentMusic);
         currentMusic = null;
         timeUntilNextMusic = 3600;
     }
@@ -170,7 +164,7 @@ public class MusicClient {
 
         // if none available, just play a default background track
         if (condition == null)
-            condition = new MusicCondition(MinecraftClient.getInstance().getMusicType());
+            condition = new MusicCondition(Minecraft.getInstance().getMusicType());
 
         return condition;
     }

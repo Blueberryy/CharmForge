@@ -16,7 +16,7 @@ public class ChickensDropFeathers extends CharmModule {
 
         if (chicken.isAlive()
             && !chicken.isBaby()
-            && !chicken.world.isClient
+            && !chicken.world.isRemote
             && !chicken.hasJockey()
             && chicken.world.random.nextFloat() < 0.2F
         ) {

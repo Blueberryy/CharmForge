@@ -1,12 +1,12 @@
 package svenhjol.charm.recipe;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.AbstractCookingRecipe;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.item.crafting.AbstractCookingRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.module.Kilns;
 
 public class FiringRecipe extends AbstractCookingRecipe {
@@ -14,13 +14,13 @@ public class FiringRecipe extends AbstractCookingRecipe {
         super(Kilns.RECIPE_TYPE, id, group, input, output, experience, cookTime);
     }
 
-    @Environment(EnvType.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ItemStack getRecipeKindIcon() {
         return new ItemStack(Kilns.KILN);
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public IRecipeSerializer<?> getSerializer() {
         return Kilns.RECIPE_SERIALIZER;
     }
 }

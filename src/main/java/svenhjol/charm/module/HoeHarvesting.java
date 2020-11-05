@@ -43,7 +43,7 @@ public class HoeHarvesting extends CharmModule {
         ItemStack held = player.getStackInHand(hand);
         BlockPos pos = hitResult.getBlockPos();
 
-        if (!world.isClient && held.getItem() instanceof HoeItem) {
+        if (!world.isRemote && held.getItem() instanceof HoeItem) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
             ServerWorld serverWorld = (ServerWorld)serverPlayer.world;
             BlockState state = world.getBlockState(pos);

@@ -10,7 +10,7 @@ import net.minecraft.structure.processor.StructureProcessorList;
 import net.minecraft.structure.processor.StructureProcessorLists;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.BuiltinRegistries;
-import svenhjol.charm.mixin.accessor.StructurePoolAccessor;
+import svenhjol.charm.mixin.accessor.JigsawPatternAccessor;
 import svenhjol.charm.base.enums.ICharmEnum;
 
 import java.util.ArrayList;
@@ -33,11 +33,11 @@ public interface StructureSetupCallback {
             StructurePool pool = BuiltinRegistries.STRUCTURE_POOL.get(id);
 
             // convert elementCounts to mutable list
-            List<Pair<StructurePoolElement, Integer>> elementCounts = ((StructurePoolAccessor) pool).getElementCounts();
-            ((StructurePoolAccessor)pool).setElementCounts(new ArrayList<>(elementCounts));
+            List<Pair<StructurePoolElement, Integer>> elementCounts = ((JigsawPatternAccessor) pool).getRawTemplates();
+            ((JigsawPatternAccessor)pool).setRawTemplates(new ArrayList<>(elementCounts));
 
             if (false) { // DELETES ALL IN POOL, DO NOT USE!
-                ((StructurePoolAccessor) pool).setElementCounts(new ArrayList<>());
+                ((JigsawPatternAccessor) pool).setRawTemplates(new ArrayList<>());
             }
 
             vanillaPools.put(id, pool);
@@ -54,11 +54,11 @@ public interface StructureSetupCallback {
         StructurePool pool = getVanillaPool(poolId);
         
         // add custom piece to the element counts
-        ((StructurePoolAccessor)pool).getElementCounts().add(Pair.of(element, count));
+        ((JigsawPatternAccessor)pool).getRawTemplates().add(Pair.of(element, count));
         
         // add custom piece to the elements
         for (int i = 0; i < count; i++) {
-            ((StructurePoolAccessor)pool).getElements().add(element);
+            ((JigsawPatternAccessor)pool).getJigsawPieces().add(element);
         }
     }
 
