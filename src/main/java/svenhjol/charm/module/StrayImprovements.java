@@ -47,7 +47,7 @@ public class StrayImprovements extends CharmModule {
             World world = entity.getEntityWorld();
             BlockPos pos = entity.getBlockPos();
             int amount = ItemHelper.getAmountWithLooting(world.random, (int)maxDrops, lootingLevel, (float)lootingBoost);
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.BLUE_ICE, amount)));
+            world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.BLUE_ICE, amount)));
         }
         return ActionResult.PASS;
     }

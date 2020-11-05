@@ -47,7 +47,7 @@ public class HuskImprovements extends CharmModule {
             World world = entity.getEntityWorld();
             BlockPos pos = entity.getBlockPos();
             int amount = ItemHelper.getAmountWithLooting(world.random, maxDrops, lootingLevel, (float)lootingBoost);
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.SAND, amount)));
+            world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.SAND, amount)));
         }
         return ActionResult.PASS;
     }

@@ -40,7 +40,7 @@ public class GlowBallItem extends EnderPearlItem implements ICharmItem {
             GlowBallEntity entity = new GlowBallEntity(world, user);
             entity.setItem(itemStack);
             entity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.5F, 1.0F);
-            world.spawnEntity(entity);
+            world.addEntity(entity);
         }
 
         user.incrementStat(Stats.USED.getOrCreateStat(this));

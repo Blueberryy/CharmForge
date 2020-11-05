@@ -15,8 +15,8 @@ public class SmoothGlowstoneBlock extends CharmBlock {
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        super.onBreak(world, pos, state, player);
+    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        super.onBlockHarvested(world, pos, state, player);
 
     }
 }

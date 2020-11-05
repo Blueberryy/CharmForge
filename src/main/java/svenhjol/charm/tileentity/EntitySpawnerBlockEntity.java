@@ -124,7 +124,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
                 m.initialize((ServerIWorld)world, world.getLocalDifficulty(pos), SpawnReason.TRIGGERED, null, null);
             }
 
-            world.spawnEntity(spawned);
+            world.addEntity(spawned);
         }
         return true;
     }
@@ -144,7 +144,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
         if (minecart == null)
             return false;
 
-        world.spawnEntity(minecart);
+        world.addEntity(minecart);
 
         return true;
     }
@@ -225,7 +225,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
 
         float yaw = facing.getHorizontal();
         stand.refreshPositionAndAngles(pos, yaw, 0.0F);
-        world.spawnEntity(stand);
+        world.addEntity(stand);
 
         return true;
     }

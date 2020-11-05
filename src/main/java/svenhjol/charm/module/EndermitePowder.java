@@ -64,7 +64,7 @@ public class EndermitePowder extends CharmModule {
             World world = entity.getEntityWorld();
             BlockPos pos = entity.getBlockPos();
             int amount = ItemHelper.getAmountWithLooting(world.random, maxDrops, lootingLevel, (float)lootingBoost);
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ENDERMITE_POWDER, amount)));
+            world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(ENDERMITE_POWDER, amount)));
         }
         return ActionResult.PASS;
     }

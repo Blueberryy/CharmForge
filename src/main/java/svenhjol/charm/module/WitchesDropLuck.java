@@ -36,7 +36,7 @@ public class WitchesDropLuck extends CharmModule {
         ) {
             BlockPos pos = entity.getBlockPos();
             ItemStack potion = PotionHelper.getPotionItemStack(Potions.LUCK, 1);
-            entity.world.spawnEntity(new ItemEntity(entity.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), potion));
+            entity.world.addEntity(new ItemEntity(entity.getEntityWorld(), pos.getX(), pos.getY(), pos.getZ(), potion));
         }
         return ActionResult.PASS;
     }

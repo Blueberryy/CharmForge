@@ -5,16 +5,23 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.PushReaction;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootParameters;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
@@ -69,93 +76,83 @@ public class CrateBlock extends CharmBlockWithEntity {
         if (itemStack.hasDisplayName()) {
             TileEntity tileEntity = world.getTileEntity(pos);
 
-            if (TileEntity instanceof CrateTileEntity) {
-                ((CrateTileEntity)TileEntity).setCustomName(itemStack.getName());
+            if (tileEntity instanceof CrateTileEntity) {
+                ((CrateTileEntity)tileEntity).setCustomName(itemStack.getDisplayName());
             }
         }
     }
 
     @Override
-    public void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void onBlockHarvested(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         TileEntity tileEntity = world.getTileEntity(pos);
-        if (TileEntity instanceof CrateTileEntity) {
-            CrateTileEntity crate = (CrateTileEntity)TileEntity;
+        if (tileEntity instanceof CrateTileEntity) {
+            CrateTileEntity crate = (CrateTileEntity)tileEntity;
 
             if (!world.isRemote && player.isCreative() && !crate.isEmpty()) {
                 ItemStack stack = new ItemStack(getBlockByMaterial(this.type));
                 CompoundNBT tag = crate.toTag(new CompoundNBT());
 
                 if (!tag.isEmpty())
-                    stack.putSubTag(BLOCK_ENTITY_TAG, tag);
+                    stack.setTagInfo(BLOCK_ENTITY_TAG, tag);
 
-                if (crate.hasDisplayName())
-                    stack.setCustomName(crate.getCustomName());
+                if (crate.hasCustomName())
+                    stack.setDisplayName(crate.getCustomName());
 
                 ItemEntity entity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
-                entity.setToDefaultPickupDelay();
-                world.spawnEntity(entity);
+                entity.setDefaultPickupDelay();
+                world.addEntity(entity);
             } else {
-                crate.checkLootInteraction(player);
+                crate.fillWithLoot(player);
             }
         }
 
-        super.onBreak(world, pos, state, player);
+        super.onBlockHarvested(world, pos, state, player);
     }
 
     @Override
-    public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
-        TileEntity tileEntity = builder.get(LootContextParameters.BLOCK_ENTITY);
-        if (TileEntity instanceof CrateTileEntity) {
-            CrateTileEntity crate = (CrateTileEntity)TileEntity;
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+        TileEntity tileEntity = builder.get(LootParameters.BLOCK_ENTITY);
+        if (tileEntity instanceof CrateTileEntity) {
+            CrateTileEntity crate = (CrateTileEntity)tileEntity;
 
-            builder = builder.putDrop(CONTENTS, ((context, consumer) -> {
+            builder = builder.withDynamicDrop(CONTENTS, ((context, consumer) -> {
                 for (int i = 0; i < crate.size(); i++) {
-                    consumer.accept(crate.getStack(i));
+                    consumer.accept(crate.getStackInSlot(i));
                 }
             }));
         }
-        return super.getDroppedStacks(state, builder);
+        return super.getDrops(state, builder);
     }
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
         if (!world.isRemote && !player.isSpectator()) {
 
-            // original implementation with loot check
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (TileEntity instanceof CrateTileEntity) {
-                CrateTileEntity crate = (CrateTileEntity)TileEntity;
-                crate.checkLootInteraction(player);
-                player.openHandledScreen(crate);
-            }
-
-            // fabric default implementation
-            if (false) {
-                NamedScreenHandlerFactory screenHandlerFactory = state.createScreenHandlerFactory(world, pos);
-
-                if (screenHandlerFactory != null) {
-                    player.openHandledScreen(screenHandlerFactory);
-                }
+            if (tileEntity instanceof CrateTileEntity) {
+                CrateTileEntity crate = (CrateTileEntity)tileEntity;
+                crate.fillWithLoot(player);
+                player.openContainer(crate);
             }
         }
 
-        return ActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     @Override
     public void onReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         if (state.getBlock() != newState.getBlock()) {
             TileEntity tileEntity = world.getTileEntity(pos);
-            if (TileEntity instanceof CrateTileEntity)
-                world.updateComparators(pos, state.getBlock());
+            if (tileEntity instanceof CrateTileEntity)
+                world.updateComparatorOutputLevel(pos, state.getBlock());
 
-            super.onStateReplaced(state, world, pos, newState, moved);
+            super.onReplaced(state, world, pos, newState, moved);
         }
     }
 
     @Override
-    public PistonBehavior getPistonBehavior(BlockState state) {
-        return PistonBehavior.NORMAL;
+    public PushReaction getPushReaction(BlockState state) {
+        return PushReaction.NORMAL;
     }
 
     @Override
@@ -165,12 +162,12 @@ public class CrateBlock extends CharmBlockWithEntity {
 
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return ScreenHandler.calculateComparatorOutput(world.getTileEntity(pos));
+        return Container.calcRedstoneFromInventory((IInventory)world.getTileEntity(pos));
     }
 
     @Override
-    public ItemStack getPickStack(IBlockReader world, BlockPos pos, BlockState state) {
-        ItemStack stack = super.getPickStack(world, pos, state);
+    public ItemStack getItem(IBlockReader world, BlockPos pos, BlockState state) {
+        ItemStack stack = super.getItem(world, pos, state);
         CrateTileEntity crate = (CrateTileEntity)world.getTileEntity(pos);
 
         if (crate == null)
@@ -178,7 +175,7 @@ public class CrateBlock extends CharmBlockWithEntity {
 
         CompoundNBT tag = crate.toTag(new CompoundNBT());
         if (!tag.isEmpty())
-            stack.putSubTag(BLOCK_ENTITY_TAG, tag);
+            stack.setTagInfo(BLOCK_ENTITY_TAG, tag);
 
         return stack;
     }

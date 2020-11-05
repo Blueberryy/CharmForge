@@ -61,7 +61,7 @@ public class BatBucketItem extends CharmItem {
                 if (!data.isEmpty())
                     bat.readCustomDataFromTag(data);
 
-                world.spawnEntity(bat);
+                world.addEntity(bat);
 
                 // damage the bat :(
                 float health = bat.getHealth();

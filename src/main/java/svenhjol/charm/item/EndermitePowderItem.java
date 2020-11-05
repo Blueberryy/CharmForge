@@ -55,7 +55,7 @@ public class EndermitePowderItem extends CharmItem {
                 Vec3d look = playerIn.getRotationVector();
 
                 entity.setPos(x + look.x * 2, y + 0.5, z + look.z * 2);
-                worldIn.spawnEntity(entity);
+                worldIn.addEntity(entity);
                 return TypedActionResult.pass(stack);
             }
         }

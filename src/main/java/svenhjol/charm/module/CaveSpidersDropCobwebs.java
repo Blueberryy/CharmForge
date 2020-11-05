@@ -36,7 +36,7 @@ public class CaveSpidersDropCobwebs extends CharmModule {
             BlockPos pos = entity.getBlockPos();
 
             int amount = ItemHelper.getAmountWithLooting(world.random, (int)maxDrops, lootingLevel, (float)lootingBoost);
-            world.spawnEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.COBWEB, amount)));
+            world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.COBWEB, amount)));
         }
 
         return ActionResult.PASS;
