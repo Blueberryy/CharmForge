@@ -2,22 +2,22 @@ package svenhjol.charm.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ShovelItem;
-import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmFallingBlock;
 
 public class GunpowderBlock extends CharmFallingBlock {
     public GunpowderBlock(CharmModule module) {
-        super(module, "gunpowder_block", Settings
-            .of(Material.AGGREGATE)
-            .sounds(SoundType.SAND)
-            .strength(0.5F)
+        super(module, "gunpowder_block", Properties
+            .create(Material.SAND)
+            .sound(SoundType.SAND)
+            .hardnessAndResistance(0.5F)
         );
 
         setEffectiveTool(ShovelItem.class);
@@ -29,9 +29,9 @@ public class GunpowderBlock extends CharmFallingBlock {
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         if (!tryTouchLava(worldIn, pos, state)) {
-            super.neighborUpdate(state, worldIn, pos, blockIn, fromPos, isMoving);
+            super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
         }
     }
 
@@ -56,7 +56,7 @@ public class GunpowderBlock extends CharmFallingBlock {
         }
 
         if (lavaBelow) {
-            world.syncGlobalEvent(2001, pos, Block.getRawIdFromState(world.getBlockState(pos)));
+            world.playEvent(2001, pos, Block.getStateId(world.getBlockState(pos)));
             world.removeBlock(pos, true);
         }
 

@@ -10,7 +10,7 @@ public class RefinedObsidianBlock extends CharmBlock {
     public RefinedObsidianBlock(CharmModule module) {
         super(module, "refined_obsidian", AbstractBlock.Settings
             .copy(Blocks.OBSIDIAN)
-            .sounds(SoundType.BASALT)
+            .sound(SoundType.BASALT)
         );
     }
 }

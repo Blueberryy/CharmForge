@@ -16,8 +16,8 @@ public class SugarBlock extends CharmFallingBlock {
     public SugarBlock(CharmModule module) {
         super(module, "sugar_block", Settings
             .of(Material.AGGREGATE)
-            .sounds(SoundType.SAND)
-            .strength(0.5F)
+            .sound(SoundType.SAND)
+            .hardnessAndResistance(0.5F)
         );
 
         setEffectiveTool(ShovelItem.class);
@@ -29,9 +29,9 @@ public class SugarBlock extends CharmFallingBlock {
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         if (!tryTouchWater(worldIn, pos, state)) {
-            super.neighborUpdate(state, worldIn, pos, blockIn, fromPos, isMoving);
+            super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
         }
     }
 

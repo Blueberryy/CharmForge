@@ -30,7 +30,7 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
         super(AbstractBlock.Settings
             .of(Material.STONE)
             .requiresTool()
-            .strength(3.5F)
+            .hardnessAndResistance(3.5F)
             .luminance(l -> l.get(Properties.LIT) ? 13 : 0));
 
         this.module = module;
