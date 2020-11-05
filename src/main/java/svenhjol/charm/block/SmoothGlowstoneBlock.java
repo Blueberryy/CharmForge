@@ -5,13 +5,12 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 
 public class SmoothGlowstoneBlock extends CharmBlock {
     public SmoothGlowstoneBlock(CharmModule module) {
-        super(module, "smooth_glowstone", Settings.copy(Blocks.GLOWSTONE));
+        super(module, "smooth_glowstone", Properties.from(Blocks.GLOWSTONE));
     }
 
     @Override
