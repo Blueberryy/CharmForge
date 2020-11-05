@@ -6,11 +6,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.CraftingScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.screen.IWorldPosCallable;
 import svenhjol.charm.module.Core;
 
 public class PortableCraftingScreenHandler extends CraftingScreenHandler {
-    public PortableCraftingScreenHandler(int syncId, PlayerInventory playerInventory, ScreenHandlerContext context) {
+    public PortableCraftingScreenHandler(int syncId, PlayerInventory playerInventory, IWorldPosCallable context) {
         super(syncId, playerInventory, context);
     }
 

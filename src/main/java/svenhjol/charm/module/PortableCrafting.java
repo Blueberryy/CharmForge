@@ -3,8 +3,8 @@ package svenhjol.charm.module;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.screen.IWorldPosCallable;
+import net.minecraft.screen.SimpleNamedContainerProvider;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslationTextComponent;
@@ -45,6 +45,6 @@ public class PortableCrafting extends CharmModule {
     }
 
     public static void openContainer(ServerPlayerEntity player) {
-        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, inv, p) -> new PortableCraftingScreenHandler(i, inv, ScreenHandlerContext.create(p.world, p.getBlockPos())), LABEL));
+        player.openHandledScreen(new SimpleNamedContainerProvider((i, inv, p) -> new PortableCraftingScreenHandler(i, inv, IWorldPosCallable.create(p.world, p.getBlockPos())), LABEL));
     }
 }

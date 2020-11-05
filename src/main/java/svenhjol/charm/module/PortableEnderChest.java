@@ -3,7 +3,7 @@ package svenhjol.charm.module;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
+import net.minecraft.screen.SimpleNamedContainerProvider;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -47,6 +47,6 @@ public class PortableEnderChest extends CharmModule {
 
     public static void openContainer(ServerPlayerEntity player) {
         player.world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_ENDER_CHEST_OPEN, SoundCategory.PLAYERS, 0.4F, 1.08F);
-        player.openHandledScreen(new SimpleNamedScreenHandlerFactory((i, inv, p) -> new PortableEnderChestScreenHandler(i, inv, p.getEnderChestInventory()), LABEL));
+        player.openHandledScreen(new SimpleNamedContainerProvider((i, inv, p) -> new PortableEnderChestScreenHandler(i, inv, p.getEnderChestInventory()), LABEL));
     }
 }

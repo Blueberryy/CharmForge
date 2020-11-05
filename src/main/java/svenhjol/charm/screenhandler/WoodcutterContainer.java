@@ -1,30 +1,21 @@
 package svenhjol.charm.screenhandler;
 
 import com.google.common.collect.Lists;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingResultInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.world.World;
 import svenhjol.charm.module.Woodcutters;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
 
 import java.util.List;
 
-public class WoodcutterScreenHandler extends ScreenHandler {
-    private final ScreenHandlerContext context;
+public class WoodcutterContainer extends Container {
+    private final IWorldPosCallable context;
     private final Property selectedRecipe;
     private final World world;
     private List<WoodcuttingRecipe> availableRecipes;
@@ -36,11 +27,11 @@ public class WoodcutterScreenHandler extends ScreenHandler {
     public final Inventory input;
     private final CraftingResultInventory output;
 
-    public WoodcutterScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, ScreenHandlerContext.EMPTY);
+    public WoodcutterContainer(int syncId, PlayerInventory playerInventory) {
+        this(syncId, playerInventory, IWorldPosCallable.EMPTY);
     }
 
-    public WoodcutterScreenHandler(int syncId, PlayerInventory playerInventory, final ScreenHandlerContext context) {
+    public WoodcutterContainer(int syncId, PlayerInventory playerInventory, final IWorldPosCallable context) {
         super(Woodcutters.SCREEN_HANDLER, syncId);
         this.selectedRecipe = Property.create();
         this.availableRecipes = Lists.newArrayList();
@@ -50,8 +41,8 @@ public class WoodcutterScreenHandler extends ScreenHandler {
         this.input = new SimpleInventory(1) {
             public void markDirty() {
                 super.markDirty();
-                WoodcutterScreenHandler.this.onContentChanged(this);
-                WoodcutterScreenHandler.this.contentsChangedListener.run();
+                WoodcutterContainer.this.onContentChanged(this);
+                WoodcutterContainer.this.contentsChangedListener.run();
             }
         };
         this.output = new CraftingResultInventory();
@@ -65,17 +56,17 @@ public class WoodcutterScreenHandler extends ScreenHandler {
 
             public ItemStack onTakeItem(PlayerEntity player, ItemStack stack) {
                 stack.onCraft(player.world, player, stack.getCount());
-                WoodcutterScreenHandler.this.output.unlockLastRecipe(player);
-                ItemStack itemStack = WoodcutterScreenHandler.this.inputSlot.takeStack(1);
+                WoodcutterContainer.this.output.unlockLastRecipe(player);
+                ItemStack itemStack = WoodcutterContainer.this.inputSlot.takeStack(1);
                 if (!itemStack.isEmpty()) {
-                    WoodcutterScreenHandler.this.populateResult();
+                    WoodcutterContainer.this.populateResult();
                 }
 
                 context.run((world, blockPos) -> {
                     long l = world.getTime();
-                    if (WoodcutterScreenHandler.this.lastTakeTime != l) {
+                    if (WoodcutterContainer.this.lastTakeTime != l) {
                         world.playSound(null, blockPos, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundCategory.BLOCKS, 1.0F, 1.0F);
-                        WoodcutterScreenHandler.this.lastTakeTime = l;
+                        WoodcutterContainer.this.lastTakeTime = l;
                     }
 
                 });

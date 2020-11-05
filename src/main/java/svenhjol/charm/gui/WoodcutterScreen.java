@@ -13,19 +13,19 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
-import svenhjol.charm.screenhandler.WoodcutterScreenHandler;
+import svenhjol.charm.screenhandler.WoodcutterContainer;
 
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class WoodcutterScreen extends HandledScreen<WoodcutterScreenHandler> {
+public class WoodcutterScreen extends HandledScreen<WoodcutterContainer> {
    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/stonecutter.png");
    private float scrollAmount;
    private boolean mouseClicked;
    private int scrollOffset;
    private boolean canCraft;
 
-   public WoodcutterScreen(WoodcutterScreenHandler handler, PlayerInventory inventory, Text title) {
+   public WoodcutterScreen(WoodcutterContainer handler, PlayerInventory inventory, Text title) {
       super(handler, inventory, title);
       handler.setContentsChangedListener(this::onInventoryChange);
       --this.titleY;
