@@ -16,7 +16,7 @@ import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 
 public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     private CharmModule module;
-    private static final TextComponent TITLE = new TranslationTextComponent("container.charm.woodcutter");
+    private static final ITextComponent TITLE = new TranslationTextComponent("container.charm.woodcutter");
 
     public WoodcutterBlock(CharmModule module) {
         super(AbstractBlock.Properties.from(Blocks.STONECUTTER));
