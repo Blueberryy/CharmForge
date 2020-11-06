@@ -1,12 +1,19 @@
 package svenhjol.charm.base.handler;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.event.StructureSetupCallback;
 import svenhjol.charm.handler.ColoredGlintHandler;
 
 import javax.annotation.Nullable;
@@ -34,34 +41,23 @@ public class ModuleHandler {
 
         // both-side initializers
         BiomeHandler.init();
+        // TODO: forge module enabled conditions should register here
 
         // early init, always run, use for registering things
         eachModule(CharmModule::register);
-        if (isClient())
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             eachModule(CharmModule::clientRegister);
-
-        // post init, only enabled modules are run
-        eachEnabledModule(CharmModule::init);
-        if (isClient())
-            eachEnabledModule(CharmModule::clientInit);
-
-        // allow modules to modify structures via an event
-        StructureSetupCallback.EVENT.invoker().interact();
-
-        // listen for server world loading events
-        LoadWorldCallback.EVENT.register(server -> {
-            DecorationHandler.init(); // load late so that tags are populated at this point
-            eachEnabledModule(m -> m.loadWorld(server));
+            MOD_EVENT_BUS.addListener(ModuleHandler::onClientSetup);
         });
 
-        // client-only initializers and listeners
-        if (isClient()) {
-            ClientJoinCallback.EVENT.register(client -> {
-                ColoredGlintHandler.init(); // load late so that buffer builders are populated
-                DecorationHandler.init(); // load late so that tags are populated
-                eachEnabledModule(m -> m.clientJoinWorld(client));
-            });
-        }
+        // register load events
+        MOD_EVENT_BUS.addListener(ModuleHandler::onCommonSetup);
+        MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
+        FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
+
+        // allow modules to modify structures via an event
+//        StructureSetupCallback.EVENT.invoker().interact();
 
         /** @deprecated listen for server setup events (dedicated server only) */
         //DedicatedServerSetupCallback.EVENT.register(server -> {
@@ -69,6 +65,34 @@ public class ModuleHandler {
         //});
 
         hasInit = true;
+    }
+
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        eachEnabledModule(module -> {
+            if (module.hasSubscriptions)
+                FORGE_EVENT_BUS.register(module);
+
+            module.init();
+        });
+    }
+
+    public static void onClientSetup(FMLClientSetupEvent event) {
+        eachEnabledModule(CharmModule::clientInit);
+    }
+
+    public static void onModConfig(ModConfig.ModConfigEvent event) {
+
+    }
+
+    public static void onLoadComplete(FMLLoadCompleteEvent event) {
+        DecorationHandler.init(); // load late so that tags are populated
+        ColoredGlintHandler.init(); // load late so that buffer builders are populated
+    }
+
+    public static void onServerStarting(FMLServerStartingEvent event) {
+        MinecraftServer server = event.getServer();
+        DecorationHandler.init(); // load late so that tags are populated at this point
+        eachEnabledModule(m -> m.loadWorld(server));
     }
 
     @Nullable
