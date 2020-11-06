@@ -7,8 +7,6 @@ import net.minecraft.world.poi.PointOfInterestType;
 import svenhjol.charm.Charm;
 import svenhjol.charm.village.LumberjackTradeOffers.*;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.event.StructureSetupCallback;
-import svenhjol.charm.event.StructureSetupCallback.VillageType;
 import svenhjol.charm.base.helper.VillagerHelper;
 import svenhjol.charm.base.iface.Module;
 

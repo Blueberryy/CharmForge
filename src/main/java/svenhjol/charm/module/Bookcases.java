@@ -1,5 +1,6 @@
 package svenhjol.charm.module;
 
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -11,15 +12,13 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
-import svenhjol.charm.base.handler.ClientRegistryHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
-import svenhjol.charm.base.helper.EnchantmentsHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
-import svenhjol.charm.TileEntity.BookcaseTileEntity;
-import svenhjol.charm.gui.BookcaseScreen;
 import svenhjol.charm.container.BookcaseContainer;
+import svenhjol.charm.gui.BookcaseScreen;
+import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import java.util.*;
 
@@ -28,15 +27,13 @@ public class Bookcases extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "bookcase");
     public static final Map<IVariantMaterial, BookcaseBlock> BOOKCASE_BLOCKS = new HashMap<>();
 
-    public static ContainerType<BookcaseContainer> SCREEN_HANDLER;
-    public static TileEntityType<BookcaseTileEntity> BLOCK_ENTITY;
+    public static ContainerType<BookcaseContainer> CONTAINER;
+    public static TileEntityType<BookcaseTileEntity> TILE_ENTITY;
 
     public static List<Class<? extends Item>> validItems = new ArrayList<>();
 
     @Config(name = "Valid books", description = "Additional items that may be placed in bookcases.")
-    public static List<String> configValidItems = Arrays.asList(
-        "strange:scroll"
-    );
+    public static List<String> configValidItems = new ArrayList<>();
 
     @Override
     public void register() {
@@ -56,22 +53,17 @@ public class Bookcases extends CharmModule {
         });
 
         configValidItems.forEach(string -> {
-            Item item = Registry.ITEM.get(new ResourceLocation(string));
+            Item item = Registry.ITEM.getOrDefault(new ResourceLocation(string));
             validItems.add(item.getClass());
         });
 
-        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, BookcaseContainer::new);
-        BLOCK_ENTITY = RegistryHandler.TileEntity(ID, BookcaseTileEntity::new);
-    }
-
-    @Override
-    public void init() {
-        EnchantmentsHelper.ENCHANTING_BLOCKS.addAll(BOOKCASE_BLOCKS.values());
+        CONTAINER = RegistryHandler.container(ID, BookcaseContainer::new);
+        TILE_ENTITY = RegistryHandler.TileEntity(ID, BookcaseTileEntity::new);
     }
 
     @Override
     public void clientInit() {
-        ClientRegistryHandler.screenHandler(SCREEN_HANDLER, BookcaseScreen::new);
+        ScreenManager.registerFactory(CONTAINER, BookcaseScreen::new);
     }
 
     public static boolean canContainItem(ItemStack stack) {

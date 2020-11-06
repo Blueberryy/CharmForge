@@ -1,36 +1,37 @@
 package svenhjol.charm.module;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.mob.SilverfishEntity;
+import net.minecraft.entity.monster.SilverfishEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.handler.ModuleHandler;
-import svenhjol.charm.block.EnderPearlBlock;
-import svenhjol.charm.entity.goal.FormEndermiteGoal;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.block.EnderPearlBlock;
+import svenhjol.charm.entity.goal.FormEndermiteGoal;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-@Module(mod = Charm.MOD_ID, description = "Ender pearl storage. Eating a chorus fruit will teleport you to the nearest ender pearl block.")
+@Module(mod = Charm.MOD_ID, description = "Ender pearl storage. Eating a chorus fruit will teleport you to the nearest ender pearl block.", hasSubscriptions = true)
 public class BlockOfEnderPearls extends CharmModule {
     public static EnderPearlBlock ENDER_PEARL_BLOCK;
 
@@ -48,9 +49,10 @@ public class BlockOfEnderPearls extends CharmModule {
         ENDER_PEARL_BLOCK = new EnderPearlBlock(this);
     }
 
-    @Override
-    public void init() {
-        AddEntityCallback.EVENT.register(this::addGoalToSilverfish);
+    @SubscribeEvent
+    public void onEnteringChunk(EntityEvent.EnteringChunk event) {
+        if (!event.isCanceled())
+            addGoalToSilverfish(event.getEntity());
     }
 
     public static boolean tryChorusTeleport(LivingEntity entity, ItemStack stack) {
@@ -64,12 +66,12 @@ public class BlockOfEnderPearls extends CharmModule {
             return false; // must be on server side
 
         ServerPlayerEntity player = (ServerPlayerEntity)entity;
-        BlockPos playerPos = player.getBlockPos();
+        BlockPos playerPos = player.getPosition();
         World world = player.world;
         Map<Double, BlockPos> foundPositions = new HashMap<>();
 
         // find blocks around player
-        BlockPos.stream(
+        BlockPos.getAllInBox(
             playerPos.add(-teleportRange, -teleportRange, -teleportRange),
             playerPos.add(teleportRange, teleportRange, teleportRange)
         ).forEach(blockPos -> {
@@ -103,7 +105,7 @@ public class BlockOfEnderPearls extends CharmModule {
         double z = targetPos.getZ() + 0.5D;
 
         // final parameter is whether to display particle effects after teleport
-        boolean didTeleport = player.teleport(x, y, z, true);
+        boolean didTeleport = player.attemptTeleport(x, y, z, true);
         if (!didTeleport)
             return false; // I guess the player didn't make it?
 
@@ -111,26 +113,24 @@ public class BlockOfEnderPearls extends CharmModule {
         world.playSound(null, x, y, z, teleportSound, SoundCategory.PLAYERS, 1.0F, 1.0F); // at old location
         player.playSound(teleportSound, 1.0F, 1.0F); // at new location
 
-        player.getItemCooldownManager().set(Items.CHORUS_FRUIT, 20);
+        player.getCooldownTracker().setCooldown(Items.CHORUS_FRUIT, 20);
         if (!player.isCreative())
-            stack.decrement(1);
+            stack.shrink(1);
 
         return true;
     }
 
-    private ActionResult addGoalToSilverfish(Entity entity) {
+    private void addGoalToSilverfish(Entity entity) {
         if (!convertSilverfish)
-            return ActionResult.PASS;
+            return;
 
         if (!(entity instanceof SilverfishEntity))
-            return ActionResult.PASS; // must be a silverfish to process it
+            return; // must be a silverfish to process it
 
         SilverfishEntity silverfish = (SilverfishEntity)entity;
         GoalSelector goalSelector = MobHelper.getGoalSelector(silverfish);
 
         if (goalSelector.getRunningGoals().noneMatch(g -> g.getGoal() instanceof FormEndermiteGoal))
-            goalSelector.add(2, new FormEndermiteGoal(silverfish));
-
-        return ActionResult.SUCCESS;
+            goalSelector.addGoal(2, new FormEndermiteGoal(silverfish));
     }
 }

@@ -4,6 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmModule;
 
 import java.util.ArrayList;
@@ -18,6 +21,11 @@ public class BatBucketClient {
 
     public BatBucketClient(CharmModule module) {
         this.module = module;
+    }
+
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        handleClientTick(Minecraft.getInstance());
     }
 
     private void handleClientTick(Minecraft minecraft) {
@@ -36,20 +44,11 @@ public class BatBucketClient {
         }
     }
 
-    private void handleMessageClientSetGlowing(PacketContext context, PacketByteBuf data) {
-        double range = data.readDouble();
-        int ticks = data.readInt() * 20; // ticks is sent as number of seconds, multiply by 20 for ticks
-        context.getTaskQueue().execute(() -> {
-            this.range = range;
-            this.ticks = ticks;
-        });
-    }
-
     private void setNearbyEntities(PlayerEntity player) {
         entities.clear();
-        Box box = player.getBoundingBox().expand(range, range / 2.0, range);
+        AxisAlignedBB box = player.getBoundingBox().expand(range, range / 2.0, range);
         Predicate<LivingEntity> selector = entity -> true;
-        entities = player.world.getEntitiesByClass(LivingEntity.class, box, selector);
+        entities = player.world.getEntitiesWithinAABB(LivingEntity.class, box, selector);
     }
 
     private void setGlowing(boolean glowing) {

@@ -28,7 +28,7 @@ public class BookcaseTileEntity extends LockableLootTileEntity implements ISided
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
     public BookcaseTileEntity() {
-        super(Bookcases.BLOCK_ENTITY);
+        super(Bookcases.TILE_ENTITY);
     }
 
     @Override

@@ -63,7 +63,7 @@ public class RegistryHandler {
         return IRecipeSerializer.register(recipeId, serializer);
     }
 
-    public static <T extends Container> ContainerType<T> screenHandler(ResourceLocation id, ContainerType.Factory<T> factory) {
+    public static <T extends Container> ContainerType<T> container(ResourceLocation id, ContainerType.IFactory<T> factory) {
         return Registry.register(Registry.MENU, id, new ContainerType<>(factory));
     }
 

@@ -206,7 +206,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     .with(BookcaseBlock.SLOTS, BookcaseTileEntity.SIZE); // make it have the "full" texture
 
                 if (random.nextFloat() < BOOKCASE_LOOT_CHANCE) {
-                    BookcaseTileEntity tileEntity = Bookcases.BLOCK_ENTITY.create();
+                    BookcaseTileEntity tileEntity = Bookcases.TILE_ENTITY.create();
                     if (TileEntity == null)
                         return;
 

@@ -33,7 +33,7 @@ public class Kilns extends CharmModule {
         RECIPE_TYPE = RegistryHandler.recipeType(RECIPE_ID.toString());
         RECIPE_SERIALIZER = RegistryHandler.recipeSerializer(RECIPE_ID.toString(), new CookingRecipeSerializer<>(FiringRecipe::new, 100));
         BLOCK_ENTITY = RegistryHandler.TileEntity(BLOCK_ID, KilnTileEntity::new, KILN);
-        SCREEN_HANDLER = RegistryHandler.screenHandler(BLOCK_ID, KilnScreenHandler::new);
+        SCREEN_HANDLER = RegistryHandler.container(BLOCK_ID, KilnScreenHandler::new);
     }
 
     @Override

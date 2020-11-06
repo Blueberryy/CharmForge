@@ -16,10 +16,10 @@ import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.CrateBlock;
-import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.client.CratesClient;
-import svenhjol.charm.gui.CrateScreen;
 import svenhjol.charm.container.CrateContainer;
+import svenhjol.charm.gui.CrateScreen;
+import svenhjol.charm.tileentity.CrateTileEntity;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class Crates extends CharmModule {
         INVALID_CRATE_BLOCKS.add(CrateBlock.class);
         INVALID_SHULKER_BOX_BLOCKS.add(CrateBlock.class);
 
-        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, CrateContainer::new);
+        SCREEN_HANDLER = RegistryHandler.container(ID, CrateContainer::new);
         BLOCK_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;

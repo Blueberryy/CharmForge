@@ -14,7 +14,7 @@ public class BookcaseContainer extends CharmContainer {
     }
 
     public BookcaseContainer(int syncId, PlayerInventory player, IInventory inventory) {
-        super(Bookcases.SCREEN_HANDLER, syncId, player, inventory);
+        super(Bookcases.CONTAINER, syncId, player, inventory);
         int index = 0;
 
         // container's inventory slots

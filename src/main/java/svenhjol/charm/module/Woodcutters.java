@@ -28,7 +28,7 @@ public class Woodcutters extends CharmModule {
         WOODCUTTER = new WoodcutterBlock(this);
         RECIPE_TYPE = RegistryHandler.recipeType(RECIPE_ID.toString());
         RECIPE_SERIALIZER = RegistryHandler.recipeSerializer(RECIPE_ID.toString(), new WoodcuttingRecipe.Serializer<>(WoodcuttingRecipe::new));
-        SCREEN_HANDLER = RegistryHandler.screenHandler(BLOCK_ID, WoodcutterContainer::new);
+        SCREEN_HANDLER = RegistryHandler.container(BLOCK_ID, WoodcutterContainer::new);
     }
 
     @Override

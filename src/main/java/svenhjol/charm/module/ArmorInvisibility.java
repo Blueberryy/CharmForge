@@ -2,10 +2,10 @@ package svenhjol.charm.module;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Effects;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -40,7 +40,7 @@ public class ArmorInvisibility extends CharmModule {
             return true; // air is invisible!
 
         if (isEnabled && entity instanceof LivingEntity) {
-            if (((LivingEntity)entity).getStatusEffect(StatusEffects.INVISIBILITY) != null)
+            if (((LivingEntity)entity).getActivePotionEffect(Effects.INVISIBILITY) != null)
                 return invisibleItems.contains(stack.getItem());
         }
 
