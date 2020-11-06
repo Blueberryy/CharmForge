@@ -1,23 +1,15 @@
 package svenhjol.charm.item;
 
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import svenhjol.charm.module.BatBuckets;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.base.helper.MobHelper;
@@ -27,30 +19,30 @@ public class BatBucketItem extends CharmItem {
     public static final String STORED_BAT = "stored_bat";
 
     public BatBucketItem(CharmModule module) {
-        super(module, "bat_bucket", new Item.Settings()
+        super(module, "bat_bucket", new Item.Properties()
             .group(ItemGroup.MISC)
-            .maxCount(1));
+            .maxStackSize(1));
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        if (context.getPlayer() == null || context.getWorld().isClient)
-            return ActionResult.FAIL;
+    public ActionResultType onItemUse(ItemUseContext context) {
+        if (context.getPlayer() == null || context.getWorld().isRemote)
+            return ActionResultType.FAIL;
 
         PlayerEntity player = context.getPlayer();
         World world = context.getWorld();
-        BlockPos pos = context.getBlockPos();
-        Direction facing = context.getSide();
+        BlockPos pos = context.getPos();
+        Direction facing = context.getFace();
         Hand hand = context.getHand();
         ItemStack held = player.getHeldItem(hand);
 
-        world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_BAT_TAKEOFF, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        world.playSound(null, player.getPosition(), SoundEvents.ENTITY_BAT_TAKEOFF, SoundCategory.NEUTRAL, 1.0F, 1.0F);
 
         if (!world.isRemote && !player.isCreative()) {
 
-            double x = pos.getX() + 0.5F + facing.getOffsetX();
-            double y = pos.getY() + 0.25F + (world.random.nextFloat() / 2.0F) + facing.getOffsetY();
-            double z = pos.getZ() + 0.5F + facing.getOffsetZ();
+            double x = pos.getX() + 0.5F + facing.getXOffset();
+            double y = pos.getY() + 0.25F + (world.rand.nextFloat() / 2.0F) + facing.getYOffset();
+            double z = pos.getZ() + 0.5F + facing.getZOffset();
             BlockPos spawnPos = new BlockPos(x, y, z);
 
             // spawn the bat
@@ -59,7 +51,7 @@ public class BatBucketItem extends CharmItem {
 
                 CompoundNBT data = ItemNBTHelper.getCompound(held, STORED_BAT);
                 if (!data.isEmpty())
-                    bat.readCustomDataFromTag(data);
+                    bat.readAdditional(data);
 
                 world.addEntity(bat);
 
@@ -68,20 +60,21 @@ public class BatBucketItem extends CharmItem {
                 bat.setHealth(health - 1.0F);
             }
         }
-        player.swingHand(hand);
+        player.swingArm(hand);
 
         // send message to client to start glowing
         if (!world.isRemote) {
-            PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-            data.writeDouble(BatBuckets.glowingRange);
-            data.writeInt(BatBuckets.glowingTime);
-
-            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, BatBuckets.MSG_CLIENT_SET_GLOWING, data);
+            // TODO: handle packet
+//            PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
+//            data.writeDouble(BatBuckets.glowingRange);
+//            data.writeInt(BatBuckets.glowingTime);
+//
+//            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, BatBuckets.MSG_CLIENT_SET_GLOWING, data);
         }
 
         if (!player.isCreative())
-            player.setStackInHand(hand, new ItemStack(Items.BUCKET));
+            player.setHeldItem(hand, new ItemStack(Items.BUCKET));
 
-        return ActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 }

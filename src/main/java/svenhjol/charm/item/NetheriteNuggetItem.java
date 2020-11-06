@@ -7,8 +7,8 @@ import svenhjol.charm.base.item.CharmItem;
 
 public class NetheriteNuggetItem extends CharmItem {
     public NetheriteNuggetItem(CharmModule module) {
-        super(module, "netherite_nugget", new Item.Settings()
+        super(module, "netherite_nugget", new Item.Properties()
             .group(ItemGroup.MATERIALS)
-            .fireproof());
+            .isImmuneToFire());
     }
 }

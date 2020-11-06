@@ -4,62 +4,58 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vector3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
-import svenhjol.charm.entity.EndermitePowderEntity;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DimensionHelper;
 import svenhjol.charm.base.item.CharmItem;
+import svenhjol.charm.entity.EndermitePowderEntity;
 
 public class EndermitePowderItem extends CharmItem {
     public EndermitePowderItem(CharmModule module) {
-        super(module, "endermite_powder", new Item.Settings().group(ItemGroup.MISC));
+        super(module, "endermite_powder", new Item.Properties().group(ItemGroup.MISC));
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn, Hand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
         ItemStack stack = playerIn.getHeldItem(handIn);
 
         if (!DimensionHelper.isDimension(worldIn, new ResourceLocation("the_end")))
-            return TypedActionResult.fail(stack);
+            return new ActionResult<>(ActionResultType.FAIL, stack);
 
         if (!playerIn.isCreative())
-            stack.decrement(1);
+            stack.shrink(1);
 
-        int x = playerIn.getBlockPos().getX();
-        int y = playerIn.getBlockPos().getY();
-        int z = playerIn.getBlockPos().getZ();
+        int x = playerIn.getPosition().getX();
+        int y = playerIn.getPosition().getY();
+        int z = playerIn.getPosition().getZ();
 
-        playerIn.getItemCooldownManager().set(this, 40);
+        playerIn.getCooldownTracker().setCooldown(this, 40);
 
         // client
-        if (worldIn.isClient) {
-            playerIn.swingHand(handIn);
+        if (worldIn.isRemote) {
+            playerIn.swingArm(handIn);
             worldIn.playSound(playerIn, x, y, z, SoundEvents.ENTITY_ENDER_EYE_LAUNCH, SoundCategory.PLAYERS, 1.0F, 1.0F);
         }
 
         // server
-        if (!worldIn.isClient) {
+        if (!worldIn.isRemote) {
             ServerWorld serverWorld = (ServerWorld)worldIn;
-            BlockPos pos = serverWorld.locateStructure(StructureFeature.END_CITY, playerIn.getBlockPos(), 1500, false);
+            BlockPos pos = serverWorld.func_241117_a_(Structure.field_236379_o_, playerIn.getPosition(), 1500, false);
             if (pos != null) {
                 EndermitePowderEntity entity = new EndermitePowderEntity(worldIn, pos.getX(), pos.getZ());
-                Vector3d look = playerIn.getRotationVector();
+                Vector3d look = playerIn.getLookVec();
 
-                entity.setPos(x + look.x * 2, y + 0.5, z + look.z * 2);
+                entity.setPosition(x + look.x * 2, y + 0.5, z + look.z * 2);
                 worldIn.addEntity(entity);
-                return TypedActionResult.pass(stack);
+                return new ActionResult<>(ActionResultType.PASS, stack);
             }
         }
 
-        return TypedActionResult.success(stack);
+        return new ActionResult<>(ActionResultType.SUCCESS, stack);
     }
 }

@@ -5,50 +5,46 @@ import net.minecraft.item.EnderPearlItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.collection.NonNullList;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
-import svenhjol.charm.entity.GlowBallEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.item.ICharmItem;
+import svenhjol.charm.entity.GlowBallEntity;
 
 public class GlowBallItem extends EnderPearlItem implements ICharmItem {
     protected CharmModule module;
 
     public GlowBallItem(CharmModule module) {
-        super(new Item.Settings().maxCount(16).group(ItemGroup.MISC));
+        super(new Item.Properties().maxStackSize(16).group(ItemGroup.MISC));
         this.module = module;
         this.register(module, "glow_ball");
     }
 
     @Override
-    public void appendStacks(ItemGroup group, NonNullList<ItemStack> stacks) {
+    public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> stacks) {
         if (enabled())
-            super.appendStacks(group, stacks);
+            super.fillItemGroup(group, stacks);
     }
 
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getHeldItem(hand);
-        world.playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (RANDOM.nextFloat() * 0.4F + 0.8F));
-        user.getItemCooldownManager().set(this, 10);
+        world.playSound(null, user.getPosX(), user.getPosY(), user.getPosZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
+        user.getCooldownTracker().setCooldown(this, 10);
 
         if (!world.isRemote) {
             GlowBallEntity entity = new GlowBallEntity(world, user);
             entity.setItem(itemStack);
-            entity.setProperties(user, user.pitch, user.yaw, 0.0F, 1.5F, 1.0F);
+            entity.func_234612_a_(user, user.rotationPitch, user.rotationYaw, 0.0F, 1.5F, 1.0F);
             world.addEntity(entity);
         }
 
-        user.incrementStat(Stats.USED.getOrCreateStat(this));
-        if (!user.abilities.creativeMode) {
-            itemStack.decrement(1);
+        user.addStat(Stats.ITEM_USED.get(this));
+        if (!user.abilities.isCreativeMode) {
+            itemStack.shrink(1);
         }
 
-        return TypedActionResult.success(itemStack, world.isRemote());
+        return ActionResult.func_233538_a_(itemStack, world.isRemote());
     }
 
     @Override
