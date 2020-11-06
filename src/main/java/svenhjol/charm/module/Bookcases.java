@@ -19,7 +19,7 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.TileEntity.BookcaseTileEntity;
 import svenhjol.charm.gui.BookcaseScreen;
-import svenhjol.charm.screenhandler.BookcaseContainer;
+import svenhjol.charm.container.BookcaseContainer;
 
 import java.util.*;
 

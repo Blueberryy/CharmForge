@@ -13,7 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
-import svenhjol.charm.screenhandler.WoodcutterContainer;
+import svenhjol.charm.container.WoodcutterContainer;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class WoodcutterScreen extends HandledScreen<WoodcutterContainer> {
 
    public WoodcutterScreen(WoodcutterContainer handler, PlayerInventory inventory, Text title) {
       super(handler, inventory, title);
-      handler.setContentsChangedListener(this::onInventoryChange);
+      handler.setInventoryUpdateListener(this::onInventoryChange);
       --this.titleY;
    }
 

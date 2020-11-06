@@ -17,7 +17,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.module.Bookcases;
-import svenhjol.charm.screenhandler.BookcaseContainer;
+import svenhjol.charm.container.BookcaseContainer;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;

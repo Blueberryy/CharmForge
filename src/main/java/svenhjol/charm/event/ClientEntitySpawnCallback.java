@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
+import net.minecraft.network.packet.s2c.play.SSpawnObjectPacket;
 
 public interface ClientEntitySpawnCallback {
     Event<ClientEntitySpawnCallback> EVENT = EventFactory.createArrayBacked(ClientEntitySpawnCallback.class, (listeners) -> (world, packet, x, y, z, entityType) -> {
@@ -14,9 +14,9 @@ public interface ClientEntitySpawnCallback {
         }
     });
 
-    void interact(ClientWorld world, EntitySpawnS2CPacket packet, double x, double y, double z, EntityType<?> entityType);
+    void interact(ClientWorld world, SSpawnObjectPacket packet, double x, double y, double z, EntityType<?> entityType);
 
-    static void addEntity(ClientWorld world, Entity entity, EntitySpawnS2CPacket packet, double x, double y, double z) {
+    static void addEntity(ClientWorld world, Entity entity, SSpawnObjectPacket packet, double x, double y, double z) {
         int i = packet.getId();
         entity.updateTrackedPosition(x, y, z);
         entity.refreshPositionAfterTeleport(x, y, z);

@@ -19,7 +19,7 @@ import svenhjol.charm.block.CrateBlock;
 import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.client.CratesClient;
 import svenhjol.charm.gui.CrateScreen;
-import svenhjol.charm.screenhandler.CrateContainer;
+import svenhjol.charm.container.CrateContainer;
 
 import java.util.*;
 

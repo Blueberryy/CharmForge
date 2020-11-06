@@ -1,5 +1,6 @@
 package svenhjol.charm.module;
 
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
@@ -10,14 +11,14 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.WoodcutterBlock;
 import svenhjol.charm.gui.WoodcutterScreen;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
-import svenhjol.charm.screenhandler.WoodcutterContainer;
+import svenhjol.charm.container.WoodcutterContainer;
 
 @Module(mod = Charm.MOD_ID, description = "A functional block that adds more efficient recipes for crafting wooden stairs and slabs.")
 public class Woodcutters extends CharmModule {
     public static ResourceLocation RECIPE_ID = new ResourceLocation("woodcutting");
     public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "woodcutter");
     public static WoodcutterBlock WOODCUTTER;
-    public static ScreenHandlerType<WoodcutterContainer> SCREEN_HANDLER;
+    public static ContainerType<WoodcutterContainer> SCREEN_HANDLER;
     public static IRecipeType<WoodcuttingRecipe> RECIPE_TYPE;
     public static RecipeSerializer<WoodcuttingRecipe> RECIPE_SERIALIZER;
 

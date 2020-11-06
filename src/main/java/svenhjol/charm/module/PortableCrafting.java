@@ -11,7 +11,7 @@ import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.PortableCraftingClient;
-import svenhjol.charm.screenhandler.PortableCraftingScreenHandler;
+import svenhjol.charm.container.PortableCraftingScreenHandler;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;

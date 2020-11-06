@@ -21,7 +21,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
-import svenhjol.charm.screenhandler.WoodcutterContainer;
+import svenhjol.charm.container.WoodcutterContainer;
 
 import javax.annotation.Nullable;
 

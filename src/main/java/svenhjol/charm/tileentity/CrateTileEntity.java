@@ -17,7 +17,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import svenhjol.charm.module.Crates;
-import svenhjol.charm.screenhandler.CrateContainer;
+import svenhjol.charm.container.CrateContainer;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;

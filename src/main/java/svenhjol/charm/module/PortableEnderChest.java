@@ -12,7 +12,7 @@ import net.minecraft.text.TranslationTextComponent;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.client.PortableEnderChestClient;
-import svenhjol.charm.screenhandler.PortableEnderChestScreenHandler;
+import svenhjol.charm.container.PortableEnderChestScreenHandler;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;

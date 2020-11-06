@@ -7,7 +7,7 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.module.Kilns;
-import svenhjol.charm.screenhandler.KilnScreenHandler;
+import svenhjol.charm.container.KilnScreenHandler;
 
 public class KilnTileEntity extends AbstractFurnaceTileEntity {
     public KilnTileEntity() {

@@ -14,7 +14,7 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.KilnBlock;
 import svenhjol.charm.gui.KilnScreen;
 import svenhjol.charm.recipe.FiringRecipe;
-import svenhjol.charm.screenhandler.KilnScreenHandler;
+import svenhjol.charm.container.KilnScreenHandler;
 import svenhjol.charm.tileentity.KilnTileEntity;
 
 @Module(mod = Charm.MOD_ID, description = "A functional block that speeds up cooking of clay, bricks and terracotta.")

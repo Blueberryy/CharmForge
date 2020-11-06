@@ -17,6 +17,7 @@ import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -43,7 +44,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
         UseBlockCallback.EVENT.register(this::tryPlaceDust);
     }
 
-    public static boolean tryPlaceDust(World world, HitResult hitResult) {
+    public static boolean tryPlaceDust(World world, RayTraceResult hitResult) {
         if (hitResult.getType() != HitResult.Type.BLOCK)
             return false;
 
