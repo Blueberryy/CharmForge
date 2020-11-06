@@ -2,6 +2,7 @@ package svenhjol.charm.base.helper;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
@@ -46,7 +47,7 @@ public class BiomeHelper {
     }
 
     public static BlockPos locateBiome(RegistryKey<Biome> biomeKey, ServerWorld world, BlockPos pos) {
-        Biome biome = world.getRegistryManager().get(Registry.BIOME_KEY).get(biomeKey);
+        Biome biome = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getValueForKey(biomeKey);
         return locateBiome(biome, world, pos);
     }
 
@@ -60,13 +61,13 @@ public class BiomeHelper {
         ((BiomeGenerationSettingsAccessor)settings).getStructures().add(() -> structureFeature);
     }
 
-    public static void addSpawnEntry(Biome biome, SpawnGroup group, EntityType<?> entity, int weight, int minGroupSize, int maxGroupSize) {
+    public static void addSpawnEntry(Biome biome, EntityClassification group, EntityType<?> entity, int weight, int minGroupSize, int maxGroupSize) {
         MobSpawnInfo settings = biome.getMobSpawnInfo();
         checkSpawnSettingsMutable(settings);
 
-        // TODO: revise all this
-        Map<SpawnGroup, List<SpawnEntry>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
-        spawners.get(group).add(new SpawnEntry(entity, weight, minGroupSize, maxGroupSize));
+        // TODO: forge API for this?
+        Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
+        spawners.get(group).add(new MobSpawnInfo.Spawners(entity, weight, minGroupSize, maxGroupSize));
         ((MobSpawnInfoAccessor)settings).setSpawners(spawners);
     }
 
@@ -83,12 +84,12 @@ public class BiomeHelper {
      * Evil hack until there's a better way to add mobs to biomes
      */
     private static void checkSpawnSettingsMutable(MobSpawnInfo settings) {
-        Map<SpawnGroup, List<SpawnEntry>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
-        Map<EntityType<?>, SpawnSettings.SpawnDensity> spawnCosts = ((MobSpawnInfoAccessor) settings).getSpawnCosts();
+        Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
+        Map<EntityType<?>, MobSpawnInfo.SpawnCosts> spawnCosts = ((MobSpawnInfoAccessor) settings).getSpawnCosts();
 
         if (spawners instanceof ImmutableMap) {
             // have to make each list mutable as well. BIOME API OMFG.
-            HashMap<SpawnGroup, List<SpawnEntry>> mutable = new HashMap<>(spawners);
+            HashMap<EntityClassification, List<MobSpawnInfo.Spawners>> mutable = new HashMap<>(spawners);
 
             spawners.forEach((spawnGroup, spawnEntries) ->
                 mutable.put(spawnGroup, new ArrayList<>(spawnEntries)));
