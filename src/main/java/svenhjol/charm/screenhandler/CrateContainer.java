@@ -1,19 +1,20 @@
 package svenhjol.charm.screenhandler;
 
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.screen.slot.Slot;
-import svenhjol.charm.base.screenhandler.CharmScreenHandler;
-import svenhjol.charm.TileEntity.CrateTileEntity;
+import net.minecraft.inventory.container.Slot;
+import svenhjol.charm.base.screenhandler.CharmContainer;
 import svenhjol.charm.module.Crates;
+import svenhjol.charm.tileentity.CrateTileEntity;
 
-public class CrateScreenHandler extends CharmScreenHandler {
-    public CrateScreenHandler(int syncId, PlayerInventory player) {
-        this(syncId, player, new SimpleInventory(CrateTileEntity.SIZE));
+public class CrateContainer extends CharmContainer {
+
+    public CrateContainer(int syncId, PlayerInventory player) {
+        this(syncId, player, new Inventory(CrateTileEntity.SIZE));
     }
 
-    public CrateScreenHandler(int syncId, PlayerInventory player, Inventory inventory) {
+    public CrateContainer(int syncId, PlayerInventory player, IInventory inventory) {
         super(Crates.SCREEN_HANDLER, syncId, player, inventory);
 
         int index = 0;
