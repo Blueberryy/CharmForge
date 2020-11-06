@@ -1,17 +1,19 @@
 package svenhjol.charm.screenhandler;
 
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
-import svenhjol.charm.base.screenhandler.CharmScreenHandler;
-import svenhjol.charm.TileEntity.BookcaseTileEntity;
+import net.minecraft.inventory.container.Slot;
+import svenhjol.charm.base.screenhandler.CharmContainer;
 import svenhjol.charm.module.Bookcases;
+import svenhjol.charm.tileentity.BookcaseTileEntity;
 
-public class BookcaseScreenHandler extends CharmScreenHandler {
-    public BookcaseScreenHandler(int syncId, PlayerInventory player) {
-        this(syncId, player, new SimpleInventory(BookcaseTileEntity.SIZE));
+public class BookcaseContainer extends CharmContainer {
+    public BookcaseContainer(int syncId, PlayerInventory player) {
+        this(syncId, player, new Inventory(BookcaseTileEntity.SIZE));
     }
 
-    public BookcaseScreenHandler(int syncId, PlayerInventory player, Inventory inventory) {
+    public BookcaseContainer(int syncId, PlayerInventory player, IInventory inventory) {
         super(Bookcases.SCREEN_HANDLER, syncId, player, inventory);
         int index = 0;
 

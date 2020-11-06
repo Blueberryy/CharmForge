@@ -1,17 +1,23 @@
-package svenhjol.charm.TileEntity;
+package svenhjol.charm.tileentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.module.Bookcases;
-import svenhjol.charm.screenhandler.BookcaseScreenHandler;
+import svenhjol.charm.screenhandler.BookcaseContainer;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
@@ -19,89 +25,89 @@ import java.util.stream.IntStream;
 public class BookcaseTileEntity extends LockableLootTileEntity implements ISidedInventory {
     public static int SIZE = 18;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
-    private NonNullList<ItemStack> items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
     public BookcaseTileEntity() {
         super(Bookcases.BLOCK_ENTITY);
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundNBT tag) {
-        super.fromTag(state, tag);
-        this.items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
-        if (!this.deserializeLootTable(tag))
-            Inventories.fromTag(tag, this.items);
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
+        this.items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        if (!this.checkLootAndRead(tag))
+            ItemStackHelper.loadAllItems(tag, this.items);
     }
 
     @Override
-    public CompoundNBT toTag(CompoundNBT tag) {
-        super.toTag(tag);
-        if (!this.serializeLootTable(tag))
-            Inventories.toTag(tag, this.items);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
+        if (!this.checkLootAndWrite(tag))
+            ItemStackHelper.saveAllItems(tag, this.items);
 
         return tag;
     }
 
     @Override
-    protected NonNullList<ItemStack> getInvStackList() {
+    protected NonNullList<ItemStack> getItems() {
         return this.items;
     }
 
     @Override
-    protected void setInvStackList(NonNullList<ItemStack> list) {
+    protected void setItems(NonNullList<ItemStack> list) {
         this.items = list;
     }
 
     @Nullable
     @Override
-    public Text getCustomName() {
+    public ITextComponent getCustomName() {
         return new TranslationTextComponent("container.charm.bookcase");
     }
 
     @Override
-    protected Text getContainerName() {
+    protected ITextComponent getDefaultName() {
         return new TranslationTextComponent("container.charm.bookcase");
     }
 
     @Override
-    protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return new BookcaseScreenHandler(syncId, playerInventory, this);
+    protected Container createMenu(int syncId, PlayerInventory playerInventory) {
+        return new BookcaseContainer(syncId, playerInventory, this);
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
-        super.setStack(slot, stack);
+    public void setInventorySlotContents(int slot, ItemStack stack) {
+        super.setInventorySlotContents(slot, stack);
         updateBlockState();
     }
 
     @Override
-    public int[] getAvailableSlots(Direction side) {
+    public int[] getSlotsForFace(Direction side) {
         return SLOTS;
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+    public boolean canInsertItem(int slot, ItemStack stack, @Nullable Direction dir) {
         return Bookcases.canContainItem(stack);
     }
 
     @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+    public boolean canExtractItem(int slot, ItemStack stack, Direction dir) {
         return true;
     }
 
     @Override
-    public int size() {
+    public int getSizeInventory() {
         return SIZE;
     }
 
     @Override
-    public void onOpen(PlayerEntity player) {
-        player.world.playSound(null, pos, CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f, player.world.random.nextFloat() * 0.1F + 0.9F);
+    public void openInventory(PlayerEntity player) {
+        player.world.playSound(null, pos, CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     @Override
-    public void onClose(PlayerEntity player) {
-        player.world.playSound(null, pos, CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f, player.world.random.nextFloat() * 0.1F + 0.9F);
+    public void closeInventory(PlayerEntity player) {
+        player.world.playSound(null, pos, CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     @Override
@@ -126,8 +132,8 @@ public class BookcaseTileEntity extends LockableLootTileEntity implements ISided
             if (world == null)
                 continue;
 
-            ItemStack stack = getStack(i);
-            if (stack == null || !stack.isEmpty())
+            ItemStack stack = getStackInSlot(i);
+            if (!stack.isEmpty())
                 filled++;
         }
 
