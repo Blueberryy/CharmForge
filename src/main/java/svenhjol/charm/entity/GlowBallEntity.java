@@ -1,22 +1,22 @@
 package svenhjol.charm.entity;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
+import net.minecraft.entity.projectile.ProjectileItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.base.helper.PlayerHelper;
 import svenhjol.charm.module.GlowBalls;
 import svenhjol.charm.module.PlaceableGlowstoneDust;
 
-public class GlowBallEntity extends ThrownItemEntity {
+public class GlowBallEntity extends ProjectileItemEntity {
     public GlowBallEntity(EntityType<? extends GlowBallEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -36,8 +36,8 @@ public class GlowBallEntity extends ThrownItemEntity {
     }
 
     @Override
-    protected void onCollision(HitResult hitResult) {
-        super.onCollision(hitResult);
+    protected void onImpact(RayTraceResult hitResult) {
+        super.onImpact(hitResult);
         this.remove();
 
         if (!world.isRemote) {
@@ -47,11 +47,11 @@ public class GlowBallEntity extends ThrownItemEntity {
                 return;
 
             // cannot place, return the glow ball
-            if (this.getOwner() instanceof PlayerEntity) {
-                PlayerEntity player = (PlayerEntity)this.getOwner();
+            if (this.getEntity() instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity)this.getEntity();
 
                 if (!player.isCreative()) {
-                    world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.PLAYERS, 0.7F, 1.0F);
+                    world.playSound(null, player.getPosition(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.PLAYERS, 0.7F, 1.0F);
                     PlayerHelper.addOrDropStack(player, new ItemStack(GlowBalls.GLOW_BALL));
                 }
             }
