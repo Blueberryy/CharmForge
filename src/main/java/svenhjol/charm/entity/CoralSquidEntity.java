@@ -1,39 +1,34 @@
 package svenhjol.charm.entity;
 
 import com.google.common.collect.Maps;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.*;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.WaterCreatureEntity;
+import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.potion.Effects;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerIWorld;
-import net.minecraft.world.World;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.IServerWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.Charm;
 import svenhjol.charm.module.CoralSquids;
 
@@ -42,12 +37,12 @@ import java.util.Map;
 
 /**
  * Most of this is copypasta from SquidEntity.
- * canSpanw() checks for coral.
+ * canSpawn() checks for coral.
  */
-public class CoralSquidEntity extends WaterCreatureEntity {
+public class CoralSquidEntity extends WaterMobEntity {
     public static final String CORAL_SQUID_TYPE_TAG = "CoralSquidType";
 
-    private static final TrackedData<Integer> CORAL_SQUID_TYPE;
+    private static final DataParameter<Integer> CORAL_SQUID_TYPE;
     public static final Map<Integer, ResourceLocation> TEXTURES;
     public static final Map<Integer, Item> DROPS;
 
@@ -55,7 +50,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     public float prevTiltAngle;
     public float rollAngle;
     public float prevRollAngle;
-    public float thrustTimer;
+    public float squidRotation;
     public float prevThrustTimer;
     public float tentacleAngle;
     public float prevTentacleAngle;
@@ -68,39 +63,39 @@ public class CoralSquidEntity extends WaterCreatureEntity {
 
     public CoralSquidEntity(EntityType<? extends CoralSquidEntity> entityType, World world) {
         super(entityType, world);
-        this.random.setSeed(this.getEntityId());
-        this.thrustTimerSpeed = 1.0F / (this.random.nextFloat() + 1.0F) * 0.28F;
+        this.rand.setSeed(this.getEntityId());
+        this.thrustTimerSpeed = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.28F;
     }
 
     @Nullable
     @Override
-    public EntityData initialize(ServerIWorld world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable CompoundNBT entityTag) {
-        entityData = super.initialize(world, difficulty, spawnReason, entityData, entityTag);
-        setCoralSquidType(random.nextInt(5));
+    public ILivingEntityData onInitialSpawn(IServerWorld world, DifficultyInstance difficulty, SpawnReason spawnReason, @Nullable ILivingEntityData entityData, @Nullable CompoundNBT entityTag) {
+        entityData = super.onInitialSpawn(world, difficulty, spawnReason, entityData, entityTag);
+        setCoralSquidType(rand.nextInt(5));
         return entityData;
     }
 
     @Override
-    public boolean canSpawn(IWorldReader world) {
+    public boolean isNotColliding(IWorldReader world) {
         // don't spawn on surface of water
-        if (!world.getBlockState(this.getBlockPos().up()).isOf(Blocks.WATER))
+        if (!world.getBlockState(this.getPosition().up()).isIn(Blocks.WATER))
             return false;
 
-        Box box = this.getBoundingBox().expand(5, 30, 5);
+        AxisAlignedBB box = this.getBoundingBox().grow(5, 30, 5);
 
         BlockPos pos1 = new BlockPos(box.minX, box.minY, box.minZ);
         BlockPos pos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
 
-        return BlockPos.stream(pos1, pos2).anyMatch(p -> {
+        return BlockPos.getAllInBox(pos1, pos2).anyMatch(p -> {
             BlockState state = world.getBlockState(p);
             return state.getBlock() instanceof CoralBlock
-                || state.getBlock() instanceof CoralBlockBlock
+                || state.getBlock() instanceof CoralPlantBlock
                 || state.getBlock() instanceof CoralFanBlock;
         });
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnedInChunk() {
         return 8; // might be important for performance
     }
 
@@ -109,53 +104,53 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     }
 
     public int getCoralSquidType() {
-        return this.dataTracker.get(CORAL_SQUID_TYPE);
+        return this.dataManager.get(CORAL_SQUID_TYPE);
     }
 
     public void setCoralSquidType(int type) {
         if (type < 0 || type > 4)
-            type = this.random.nextInt(5);
+            type = this.rand.nextInt(5);
 
-        this.dataTracker.set(CORAL_SQUID_TYPE, type);
+        this.dataManager.set(CORAL_SQUID_TYPE, type);
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        this.dataTracker.startTracking(CORAL_SQUID_TYPE, 1);
+    protected void registerData() {
+        super.registerData();
+        this.dataManager.register(CORAL_SQUID_TYPE, 1);
     }
 
     @Override
-    public void writeCustomDataToTag(CompoundNBT tag) {
-        super.writeCustomDataToTag(tag);
+    public void writeAdditional(CompoundNBT tag) {
+        super.writeAdditional(tag);
         tag.putInt(CORAL_SQUID_TYPE_TAG, this.getCoralSquidType());
     }
 
     @Override
-    public void readCustomDataFromTag(CompoundNBT tag) {
-        super.readCustomDataFromTag(tag);
+    public void readAdditional(CompoundNBT tag) {
+        super.readAdditional(tag);
         this.setCoralSquidType(tag.getInt(CORAL_SQUID_TYPE_TAG));
     }
 
     protected void initGoals() {
-        this.goalSelector.add(0, new SwimGoal(this));
-        this.goalSelector.add(1, new CoralSquidEntity.EscapeAttackerGoal());
+        this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(1, new FleeGoal());
     }
 
     @Override
-    protected void dropEquipment(DamageSource source, int lootingMultiplier, boolean allowDrops) {
-        super.dropEquipment(source, lootingMultiplier, allowDrops);
-        Entity attacker = source.getAttacker();
+    protected void dropSpecialItems(DamageSource source, int lootingMultiplier, boolean allowDrops) {
+        super.dropSpecialItems(source, lootingMultiplier, allowDrops);
+        Entity attacker = source.getTrueSource();
 
-        if (attacker instanceof PlayerEntity && random.nextFloat() < CoralSquids.dropChance)
-            this.dropItem(DROPS.get(getCoralSquidType()));
+        if (attacker instanceof PlayerEntity && rand.nextFloat() < CoralSquids.dropChance)
+            this.entityDropItem(DROPS.get(getCoralSquidType()));
     }
 
-    public static DefaultAttributeContainer.Builder createSquidAttributes() {
-        return MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, 5.0D);
+    public static AttributeModifierMap.MutableAttribute createSquidAttributes() {
+        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 5.0D);
     }
 
-    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+    protected float getStandingEyeHeight(Pose pose, EntitySize dimensions) {
         return dimensions.height * 0.5F;
     }
 
@@ -188,29 +183,29 @@ public class CoralSquidEntity extends WaterCreatureEntity {
         return false;
     }
 
-    public void tickMovement() {
-        super.tickMovement();
+    public void livingTick() {
+        super.livingTick();
         this.prevTiltAngle = this.tiltAngle;
         this.prevRollAngle = this.rollAngle;
-        this.prevThrustTimer = this.thrustTimer;
+        this.prevThrustTimer = this.squidRotation;
         this.prevTentacleAngle = this.tentacleAngle;
-        this.thrustTimer += this.thrustTimerSpeed;
-        if ((double)this.thrustTimer > 6.283185307179586D) {
+        this.squidRotation += this.thrustTimerSpeed;
+        if ((double)this.squidRotation > 6.283185307179586D) {
             if (this.world.isRemote) {
-                this.thrustTimer = 6.2831855F;
+                this.squidRotation = 6.2831855F;
             } else {
-                this.thrustTimer = (float)((double)this.thrustTimer - 6.283185307179586D);
-                if (this.random.nextInt(7) == 0) {
-                    this.thrustTimerSpeed = 1.0F / (this.random.nextFloat() + 1.0F) * 0.2F;
+                this.squidRotation = (float)((double)this.squidRotation - 6.283185307179586D);
+                if (this.rand.nextInt(7) == 0) {
+                    this.thrustTimerSpeed = 1.0F / (this.rand.nextFloat() + 1.0F) * 0.2F;
                 }
 
-                this.world.sendEntityStatus(this, (byte)19);
+                this.world.setEntityState(this, (byte)19);
             }
         }
 
-        if (this.isInsideWaterOrBubbleColumn()) {
-            if (this.thrustTimer < 3.1415927F) {
-                float f = this.thrustTimer / 3.1415927F;
+        if (this.isInWaterOrBubbleColumn()) {
+            if (this.squidRotation < 3.1415927F) {
+                float f = this.squidRotation / 3.1415927F;
                 this.tentacleAngle = MathHelper.sin(f * f * 3.1415927F) * 3.1415927F * 0.25F;
                 if ((double)f > 0.75D) {
                     this.swimVelocityScale = 1.0F;
@@ -228,18 +223,18 @@ public class CoralSquidEntity extends WaterCreatureEntity {
                 this.setVelocity((double)(this.swimX * this.swimVelocityScale), (double)(this.swimY * this.swimVelocityScale), (double)(this.swimZ * this.swimVelocityScale));
             }
 
-            Vec3d vec3d = this.getVelocity();
-            float g = MathHelper.sqrt(squaredHorizontalLength(vec3d));
-            this.bodyYaw += (-((float)MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F - this.bodyYaw) * 0.1F;
-            this.yaw = this.bodyYaw;
+            Vector3d vec3d = this.getMotion();
+            float g = MathHelper.sqrt(horizontalMag(vec3d));
+            this.renderYawOffset += (-((float)MathHelper.atan2(vec3d.x, vec3d.z)) * 57.295776F - this.renderYawOffset) * 0.1F;
+            this.rotationYaw = this.renderYawOffset;
             this.rollAngle = (float)((double)this.rollAngle + 3.141592653589793D * (double)this.turningSpeed * 1.5D);
             this.tiltAngle += (-((float)MathHelper.atan2((double)g, vec3d.y)) * 57.295776F - this.tiltAngle) * 0.1F;
         } else {
-            this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.thrustTimer)) * 3.1415927F * 0.25F;
+            this.tentacleAngle = MathHelper.abs(MathHelper.sin(this.squidRotation)) * 3.1415927F * 0.25F;
             if (!this.world.isRemote) {
-                double d = this.getVelocity().y;
-                if (this.hasStatusEffect(StatusEffects.LEVITATION)) {
-                    d = 0.05D * (double)(this.getStatusEffect(StatusEffects.LEVITATION).getAmplifier() + 1);
+                double d = this.getMotion().y;
+                if (this.isPotionActive(Effects.LEVITATION)) {
+                    d = 0.05D * (double)(this.getActivePotionEffect(Effects.LEVITATION).getAmplifier() + 1);
                 } else if (!this.hasNoGravity()) {
                     d -= 0.08D;
                 }
@@ -252,16 +247,16 @@ public class CoralSquidEntity extends WaterCreatureEntity {
 
     }
 
-    public void travel(Vec3d movementInput) {
-        this.move(MovementType.SELF, this.getVelocity());
+    public void travel(Vector3d movementInput) {
+        this.move(MoverType.SELF, this.getMotion());
     }
 
     @OnlyIn(Dist.CLIENT)
     public void handleStatus(byte status) {
         if (status == 19) {
-            this.thrustTimer = 0.0F;
+            this.squidRotation = 0.0F;
         } else {
-            super.handleStatus(status);
+            super.handleStatusUpdate(status);
         }
     }
 
@@ -278,33 +273,33 @@ public class CoralSquidEntity extends WaterCreatureEntity {
         return this.swimX != 0.0F || this.swimY != 0.0F || this.swimZ != 0.0F;
     }
 
-    class EscapeAttackerGoal extends Goal {
+    class FleeGoal extends Goal {
         private int timer;
 
-        private EscapeAttackerGoal() {
+        private FleeGoal() {
         }
 
-        public boolean canStart() {
-            LivingEntity livingEntity = CoralSquidEntity.this.getAttacker();
-            if (CoralSquidEntity.this.isTouchingWater() && livingEntity != null) {
-                return CoralSquidEntity.this.squaredDistanceTo(livingEntity) < 100.0D;
+        public boolean shouldExecute() {
+            LivingEntity livingEntity = CoralSquidEntity.this.getRevengeTarget();
+            if (CoralSquidEntity.this.isInWater() && livingEntity != null) {
+                return CoralSquidEntity.this.getDistanceSq(livingEntity) < 100.0D;
             } else {
                 return false;
             }
         }
 
-        public void start() {
+        public void startExecuting() {
             this.timer = 0;
         }
 
         public void tick() {
             ++this.timer;
-            LivingEntity livingEntity = CoralSquidEntity.this.getAttacker();
+            LivingEntity livingEntity = CoralSquidEntity.this.getRevengeTarget();
             if (livingEntity != null) {
-                Vec3d vec3d = new Vec3d(CoralSquidEntity.this.getX() - livingEntity.getX(), CoralSquidEntity.this.getY() - livingEntity.getY(), CoralSquidEntity.this.getZ() - livingEntity.getZ());
-                BlockState blockState = CoralSquidEntity.this.world.getBlockState(new BlockPos(CoralSquidEntity.this.getX() + vec3d.x, CoralSquidEntity.this.getY() + vec3d.y, CoralSquidEntity.this.getZ() + vec3d.z));
-                FluidState fluidState = CoralSquidEntity.this.world.getFluidState(new BlockPos(CoralSquidEntity.this.getX() + vec3d.x, CoralSquidEntity.this.getY() + vec3d.y, CoralSquidEntity.this.getZ() + vec3d.z));
-                if (fluidState.isIn(FluidTags.WATER) || blockState.isAir()) {
+                Vector3d vec3d = new Vector3d(CoralSquidEntity.this.getPosX() - livingEntity.getPosX(), CoralSquidEntity.this.getPosY() - livingEntity.getPosY(), CoralSquidEntity.this.getPosZ() - livingEntity.getPosZ());
+                BlockState blockState = CoralSquidEntity.this.world.getBlockState(new BlockPos(CoralSquidEntity.this.getPosX() + vec3d.x, CoralSquidEntity.this.getPosY() + vec3d.y, CoralSquidEntity.this.getPosZ() + vec3d.z));
+                FluidState fluidState = CoralSquidEntity.this.world.getFluidState(new BlockPos(CoralSquidEntity.this.getPosX() + vec3d.x, CoralSquidEntity.this.getPosY() + vec3d.y, CoralSquidEntity.this.getPosZ() + vec3d.z));
+                if (fluidState.isTagged(FluidTags.WATER) || blockState.isAir()) {
                     double d = vec3d.length();
                     if (d > 0.0D) {
                         vec3d.normalize();
@@ -314,7 +309,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
                         }
 
                         if (f > 0.0F) {
-                            vec3d = vec3d.multiply(f);
+                            vec3d = vec3d.scale(f);
                         }
                     }
 
@@ -326,7 +321,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
                 }
 
                 if (this.timer % 10 == 5) {
-                    CoralSquidEntity.this.world.addParticle(ParticleTypes.BUBBLE, CoralSquidEntity.this.getX(), CoralSquidEntity.this.getY(), CoralSquidEntity.this.getZ(), 0.0D, 0.0D, 0.0D);
+                    CoralSquidEntity.this.world.addParticle(ParticleTypes.BUBBLE, CoralSquidEntity.this.getPosX(), CoralSquidEntity.this.getPosY(), CoralSquidEntity.this.getPosZ(), 0.0D, 0.0D, 0.0D);
                 }
 
             }
@@ -340,18 +335,18 @@ public class CoralSquidEntity extends WaterCreatureEntity {
             this.squid = squid;
         }
 
-        public boolean canStart() {
+        public boolean shouldExecute() {
             return true;
         }
 
         public void tick() {
-            int i = this.squid.getDespawnCounter();
+            int i = this.squid.getIdleTime();
             if (i > 100) {
                 this.squid.setSwimmingVector(0.0F, 0.0F, 0.0F);
-            } else if (this.squid.getRandom().nextInt(50) == 0 || !this.squid.touchingWater || !this.squid.hasSwimmingVector()) {
-                float f = this.squid.getRandom().nextFloat() * 6.2831855F;
+            } else if (this.squid.getRNG().nextInt(50) == 0 || !this.squid.inWater || !this.squid.hasSwimmingVector()) {
+                float f = this.squid.getRNG().nextFloat() * 6.2831855F;
                 float g = MathHelper.cos(f) * 0.2F;
-                float h = -0.1F + this.squid.getRandom().nextFloat() * 0.2F;
+                float h = -0.1F + this.squid.getRNG().nextFloat() * 0.2F;
                 float j = MathHelper.sin(f) * 0.2F;
                 this.squid.setSwimmingVector(g, h, j);
             }
@@ -359,7 +354,7 @@ public class CoralSquidEntity extends WaterCreatureEntity {
     }
 
     static {
-        CORAL_SQUID_TYPE = DataTracker.registerData(CoralSquidEntity.class, TrackedDataHandlerRegistry.INTEGER);
+        CORAL_SQUID_TYPE = EntityDataManager.createKey(CoralSquidEntity.class, DataSerializers.VARINT);
         TEXTURES = Util.make(Maps.newHashMap(), map -> {
             map.put(0, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/tube.png"));
             map.put(1, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/brain.png"));
