@@ -1,72 +1,80 @@
-package svenhjol.charm.TileEntity;
+package svenhjol.charm.tileentity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import svenhjol.charm.module.Crates;
-import svenhjol.charm.screenhandler.CrateScreenHandler;
+import svenhjol.charm.screenhandler.CrateContainer;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class CrateTileEntity extends LockableLootTileEntity implements ISidedInventory {
+public class CrateTileEntity extends LockableLootTileEntity implements ICapabilityProvider, ISidedInventory {
     public static int SIZE = 9;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
-    private NonNullList<ItemStack> items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
+    private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
     public CrateTileEntity() {
         super(Crates.BLOCK_ENTITY);
     }
 
     @Override
-    public void fromTag(BlockState state, CompoundNBT tag) {
-        super.fromTag(state, tag);
-        this.items = NonNullList.ofSize(SIZE, ItemStack.EMPTY);
-        if (!this.deserializeLootTable(tag))
-            Inventories.fromTag(tag, this.items);
+    public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
+        this.items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
+        if (!this.checkLootAndRead(tag))
+            ItemStackHelper.loadAllItems(tag, this.items);
     }
 
     @Override
-    public CompoundNBT toTag(CompoundNBT tag) {
-        super.toTag(tag);
-        if (!this.serializeLootTable(tag))
-            Inventories.toTag(tag, this.items, false);
+    public CompoundNBT write(CompoundNBT tag) {
+        super.write(tag);
+        if (!this.checkLootAndWrite(tag))
+            ItemStackHelper.saveAllItems(tag, this.items, false);
 
         return tag;
     }
 
     @Override
-    public NonNullList<ItemStack> getInvStackList() {
+    public NonNullList<ItemStack> getItems() {
         return this.items;
     }
 
     @Override
-    protected void setInvStackList(NonNullList<ItemStack> list) {
+    protected void setItems(NonNullList<ItemStack> list) {
         this.items = list;
     }
 
     @Override
-    public int[] getAvailableSlots(Direction side) {
+    public int[] getSlotsForFace(Direction side) {
         return SLOTS;
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+    public boolean canInsertItem(int slot, ItemStack stack, @Nullable Direction dir) {
         return Crates.canCrateInsertItem(stack);
     }
 
     @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+    public boolean canExtractItem(int slot, ItemStack stack, Direction dir) {
         return true;
     }
 
     @Override
-    public int size() {
+    public int getSizeInventory() {
         return SIZE;
     }
 
@@ -81,27 +89,27 @@ public class CrateTileEntity extends LockableLootTileEntity implements ISidedInv
 
     @Nullable
     @Override
-    public Text getCustomName() {
+    public ITextComponent getCustomName() {
         return new TranslationTextComponent("container.charm.crate");
     }
 
     @Override
-    protected Text getContainerName() {
+    protected ITextComponent getDefaultName() {
         return new TranslationTextComponent("container.charm.crate");
     }
 
     @Override
-    protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return new CrateScreenHandler(syncId, playerInventory, this);
+    protected Container createMenu(int syncId, PlayerInventory playerInventory) {
+        return new CrateContainer(syncId, playerInventory, this);
     }
 
     @Override
-    public void onOpen(PlayerEntity player) {
-        player.world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.BLOCKS, 0.5F, player.world.random.nextFloat() * 0.1F + 0.9F);
+    public void openInventory(PlayerEntity player) {
+        player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_BARREL_OPEN, SoundCategory.BLOCKS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     @Override
-    public void onClose(PlayerEntity player) {
-        player.world.playSound(null, player.getBlockPos(), SoundEvents.BLOCK_BARREL_CLOSE, SoundCategory.BLOCKS, 0.5F, player.world.random.nextFloat() * 0.1F + 0.9F);
+    public void closeInventory(PlayerEntity player) {
+        player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_BARREL_CLOSE, SoundCategory.BLOCKS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 }
