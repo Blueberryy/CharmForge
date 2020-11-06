@@ -31,7 +31,7 @@ public class InventoryTidyingHandler {
 
     public static void populate(Inventory inventory, List<ItemStack> stacks, int startSlot, int endSlot) {
         for (int i = startSlot; i < endSlot; i++) {
-            ItemStack stackInSlot = inventory.getStack(i);
+            ItemStack stackInSlot = inventory.getStackInSlot(i);
 
             if (!stackInSlot.isEmpty())
                 stacks.add(stackInSlot.copy());
@@ -56,16 +56,16 @@ public class InventoryTidyingHandler {
                 if (stack1.isEmpty())
                     continue;
 
-                if (stack1.getCount() < stack1.getMaxCount()
+                if (stack1.getCount() < stack1.getMaxStackSize()
                     && ItemStack.areItemsEqual(stack, stack1)
-                    && ItemStack.areTagsEqual(stack, stack1)
+                    && ItemStack.areItemStackTagsEqual(stack, stack1)
                 ) {
                     int setSize = stack1.getCount() + stack.getCount();
-                    int carryover = Math.max(0, setSize - stack1.getMaxCount());
+                    int carryover = Math.max(0, setSize - stack1.getMaxStackSize());
                     stack1.setCount(carryover);
                     stack.setCount(setSize - carryover);
 
-                    if (stack.getCount() == stack.getMaxCount())
+                    if (stack.getCount() == stack.getMaxStackSize())
                         break;
                 }
             }
@@ -84,11 +84,11 @@ public class InventoryTidyingHandler {
         for (int i = startSlot; i < endSlot; i++) {
             int j = i - startSlot;
             ItemStack stack = j >= stacks.size() ? ItemStack.EMPTY : stacks.get(j);
-            inventory.removeStack(i, inventory.getMaxCountPerStack());
+            inventory.decrStackSize(i, inventory.getInventoryStackLimit());
             if (!stack.isEmpty()) {
                 // this ended up being different from Forge's IItemHandler implementation.
                 // TODO May cause breakage... testme
-                inventory.setStack(i, stack);
+                inventory.setInventorySlotContents(i, stack);
             }
         }
 
@@ -122,13 +122,13 @@ public class InventoryTidyingHandler {
     }
 
     private static Comparator<ItemStack> blockCompare() {
-        return compare(Comparator.comparing(s -> Item.getRawId(s.getItem())),
+        return compare(Comparator.comparing(s -> Item.getIdFromItem(s.getItem())),
             (ItemStack s1, ItemStack s2) -> s2.getCount() - s1.getCount(),
             (ItemStack s1, ItemStack s2) -> s2.hashCode() - s1.hashCode());
     }
 
     private static Comparator<ItemStack> anyCompare() {
-        return compare(Comparator.comparing(s -> Item.getRawId(s.getItem())),
+        return compare(Comparator.comparing(s -> Item.getIdFromItem(s.getItem())),
             (ItemStack s1, ItemStack s2) -> s2.getCount() - s1.getCount(),
             (ItemStack s1, ItemStack s2) -> s2.hashCode() - s1.hashCode());
     }
