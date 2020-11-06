@@ -23,6 +23,8 @@ public interface ICharmBlock {
         return ItemGroup.BUILDING_BLOCKS;
     }
 
+    default int getBurnTime() { return 0; }
+
     default int getMaxStackSize() {
         return 64;
     }
@@ -42,10 +44,6 @@ public interface ICharmBlock {
 
     default BiConsumer<ItemStack, Boolean> getInventoryTickConsumer() {
         return null;
-    }
-
-    default void setBurnTime(int burnTime) {
-        FuelRegistry.INSTANCE.add((Block)this, burnTime);
     }
 
     default void setFireInfo(int encouragement, int flammability) {

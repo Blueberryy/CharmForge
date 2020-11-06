@@ -1,7 +1,10 @@
 package svenhjol.charm.block;
 
 import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
@@ -14,6 +17,15 @@ public class VariantBookshelfBlock extends CharmBlock {
         if (type.isFlammable())
             this.setFireInfo(30, 20);
 
-        this.setBurnTime(300);
+    }
+
+    @Override
+    public int getBurnTime() {
+        return 300;
+    }
+
+    @Override
+    public float getEnchantPowerBonus(BlockState state, IWorldReader world, BlockPos pos) {
+        return 1;
     }
 }
