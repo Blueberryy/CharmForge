@@ -5,7 +5,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ServerWorld.class)
-public interface ServerIWorldor {
+public interface ServerWorldAccessor {
     @Invoker
     void invokeWakeUpAllPlayers();
 
