@@ -1,6 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
@@ -20,7 +21,7 @@ public class Woodcutters extends CharmModule {
     public static WoodcutterBlock WOODCUTTER;
     public static ContainerType<WoodcutterContainer> SCREEN_HANDLER;
     public static IRecipeType<WoodcuttingRecipe> RECIPE_TYPE;
-    public static RecipeSerializer<WoodcuttingRecipe> RECIPE_SERIALIZER;
+    public static IRecipeSerializer<WoodcuttingRecipe> RECIPE_SERIALIZER;
 
     @Override
     public void register() {

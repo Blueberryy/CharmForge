@@ -1,20 +1,20 @@
 package svenhjol.charm.village;
 
-import net.minecraft.block.entity.BeehiveTileEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.merchant.villager.VillagerTrades;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.MerchantOffer;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tag.ItemTags;
-import net.minecraft.text.TranslationTextComponent;
-import net.minecraft.village.TradeOffer;
-import net.minecraft.village.TradeOffers;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tileentity.BeehiveTileEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.base.handler.ModuleHandler;
-import svenhjol.charm.module.Candles;
 import svenhjol.charm.base.helper.VillagerHelper.SingleItemTypeTrade;
+import svenhjol.charm.module.Candles;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,48 +24,48 @@ public class BeekeeperTradeOffers {
     public static class EmeraldsForFlowers extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
-            List<Item> flowers = ItemTags.FLOWERS.values();
+        public MerchantOffer getOffer(Entity entity, Random random) {
+            List<Item> flowers = ItemTags.FLOWERS.getAllElements();
             setInput(flowers.get(random.nextInt(flowers.size())), random.nextInt(3) + 13);
             setOutput(Items.EMERALD, 1);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class EmeraldsForCharcoal extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.CHARCOAL, random.nextInt(3) + 13);
             setOutput(Items.EMERALD, 1);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class EmeraldsForHoneycomb extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.HONEYCOMB, 10);
             setOutput(Items.EMERALD, random.nextInt(2) + 1);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class BottlesForEmerald extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.EMERALD, 1);
             setOutput(Items.GLASS_BOTTLE, random.nextInt(4) + 2);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class BeeswaxForEmeralds extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.EMERALD, 3);
 
             if (ModuleHandler.enabled("charm:candles")) {
@@ -74,45 +74,45 @@ public class BeekeeperTradeOffers {
                 setOutput(Items.HONEYCOMB, 1);
             }
 
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class CampfireForEmerald extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.EMERALD, 1);
             setOutput(Items.CAMPFIRE, 1);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
     public static class LeadForEmeralds extends SingleItemTypeTrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.EMERALD, 6);
             setOutput(Items.LEAD, 1);
-            return super.create(entity, random);
+            return super.getOffer(entity, random);
         }
     }
 
-    public static class HoneyBottlesForEmeralds implements TradeOffers.Factory {
+    public static class HoneyBottlesForEmeralds implements VillagerTrades.ITrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             int count = random.nextInt(2) + 1;
             ItemStack in1 = new ItemStack(Items.EMERALD, count);
             ItemStack out = new ItemStack(Items.HONEY_BOTTLE, count);
-            return new TradeOffer(in1, out, 20, 2, 0.05F);
+            return new MerchantOffer(in1, out, 20, 2, 0.05F);
         }
     }
 
-    public static class PopulatedBeehiveForEmeralds implements TradeOffers.Factory {
+    public static class PopulatedBeehiveForEmeralds implements VillagerTrades.ITrade {
         @Nullable
         @Override
-        public TradeOffer create(Entity entity, Random random) {
+        public MerchantOffer getOffer(Entity entity, Random random) {
             int count = random.nextInt(14) + 21;
             ItemStack in1 = new ItemStack(Items.EMERALD, count);
             ItemStack out = new ItemStack(Items.BEEHIVE);
@@ -121,18 +121,18 @@ public class BeekeeperTradeOffers {
 
             for (int i = 0; i < 1; i++) {
                 BeeEntity bee = new BeeEntity(EntityType.BEE, entity.world);
-                TileEntity.tryEnterHive(bee, false, 0);
+                tileEntity.tryEnterHive(bee, false, 0);
             }
 
             CompoundNBT beesTag = new CompoundNBT();
             CompoundNBT honeyTag = new CompoundNBT();
-            beesTag.put("Bees", TileEntity.getBees());
+            beesTag.put("Bees", tileEntity.getBees());
             honeyTag.putInt("honey_level", 0);
-            out.putSubTag("TileEntityTag", beesTag);
-            out.putSubTag("BlockStateTag", honeyTag);
-            out.setCustomName(new TranslationTextComponent("item.charm.populated_beehive"));
+            out.setTagInfo("TileEntityTag", beesTag);
+            out.setTagInfo("BlockStateTag", honeyTag);
+            out.setDisplayName(new TranslationTextComponent("item.charm.populated_beehive"));
 
-            return new TradeOffer(in1, out, 1, 10, 0.2F);
+            return new MerchantOffer(in1, out, 1, 10, 0.2F);
         }
     }
 }

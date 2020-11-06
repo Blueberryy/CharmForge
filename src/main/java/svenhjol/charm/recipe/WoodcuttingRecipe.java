@@ -1,6 +1,6 @@
 package svenhjol.charm.recipe;
 
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.SingleItemRecipe;
@@ -15,8 +15,8 @@ public class WoodcuttingRecipe extends SingleItemRecipe {
       super(Woodcutters.RECIPE_TYPE, Woodcutters.RECIPE_SERIALIZER, id, group, input, output);
    }
 
-   public boolean matches(Inventory inv, World world) {
-      return this.input.test(inv.getStack(0));
+   public boolean matches(IInventory inv, World world) {
+      return this.ingredient.test(inv.getStackInSlot(0));
    }
 
    @OnlyIn(Dist.CLIENT)
