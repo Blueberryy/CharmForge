@@ -38,7 +38,7 @@ public class VariantLadders extends CharmModule {
     @Override
     public void clientRegister() {
         LADDER_BLOCKS.values().forEach(ladder -> {
-            BlockRenderLayerMap.INSTANCE.putBlock(ladder, RenderLayer.getCutout());
+            RenderTypeLookup.setRenderLayer(ladder, RenderType.getCutout());
         });
     }
 

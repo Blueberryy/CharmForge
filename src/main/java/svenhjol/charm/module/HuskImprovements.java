@@ -2,16 +2,16 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.mob.HuskEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.monster.HuskEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -44,8 +44,8 @@ public class HuskImprovements extends CharmModule {
             && entity instanceof HuskEntity
         ) {
             World world = entity.getEntityWorld();
-            BlockPos pos = entity.getBlockPos();
-            int amount = ItemHelper.getAmountWithLooting(world.random, maxDrops, lootingLevel, (float)lootingBoost);
+            BlockPos pos = entity.getPosition();
+            int amount = ItemHelper.getAmountWithLooting(world.rand, maxDrops, lootingLevel, (float)lootingBoost);
             world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.SAND, amount)));
         }
         return ActionResult.PASS;

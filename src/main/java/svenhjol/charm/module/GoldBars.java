@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -18,6 +18,6 @@ public class GoldBars extends CharmModule {
 
     @Override
     public void clientRegister() {
-        BlockRenderLayerMap.INSTANCE.putBlock(GOLD_BARS, RenderLayer.getCutout());
+        RenderTypeLookup.setRenderLayer(GOLD_BARS, RenderType.getCutout());
     }
 }

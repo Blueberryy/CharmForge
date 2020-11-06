@@ -2,14 +2,10 @@ package svenhjol.charm.module;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.EnchantmentLevelEntry;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import org.apache.logging.log4j.util.TriConsumer;
 import svenhjol.charm.Charm;

@@ -18,6 +18,6 @@ public class RedstoneLanterns extends CharmModule {
 
     @Override
     public void clientRegister() {
-        BlockRenderLayerMap.INSTANCE.putBlock(REDSTONE_LANTERN, RenderLayer.getCutout());
+        RenderTypeLookup.setRenderLayer(REDSTONE_LANTERN, RenderType.getCutout());
     }
 }

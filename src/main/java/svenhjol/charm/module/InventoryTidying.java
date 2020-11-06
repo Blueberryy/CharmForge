@@ -1,21 +1,16 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
-import svenhjol.charm.client.InventoryTidyingClient;
-import svenhjol.charm.handler.InventoryTidyingHandler;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.client.InventoryTidyingClient;
+import svenhjol.charm.handler.InventoryTidyingHandler;
 
-import java.util.List;
-
-import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
 import static svenhjol.charm.handler.InventoryTidyingHandler.BE;
+import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
 
 @Module(mod = Charm.MOD_ID, description = "Button to automatically tidy inventories.")
 public class InventoryTidying extends CharmModule {

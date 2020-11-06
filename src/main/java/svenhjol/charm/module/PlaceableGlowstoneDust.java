@@ -36,7 +36,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
 
     @Override
     public void clientRegister() {
-        BlockRenderLayerMap.INSTANCE.putBlock(PLACED_GLOWSTONE_DUST, RenderLayer.getCutout());
+        RenderTypeLookup.setRenderLayer(PLACED_GLOWSTONE_DUST, RenderType.getCutout());
     }
 
     @Override

@@ -1,22 +1,20 @@
 package svenhjol.charm.module;
 
 import com.mojang.brigadier.StringReader;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.command.argument.BlockArgumentParser;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockRayTraceResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -41,7 +39,7 @@ public class HoeHarvesting extends CharmModule {
 
     public ActionResult tryHarvest(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
         ItemStack held = player.getHeldItem(hand);
-        BlockPos pos = hitResult.getBlockPos();
+        BlockPos pos = hitResult.getPos();
 
         if (!world.isRemote && held.getItem() instanceof HoeItem) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
@@ -68,7 +66,7 @@ public class HoeHarvesting extends CharmModule {
             world.setBlockState(pos, newState);
 
             // damage the hoe a bit
-            held.damage(1, player, p -> p.swingHand(hand));
+            held.damageItem(1, player, p -> p.swingArm(hand));
             return ActionResult.SUCCESS;
         }
 

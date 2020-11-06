@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -20,7 +20,7 @@ public class GoldLanterns extends CharmModule {
 
     @Override
     public void clientRegister() {
-        BlockRenderLayerMap.INSTANCE.putBlock(GOLD_LANTERN, RenderLayer.getCutout());
-        BlockRenderLayerMap.INSTANCE.putBlock(GOLD_SOUL_LANTERN, RenderLayer.getCutout());
+        RenderTypeLookup.setRenderLayer(GOLD_LANTERN, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(GOLD_SOUL_LANTERN, RenderType.getCutout());
     }
 }

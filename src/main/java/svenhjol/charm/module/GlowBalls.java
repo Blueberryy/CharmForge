@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -24,10 +24,10 @@ public class GlowBalls extends CharmModule {
     public void register() {
         GLOW_BALL = new GlowBallItem(this);
 
-        ENTITY = RegistryHandler.entity(ID, EntityType.Builder.<GlowBallEntity>create(GlowBallEntity::new, SpawnGroup.MISC)
-            .maxTrackingRange(4)
-            .trackingTickInterval(10)
-            .setDimensions(0.25F, 0.25F)
+        ENTITY = RegistryHandler.entity(ID, EntityType.Builder.<GlowBallEntity>create(GlowBallEntity::new, EntityClassification.MISC)
+            .trackingRange(4)
+            .setUpdateInterval(10)
+            .size(0.25F, 0.25F)
             .build(ID.getPath()));
 
         this.enabled = ModuleHandler.enabled("charm:placeable_glowstone_dust");

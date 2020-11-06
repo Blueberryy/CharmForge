@@ -11,6 +11,6 @@ public class ClientRegistryHandler {
     }
 
     public static void setRenderLayer(Block block, RenderType renderLayer) {
-        BlockRenderLayerMap.INSTANCE.putBlock(block, renderLayer);
+        RenderTypeLookup.setRenderLayer(block, renderLayer);
     }
 }
