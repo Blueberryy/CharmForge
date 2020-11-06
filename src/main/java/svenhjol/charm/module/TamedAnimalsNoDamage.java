@@ -11,7 +11,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.HurtEntityCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
 

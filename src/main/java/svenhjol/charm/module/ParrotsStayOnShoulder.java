@@ -5,7 +5,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.PlayerTickCallback;
 import svenhjol.charm.mixin.accessor.PlayerEntityAccessor;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;

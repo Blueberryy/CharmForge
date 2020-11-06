@@ -11,7 +11,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeatures;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.AddEntityCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.BiomeHelper;
 import svenhjol.charm.base.iface.Module;

@@ -21,7 +21,6 @@ import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.EndermitePowderClient;
 import svenhjol.charm.entity.EndermitePowderEntity;
-import svenhjol.charm.event.EntityDropsCallback;
 import svenhjol.charm.item.EndermitePowderItem;
 
 @Module(mod = Charm.MOD_ID, description = "Endermites drop endermite powder that can be used to locate an End City.")

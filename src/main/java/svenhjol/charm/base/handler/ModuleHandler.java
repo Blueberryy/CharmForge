@@ -2,12 +2,9 @@ package svenhjol.charm.base.handler;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraftforge.common.ForgeConfig;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.event.ClientJoinCallback;
-import svenhjol.charm.event.LoadWorldCallback;
 import svenhjol.charm.event.StructureSetupCallback;
 import svenhjol.charm.handler.ColoredGlintHandler;
 

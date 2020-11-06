@@ -10,7 +10,6 @@ import org.apache.logging.log4j.util.TriConsumer;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.event.UpdateAnvilCallback;
 import svenhjol.charm.handler.ColoredGlintHandler;
 
 @Module(mod = Charm.MOD_ID, alwaysEnabled = true, description = "Upcoming feature for 2.1.2")

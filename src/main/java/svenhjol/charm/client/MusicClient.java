@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.module.MusicImprovements;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.event.PlaySoundCallback;
 import svenhjol.charm.base.helper.DimensionHelper;
 import svenhjol.charm.base.helper.SoundHelper;
 

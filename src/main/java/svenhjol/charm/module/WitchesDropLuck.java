@@ -10,7 +10,6 @@ import net.minecraft.potion.Potions;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.EntityDropsCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.PotionHelper;
 import svenhjol.charm.base.iface.Config;

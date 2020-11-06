@@ -5,7 +5,12 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.loot.LootFunctionType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
@@ -50,19 +55,19 @@ public class RegistryHandler {
         return Registry.register(Registry.POINT_OF_INTEREST_TYPE, id, poit);
     }
 
-    public static <T extends Recipe<?>> RecipeType<T> recipeType(String recipeId) {
-        return RecipeType.register(recipeId);
+    public static <T extends IRecipe<?>> IRecipeType<T> recipeType(String recipeId) {
+        return IRecipeType.register(recipeId);
     }
 
-    public static <S extends RecipeSerializer<T>, T extends Recipe<?>> S recipeSerializer(String recipeId, S serializer) {
-        return RecipeSerializer.register(recipeId, serializer);
+    public static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S recipeSerializer(String recipeId, S serializer) {
+        return IRecipeSerializer.register(recipeId, serializer);
     }
 
-    public static <T extends ScreenHandler> ScreenHandlerType<T> screenHandler(ResourceLocation id, ScreenHandlerType.Factory<T> factory) {
-        return Registry.register(Registry.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory));
+    public static <T extends Container> ContainerType<T> screenHandler(ResourceLocation id, ContainerType.Factory<T> factory) {
+        return Registry.register(Registry.MENU, id, new ContainerType<>(factory));
     }
 
-    public static <H extends ScreenHandler, S extends Screen & ScreenHandlerProvider<H>> void screenHandlerClient(ScreenHandlerType<H> screenHandler, ScreenRegistry.Factory<H, S> screen) {
+    public static <H extends Container, S extends Screen & ContainerProvider<H>> void screenHandlerClient(ContainerType<H> screenHandler, ScreenRegistry.Factory<H, S> screen) {
         ScreenRegistry.register(screenHandler, screen);
     }
 

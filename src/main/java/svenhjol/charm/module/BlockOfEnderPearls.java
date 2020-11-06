@@ -21,7 +21,6 @@ import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.block.EnderPearlBlock;
 import svenhjol.charm.entity.goal.FormEndermiteGoal;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.event.AddEntityCallback;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.iface.Config;

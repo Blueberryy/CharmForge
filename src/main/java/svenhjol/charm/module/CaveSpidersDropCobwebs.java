@@ -10,7 +10,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.EntityDropsCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;

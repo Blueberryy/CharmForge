@@ -7,7 +7,6 @@ import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.event.AddEntityCallback;
 import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "When any action would cause a villager to become a nitwit, it becomes an unemployed villager instead.")

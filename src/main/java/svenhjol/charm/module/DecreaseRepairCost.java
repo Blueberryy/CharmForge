@@ -8,7 +8,6 @@ import org.apache.logging.log4j.util.TriConsumer;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.event.UpdateAnvilCallback;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 

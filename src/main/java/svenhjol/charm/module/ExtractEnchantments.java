@@ -13,7 +13,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import org.apache.logging.log4j.util.TriConsumer;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.UpdateAnvilCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;

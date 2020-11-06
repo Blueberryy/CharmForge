@@ -1,23 +1,12 @@
 package svenhjol.charm.event;
 
 import com.mojang.datafixers.util.Pair;
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.structure.pool.LegacySinglePoolElement;
-import net.minecraft.structure.pool.StructurePool;
-import net.minecraft.structure.pool.StructurePoolElement;
-import net.minecraft.structure.processor.StructureProcessorList;
-import net.minecraft.structure.processor.StructureProcessorLists;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.BuiltinRegistries;
 import svenhjol.charm.mixin.accessor.JigsawPatternAccessor;
 import svenhjol.charm.base.enums.ICharmEnum;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 public interface StructureSetupCallback {
     Map<ResourceLocation, StructurePool> vanillaPools = new HashMap<>();

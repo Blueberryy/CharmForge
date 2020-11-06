@@ -7,7 +7,6 @@ import net.minecraft.entity.passive.VillagerEntity;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.ActionResult;
 import svenhjol.charm.Charm;
-import svenhjol.charm.event.AddEntityCallback;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.iface.Module;
