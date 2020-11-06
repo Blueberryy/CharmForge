@@ -1,37 +1,39 @@
 package svenhjol.charm.client;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import svenhjol.charm.event.RenderGuiCallback;
-import svenhjol.charm.event.GuiSetupCallback;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import svenhjol.charm.base.helper.ScreenHelper;
 import svenhjol.charm.module.PortableCrafting;
 import svenhjol.charm.module.PortableEnderChest;
-import svenhjol.charm.base.helper.ScreenHelper;
+
 
 public class InventoryButtonClient {
     public TexturedButtonWidget recipeButton;
 
     public InventoryButtonClient() {
-        GuiSetupCallback.EVENT.register(((client, width, height, buttons, addButton) -> {
-            Screen currentScreen = client.currentScreen;
 
-            if (!(currentScreen instanceof InventoryScreen))
-                return;
+    }
 
-            if (!buttons.isEmpty() && buttons.get(0) instanceof TexturedButtonWidget)
-                this.recipeButton = (TexturedButtonWidget)buttons.get(0);
+    private void handleGuiSetup(Minecraft client, int width, int height, List<AbstractButtonWidget> buttons, Consumer<AbstractButtonWidget> addButton) {
+        Screen currentScreen = client.currentScreen;
 
-            redrawButtons((InventoryScreen)currentScreen);
-        }));
+        if (!(currentScreen instanceof InventoryScreen))
+            return;
 
-        RenderGuiCallback.EVENT.register(((client, matrices, mouseX, mouseY, delta) -> {
-            Screen currentScreen = client.currentScreen;
-            if (!(currentScreen instanceof InventoryScreen))
-                return;
+        if (!buttons.isEmpty() && buttons.get(0) instanceof TexturedButtonWidget)
+            this.recipeButton = (TexturedButtonWidget)buttons.get(0);
 
-            redrawButtons((InventoryScreen)currentScreen);
-        }));
+        redrawButtons((InventoryScreen)currentScreen);
+    }
+
+    private void handleRenderGui(Minecraft client, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        Screen currentScreen = client.currentScreen;
+        if (!(currentScreen instanceof InventoryScreen))
+            return;
+
+        redrawButtons((InventoryScreen)currentScreen);
     }
 
     private void redrawButtons(InventoryScreen screen) {

@@ -11,9 +11,11 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.module.MusicImprovements;
 import svenhjol.charm.base.CharmModule;
@@ -44,19 +46,19 @@ public class MusicClient {
 
         if (MusicImprovements.playCreativeMusic)
             addCreativeMusicCondition();
+    }
 
-        UseBlockCallback.EVENT.register(((player, world, hand, hitResult) -> {
-            stopRecord(player, hitResult.getBlockPos(), player.getHeldItem(hand));
-            return ActionResult.PASS;
-        }));
+    private ActionResult handleUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
+        stopRecord(player, hitResult.getBlockPos(), player.getStackInHand(hand));
+        return ActionResult.PASS;
+    }
 
-        PlaySoundCallback.EVENT.register(((soundSystem, sound) -> {
-            checkShouldStopMusic(sound);
-        }));
+    private void handlePlaySound(SoundSystem soundSystem, SoundInstance sound) {
+        checkShouldStopMusic(sound);
+    }
 
-        ClientTickEvents.END_CLIENT_TICK.register((client -> {
-            checkActuallyStopMusic();
-        }));
+    private void handleClientTick(Minecraft client) {
+        checkActuallyStopMusic();
     }
 
     public void addCreativeMusicCondition() {
