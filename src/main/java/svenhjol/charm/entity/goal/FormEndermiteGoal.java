@@ -4,21 +4,21 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.mob.EndermiteEntity;
-import net.minecraft.entity.mob.SilverfishEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.ai.goal.RandomWalkingGoal;
+import net.minecraft.entity.monster.EndermiteEntity;
+import net.minecraft.entity.monster.SilverfishEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import svenhjol.charm.module.BlockOfEnderPearls;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.base.helper.MobHelper;
+import svenhjol.charm.module.BlockOfEnderPearls;
 
 import java.util.EnumSet;
 import java.util.Random;
 
-public class FormEndermiteGoal extends WanderAroundGoal {
+public class FormEndermiteGoal extends RandomWalkingGoal {
     private final SilverfishEntity silverfish;
     private Direction facing;
     private boolean merge;
@@ -26,22 +26,22 @@ public class FormEndermiteGoal extends WanderAroundGoal {
     public FormEndermiteGoal(SilverfishEntity silverfish) {
         super(silverfish, 0.6D);
         this.silverfish = silverfish;
-        setControls(EnumSet.of(Goal.Control.MOVE));
+        setMutexFlags(EnumSet.of(Goal.Flag.MOVE));
     }
 
     @Override
-    public boolean canStart() {
-        if (!silverfish.getEntityWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+    public boolean shouldExecute() {
+        if (!silverfish.getEntityWorld().getGameRules().getBoolean(GameRules.MOB_GRIEFING)) {
             return false;
-        } else if (silverfish.getTarget() != null) {
+        } else if (silverfish.getAttackTarget() != null) {
             return false;
-        } else if (!silverfish.getNavigation().isIdle()) {
+        } else if (!silverfish.getNavigator().noPath()) {
             return false;
         } else {
-            Random random = silverfish.getRandom();
+            Random random = silverfish.getRNG();
 
             if (random.nextFloat() < 0.8D) {
-                facing = Direction.random(random);
+                facing = Direction.getRandomDirection(random);
                 BlockPos pos = getSilverfishPosition(silverfish).offset(facing);
                 BlockState state = silverfish.getEntityWorld().getBlockState(pos);
 
@@ -52,17 +52,17 @@ public class FormEndermiteGoal extends WanderAroundGoal {
             }
 
             merge = false;
-            return super.canStart();
+            return super.shouldExecute();
         }
     }
 
     @Override
-    public boolean shouldContinue() {
-        return !merge && super.shouldContinue();
+    public boolean shouldContinueExecuting() {
+        return !merge && super.shouldContinueExecuting();
     }
 
     @Override
-    public void start() {
+    public void startExecuting() {
         World world = silverfish.getEntityWorld();
         if (world.isRemote)
             return;
@@ -80,7 +80,7 @@ public class FormEndermiteGoal extends WanderAroundGoal {
 
             if (endermite != null) {
                 world.removeBlock(pos, false);
-                silverfish.playSpawnEffects();
+                silverfish.spawnExplosionParticle();
                 silverfish.remove();
                 world.addEntity(endermite);
             }
@@ -88,7 +88,7 @@ public class FormEndermiteGoal extends WanderAroundGoal {
     }
 
     private BlockPos getSilverfishPosition(SilverfishEntity silverfishEntity) {
-        BlockPos entityPos = silverfishEntity.getBlockPos();
+        BlockPos entityPos = silverfishEntity.getPosition();
         return new BlockPos(entityPos.getX(), entityPos.getY() + 0.5D, entityPos.getZ());
     }
 }
