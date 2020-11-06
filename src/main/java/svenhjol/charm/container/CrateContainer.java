@@ -15,7 +15,7 @@ public class CrateContainer extends CharmContainer {
     }
 
     public CrateContainer(int syncId, PlayerInventory player, IInventory inventory) {
-        super(Crates.SCREEN_HANDLER, syncId, player, inventory);
+        super(Crates.CONTAINER, syncId, player, inventory);
 
         int index = 0;
 

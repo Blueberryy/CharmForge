@@ -2,6 +2,7 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
@@ -10,7 +11,6 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
-import svenhjol.charm.base.handler.ClientRegistryHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
@@ -28,8 +28,8 @@ public class Crates extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "crate");
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
 
-    public static ContainerType<CrateContainer> SCREEN_HANDLER;
-    public static TileEntityType<CrateTileEntity> BLOCK_ENTITY;
+    public static ContainerType<CrateContainer> CONTAINER;
+    public static TileEntityType<CrateTileEntity> TILE_ENTITY;
 
     // add blocks and items to these lists to blacklist them from crates
     public static final List<Class<? extends Block>> INVALID_CRATE_BLOCKS = new ArrayList<>();
@@ -50,8 +50,8 @@ public class Crates extends CharmModule {
         INVALID_CRATE_BLOCKS.add(CrateBlock.class);
         INVALID_SHULKER_BOX_BLOCKS.add(CrateBlock.class);
 
-        SCREEN_HANDLER = RegistryHandler.container(ID, CrateContainer::new);
-        BLOCK_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
+        CONTAINER = RegistryHandler.container(ID, CrateContainer::new);
+        TILE_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;
     }
@@ -59,7 +59,7 @@ public class Crates extends CharmModule {
     @Override
     public void clientInit() {
         new CratesClient(this);
-        ClientRegistryHandler.screenHandler(SCREEN_HANDLER, CrateScreen::new);
+        ScreenManager.registerFactory(CONTAINER, CrateScreen::new);
     }
 
     public static boolean canCrateInsertItem(ItemStack stack) {

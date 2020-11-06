@@ -28,7 +28,7 @@ public class CrateTileEntity extends LockableLootTileEntity implements ICapabili
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
 
     public CrateTileEntity() {
-        super(Crates.BLOCK_ENTITY);
+        super(Crates.TILE_ENTITY);
     }
 
     @Override

@@ -1,11 +1,13 @@
 package svenhjol.charm;
 
 import net.minecraftforge.fml.common.Mod;
+import svenhjol.charm.base.CharmMessages;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.base.CharmStructures;
 import svenhjol.charm.base.CharmTags;
 import svenhjol.charm.base.handler.LogHandler;
 import svenhjol.charm.base.handler.ModuleHandler;
+import svenhjol.charm.base.handler.PacketHandler;
 import svenhjol.charm.module.*;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.Arrays;
 public class Charm {
     public static final String MOD_ID = "charm";
     public static LogHandler LOG = new LogHandler("Charm");
+    public static PacketHandler PACKET_HANDLER = new PacketHandler();
 
     public Charm() {
         ModuleHandler.AVAILABLE_MODULES.put(Charm.MOD_ID, new ArrayList<>(Arrays.asList(
@@ -87,6 +90,7 @@ public class Charm {
             Woodcutters.class
         )));
 
+        CharmMessages.init();
         CharmStructures.init();
         CharmSounds.init();
         CharmTags.init();

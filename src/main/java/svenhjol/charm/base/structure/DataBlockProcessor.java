@@ -400,7 +400,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {
                 // get a crate
                 state = Crates.CRATE_BLOCKS.get(woodType).getDefaultState();
-                TileEntity = Crates.BLOCK_ENTITY.create();
+                TileEntity = Crates.TILE_ENTITY.create();
             } else {
                 // get a barrel
                 if (ModuleHandler.enabled("charm:variant_barrels")) {
