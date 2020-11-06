@@ -1,4 +1,4 @@
-package svenhjol.charm.tileentity;
+package svenhjol.charm.client;
 
 import net.minecraft.state.properties.ChestType;
 import net.minecraft.util.ResourceLocation;
@@ -12,6 +12,8 @@ import svenhjol.charm.event.BlockItemRenderCallback;
 import svenhjol.charm.event.TextureStitchCallback;
 import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.render.VariantChestTileEntityRenderer;
+import svenhjol.charm.tileentity.VariantChestTileEntity;
+import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
 
 import java.util.Set;
 

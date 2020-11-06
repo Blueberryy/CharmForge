@@ -19,7 +19,7 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.TileEntity.BookcaseTileEntity;
 import svenhjol.charm.gui.BookcaseScreen;
-import svenhjol.charm.screenhandler.BookcaseScreenHandler;
+import svenhjol.charm.screenhandler.BookcaseContainer;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public class Bookcases extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "bookcase");
     public static final Map<IVariantMaterial, BookcaseBlock> BOOKCASE_BLOCKS = new HashMap<>();
 
-    public static ContainerType<BookcaseScreenHandler> SCREEN_HANDLER;
+    public static ContainerType<BookcaseContainer> SCREEN_HANDLER;
     public static TileEntityType<BookcaseTileEntity> BLOCK_ENTITY;
 
     public static List<Class<? extends Item>> validItems = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Bookcases extends CharmModule {
             validItems.add(item.getClass());
         });
 
-        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, BookcaseScreenHandler::new);
+        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, BookcaseContainer::new);
         BLOCK_ENTITY = RegistryHandler.TileEntity(ID, BookcaseTileEntity::new);
     }
 

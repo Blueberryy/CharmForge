@@ -33,20 +33,21 @@
     "accessor.FireBlockAccessor",
     "accessor.GoalSelectorAccessor",
     "accessor.HoeItemAccessor",
+    "accessor.IServerWorldor",
     "accessor.ItemAccessor",
+    "accessor.JigsawPatternAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.MobEntityAccessor",
+    "accessor.MobSpawnInfoAccessor",
     "accessor.PickaxeItemAccessor",
     "accessor.PlayerEntityAccessor",
     "accessor.PointOfInterestTypeAccessor",
     "accessor.RepairContainerAccessor",
-    "accessor.ServerIWorldor",
+    "accessor.ServerWorldAccessor",
     "accessor.ShovelItemAccessor",
     "accessor.ShulkerBoxTileEntityAccessor",
     "accessor.SlotAccessor",
-    "accessor.MobSpawnInfoAccessor",
     "accessor.StructurePieceAccessor",
-    "accessor.JigsawPatternAccessor",
     "accessor.TickableSoundAccessor",
     "accessor.VillagerEntityAccessor",
     "accessor.WorldSaveHandlerAccessor"
@@ -65,8 +66,8 @@
     "accessor.MinecraftAccessor",
     "accessor.RenderStateAccessor",
     "accessor.RenderTypeBuffersMixin",
-    "accessor.SoundHandlerAccessor",
-    "accessor.SoundEngineAccessor"
+    "accessor.SoundEngineAccessor",
+    "accessor.SoundHandlerAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

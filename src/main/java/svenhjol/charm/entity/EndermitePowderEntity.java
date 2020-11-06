@@ -10,7 +10,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vector3d;
 import net.minecraft.world.World;
 import svenhjol.charm.module.EndermitePowder;
 
@@ -69,7 +69,7 @@ public class EndermitePowderEntity extends Entity {
         int y = getBlockPos().getY();
         int z = getBlockPos().getZ();
 
-        Vec3d vec = new Vec3d((double) dataTracker.get(TARGET_X), y, (double) dataTracker.get(TARGET_Z))
+        Vector3d vec = new Vector3d((double) dataTracker.get(TARGET_X), y, (double) dataTracker.get(TARGET_Z))
             .subtract(x, y, z).normalize().multiply(scale);
 
         double bpx = x + vec.x * ticks;

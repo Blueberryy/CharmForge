@@ -1,11 +1,11 @@
 package svenhjol.charm.module;
 
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
-import svenhjol.charm.TileEntity.KilnTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ClientRegistryHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
@@ -15,6 +15,7 @@ import svenhjol.charm.block.KilnBlock;
 import svenhjol.charm.gui.KilnScreen;
 import svenhjol.charm.recipe.FiringRecipe;
 import svenhjol.charm.screenhandler.KilnScreenHandler;
+import svenhjol.charm.tileentity.KilnTileEntity;
 
 @Module(mod = Charm.MOD_ID, description = "A functional block that speeds up cooking of clay, bricks and terracotta.")
 public class Kilns extends CharmModule {
@@ -24,7 +25,7 @@ public class Kilns extends CharmModule {
     public static TileEntityType<KilnTileEntity> BLOCK_ENTITY;
     public static IRecipeType<FiringRecipe> RECIPE_TYPE;
     public static CookingRecipeSerializer<FiringRecipe> RECIPE_SERIALIZER;
-    public static ScreenHandlerType<KilnScreenHandler> SCREEN_HANDLER;
+    public static ContainerType<KilnScreenHandler> SCREEN_HANDLER;
 
     @Override
     public void register() {

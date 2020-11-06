@@ -60,7 +60,7 @@ public class CratesClient {
             return false;
 
         CrateTileEntity crate = (CrateTileEntity) TileEntity;
-        NonNullList<ItemStack> items = crate.getInvStackList();
+        NonNullList<ItemStack> items = crate.getItems();
 
         int size = crate.size();
 

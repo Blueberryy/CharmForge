@@ -19,7 +19,7 @@ import svenhjol.charm.block.CrateBlock;
 import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.client.CratesClient;
 import svenhjol.charm.gui.CrateScreen;
-import svenhjol.charm.screenhandler.CrateScreenHandler;
+import svenhjol.charm.screenhandler.CrateContainer;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public class Crates extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "crate");
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
 
-    public static ContainerType<CrateScreenHandler> SCREEN_HANDLER;
+    public static ContainerType<CrateContainer> SCREEN_HANDLER;
     public static TileEntityType<CrateTileEntity> BLOCK_ENTITY;
 
     // add blocks and items to these lists to blacklist them from crates
@@ -50,7 +50,7 @@ public class Crates extends CharmModule {
         INVALID_CRATE_BLOCKS.add(CrateBlock.class);
         INVALID_SHULKER_BOX_BLOCKS.add(CrateBlock.class);
 
-        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, CrateScreenHandler::new);
+        SCREEN_HANDLER = RegistryHandler.screenHandler(ID, CrateContainer::new);
         BLOCK_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;

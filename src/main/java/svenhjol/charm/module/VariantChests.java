@@ -11,7 +11,7 @@ import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.VariantChestBlock;
 import svenhjol.charm.block.VariantTrappedChestBlock;
-import svenhjol.charm.tileentity.VariantChestClient;
+import svenhjol.charm.client.VariantChestClient;
 import svenhjol.charm.tileentity.VariantChestTileEntity;
 import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
 

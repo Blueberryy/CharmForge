@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vector3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.StructureFeature;
 import svenhjol.charm.entity.EndermitePowderEntity;
@@ -52,7 +52,7 @@ public class EndermitePowderItem extends CharmItem {
             BlockPos pos = serverWorld.locateStructure(StructureFeature.END_CITY, playerIn.getBlockPos(), 1500, false);
             if (pos != null) {
                 EndermitePowderEntity entity = new EndermitePowderEntity(worldIn, pos.getX(), pos.getZ());
-                Vec3d look = playerIn.getRotationVector();
+                Vector3d look = playerIn.getRotationVector();
 
                 entity.setPos(x + look.x * 2, y + 0.5, z + look.z * 2);
                 worldIn.addEntity(entity);
