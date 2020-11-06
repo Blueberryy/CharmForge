@@ -14,6 +14,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.event.StructureSetupEvent;
 import svenhjol.charm.handler.ColoredGlintHandler;
 
 import javax.annotation.Nullable;
@@ -56,9 +57,6 @@ public class ModuleHandler {
         MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
         FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
 
-        // allow modules to modify structures via an event
-//        StructureSetupCallback.EVENT.invoker().interact();
-
         /** @deprecated listen for server setup events (dedicated server only) */
         //DedicatedServerSetupCallback.EVENT.register(server -> {
         //    eachEnabledModule(m -> m.dedicatedServerInit(server));
@@ -74,6 +72,9 @@ public class ModuleHandler {
 
             module.init();
         });
+
+        // allow modules to modify structures via an event
+        FORGE_EVENT_BUS.post(new StructureSetupEvent());
     }
 
     public static void onClientSetup(FMLClientSetupEvent event) {
