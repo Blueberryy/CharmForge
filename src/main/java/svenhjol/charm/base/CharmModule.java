@@ -11,6 +11,7 @@ public abstract class CharmModule {
     public boolean enabled = true;
     public boolean enabledByDefault = true;
     public boolean alwaysEnabled = false;
+    public boolean hasSubscriptions = false;
     public String description = "";
     public String mod = "";
     public String category = "";
