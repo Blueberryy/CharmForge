@@ -22,7 +22,7 @@ public class VariantChestTileEntity extends ChestTileEntity {
     @Nullable
     public IVariantMaterial getMaterialType() {
         if (materialType == null && world != null)
-            return ((IVariantChestBlock)this.getCachedState().getBlock()).getMaterialType();
+            return ((IVariantChestBlock)this.getBlockState().getBlock()).getMaterialType();
 
         return materialType;
     }
