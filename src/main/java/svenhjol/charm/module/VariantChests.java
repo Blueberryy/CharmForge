@@ -36,8 +36,8 @@ public class VariantChests extends CharmModule {
             TRAPPED_CHEST_BLOCKS.put(type, new VariantTrappedChestBlock(this, type));
         }
 
-        NORMAL_BLOCK_ENTITY = RegistryHandler.TileEntity(NORMAL_ID, VariantChestTileEntity::new, NORMAL_CHEST_BLOCKS.values().toArray(new Block[0]));
-        TRAPPED_BLOCK_ENTITY = RegistryHandler.TileEntity(TRAPPED_ID, VariantTrappedChestTileEntity::new, TRAPPED_CHEST_BLOCKS.values().toArray(new Block[0]));
+        NORMAL_BLOCK_ENTITY = RegistryHandler.tileEntity(NORMAL_ID, VariantChestTileEntity::new, NORMAL_CHEST_BLOCKS.values().toArray(new Block[0]));
+        TRAPPED_BLOCK_ENTITY = RegistryHandler.tileEntity(TRAPPED_ID, VariantTrappedChestTileEntity::new, TRAPPED_CHEST_BLOCKS.values().toArray(new Block[0]));
     }
 
     @Override

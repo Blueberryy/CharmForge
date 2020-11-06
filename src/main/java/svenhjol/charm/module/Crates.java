@@ -51,7 +51,7 @@ public class Crates extends CharmModule {
         INVALID_SHULKER_BOX_BLOCKS.add(CrateBlock.class);
 
         CONTAINER = RegistryHandler.container(ID, CrateContainer::new);
-        TILE_ENTITY = RegistryHandler.TileEntity(ID, CrateTileEntity::new);
+        TILE_ENTITY = RegistryHandler.tileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;
     }

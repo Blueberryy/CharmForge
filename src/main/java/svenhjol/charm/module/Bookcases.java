@@ -58,7 +58,7 @@ public class Bookcases extends CharmModule {
         });
 
         CONTAINER = RegistryHandler.container(ID, BookcaseContainer::new);
-        TILE_ENTITY = RegistryHandler.TileEntity(ID, BookcaseTileEntity::new);
+        TILE_ENTITY = RegistryHandler.tileEntity(ID, BookcaseTileEntity::new);
     }
 
     @Override

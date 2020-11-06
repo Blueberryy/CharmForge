@@ -170,7 +170,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void armorStand() {
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
             if (TileEntity == null) return;
             this.tag = new CompoundNBT();
 
@@ -269,7 +269,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void entity() {
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
             if (TileEntity == null) return;
             tag = new CompoundNBT();
 
@@ -320,7 +320,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void mob() {
             if (!withChance(MOB_CHANCE)) return;
 
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.BLOCK_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
             if (TileEntity == null) return;
 
             String type = getValue("type", this.data, "");

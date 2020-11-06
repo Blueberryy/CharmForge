@@ -49,7 +49,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
     public String meta = "";
 
     public EntitySpawnerTileEntity() {
-        super(EntitySpawner.BLOCK_ENTITY);
+        super(EntitySpawner.TILE_ENTITY);
     }
 
     @Override
