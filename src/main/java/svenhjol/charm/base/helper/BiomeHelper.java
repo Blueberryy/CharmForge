@@ -8,7 +8,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.BiomeManager;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.mixin.accessor.BiomeGenerationSettingsAccessor;
@@ -53,13 +55,13 @@ public class BiomeHelper {
     }
 
     public static void addStructureFeature(Biome biome, StructureFeature<?, ?> structureFeature) {
-        GenerationSettings settings = biome.getGenerationSettings();
+        BiomeGenerationSettings settings = biome.getGenerationSettings();
         checkGenerationSettingsMutable(settings);
         ((BiomeGenerationSettingsAccessor)settings).getStructures().add(() -> structureFeature);
     }
 
     public static void addSpawnEntry(Biome biome, SpawnGroup group, EntityType<?> entity, int weight, int minGroupSize, int maxGroupSize) {
-        SpawnSettings settings = biome.getSpawnSettings();
+        MobSpawnInfo settings = biome.getMobSpawnInfo();
         checkSpawnSettingsMutable(settings);
 
         // TODO: revise all this
@@ -71,7 +73,7 @@ public class BiomeHelper {
     /**
      * Evil hack until there's a better way to add structures to biomes
      */
-    private static void checkGenerationSettingsMutable(GenerationSettings settings) {
+    private static void checkGenerationSettingsMutable(BiomeGenerationSettings settings) {
         List<Supplier<StructureFeature<?, ?>>> existing = ((BiomeGenerationSettingsAccessor)settings).getStructures();
         if (existing instanceof ImmutableList)
             ((BiomeGenerationSettingsAccessor)settings).setStructures(new ArrayList<>(existing));
@@ -80,7 +82,7 @@ public class BiomeHelper {
     /**
      * Evil hack until there's a better way to add mobs to biomes
      */
-    private static void checkSpawnSettingsMutable(SpawnSettings settings) {
+    private static void checkSpawnSettingsMutable(MobSpawnInfo settings) {
         Map<SpawnGroup, List<SpawnEntry>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
         Map<EntityType<?>, SpawnSettings.SpawnDensity> spawnCosts = ((MobSpawnInfoAccessor) settings).getSpawnCosts();
 

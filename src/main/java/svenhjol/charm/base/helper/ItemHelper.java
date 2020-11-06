@@ -1,17 +1,11 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class ItemHelper {
-    public static Map<Item, Integer> ITEM_LIFETIME = new HashMap<>();
-
     public static Class<? extends Block> getBlockClass(ItemStack stack) {
         return Block.getBlockFromItem(stack.getItem()).getClass();
     }
@@ -22,15 +16,5 @@ public class ItemHelper {
             amount++;
 
         return amount;
-    }
-
-    public static boolean shouldItemDespawn(ItemEntity itemEntity) {
-        Item item = itemEntity.getItem().getItem();
-        if (ItemHelper.ITEM_LIFETIME.containsKey(item)) {
-            if (itemEntity.getAge() < ItemHelper.ITEM_LIFETIME.get(item))
-                return false;
-        }
-
-        return true;
     }
 }
