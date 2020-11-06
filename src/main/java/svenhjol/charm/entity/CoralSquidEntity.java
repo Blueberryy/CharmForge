@@ -132,7 +132,7 @@ public class CoralSquidEntity extends WaterMobEntity {
         this.setCoralSquidType(tag.getInt(CORAL_SQUID_TYPE_TAG));
     }
 
-    protected void initGoals() {
+    protected void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new FleeGoal());
     }

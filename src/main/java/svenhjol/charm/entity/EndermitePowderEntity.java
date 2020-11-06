@@ -2,24 +2,24 @@ package svenhjol.charm.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Vector3d;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.network.play.server.SSpawnObjectPacket;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.module.EndermitePowder;
 
 @SuppressWarnings("EntityConstructor")
 public class EndermitePowderEntity extends Entity {
     public int ticks = 0;
 
-    private static final TrackedData<Integer> TARGET_X = DataTracker.registerData(EndermitePowderEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    private static final TrackedData<Integer> TARGET_Z = DataTracker.registerData(EndermitePowderEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    private static final DataParameter<Integer> TARGET_X = EntityDataManager.createKey(EndermitePowderEntity.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> TARGET_Z = EntityDataManager.createKey(EndermitePowderEntity.class, DataSerializers.VARINT);
     private static final String TAG_TARGET_X = "targetX";
     private static final String TAG_TARGET_Z = "targetZ";
 
@@ -29,31 +29,31 @@ public class EndermitePowderEntity extends Entity {
 
     public EndermitePowderEntity(World world, int x, int z) {
         this(EndermitePowder.ENTITY, world);
-        dataTracker.set(TARGET_X, x);
-        dataTracker.set(TARGET_Z, z);
+        dataManager.set(TARGET_X, x);
+        dataManager.set(TARGET_Z, z);
     }
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(TARGET_X, 0);
-        dataTracker.startTracking(TARGET_Z, 0);
+    protected void registerData() {
+        dataManager.register(TARGET_X, 0);
+        dataManager.register(TARGET_Z, 0);
     }
 
     @Override
-    protected void readCustomDataFromTag(CompoundNBT tag) {
-        dataTracker.set(TARGET_X, tag.getInt(TAG_TARGET_X));
-        dataTracker.set(TARGET_Z, tag.getInt(TAG_TARGET_Z));
+    protected void readAdditional(CompoundNBT tag) {
+        dataManager.set(TARGET_X, tag.getInt(TAG_TARGET_X));
+        dataManager.set(TARGET_Z, tag.getInt(TAG_TARGET_Z));
     }
 
     @Override
-    protected void writeCustomDataToTag(CompoundNBT tag) {
-        tag.putInt(TAG_TARGET_X, dataTracker.get(TARGET_X));
-        tag.putInt(TAG_TARGET_Z, dataTracker.get(TARGET_Z));
+    protected void writeAdditional(CompoundNBT tag) {
+        tag.putInt(TAG_TARGET_X, dataManager.get(TARGET_X));
+        tag.putInt(TAG_TARGET_Z, dataManager.get(TARGET_Z));
     }
 
     @Override
-    public Packet<?> createSpawnPacket() {
-        return new EntitySpawnS2CPacket(this);
+    public IPacket<?> createSpawnPacket() {
+        return new SSpawnObjectPacket(this);
     }
 
     @Override
@@ -65,12 +65,12 @@ public class EndermitePowderEntity extends Entity {
         double rise = 0.03;
         int maxLiveTime = 1000;
         int particles = 18;
-        int x = getBlockPos().getX();
-        int y = getBlockPos().getY();
-        int z = getBlockPos().getZ();
+        int x = getPosition().getX();
+        int y = getPosition().getY();
+        int z = getPosition().getZ();
 
-        Vector3d vec = new Vector3d((double) dataTracker.get(TARGET_X), y, (double) dataTracker.get(TARGET_Z))
-            .subtract(x, y, z).normalize().multiply(scale);
+        Vector3d vec = new Vector3d((double) dataManager.get(TARGET_X), y, (double) dataManager.get(TARGET_Z))
+            .subtract(x, y, z).normalize().scale(scale);
 
         double bpx = x + vec.x * ticks;
         double bpy = y + vec.y * ticks + ticks * rise;
@@ -80,7 +80,7 @@ public class EndermitePowderEntity extends Entity {
             double px = bpx + (Math.random() - 0.5) * posSpread;
             double py = bpy + (Math.random() - 0.5) * posSpread;
             double pz = bpz + (Math.random() - 0.5) * posSpread;
-            ((ServerWorld) world).spawnParticles(ParticleTypes.PORTAL, px, py, pz, 1, 0.2D, 0.12D, 0.1D, 0.06D);
+            ((ServerWorld) world).spawnParticle(ParticleTypes.PORTAL, px, py, pz, 1, 0.2D, 0.12D, 0.1D, 0.06D);
         }
 
         if (ticks++ > maxLiveTime) {
