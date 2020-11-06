@@ -1,6 +1,7 @@
 package svenhjol.charm.base.helper;
 
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.ai.goal.PrioritizedGoal;
 import net.minecraft.util.math.BlockPos;
@@ -31,9 +32,10 @@ public class MobHelper {
         return type.create(world, null, null, null, pos, reason, false, false);
     }
 
-    public static void setEntityAttributes(EntityType<? extends LivingEntity> entityType, DefaultAttributeContainer attributes) {
-        DefaultAttributeRegistryAccessor.getRegistry()
-            .put(entityType, attributes);
+    public static void setEntityAttributes(EntityType<? extends LivingEntity> entityType, AttributeModifierMap attributes) {
+        // TODO: forge method to do this?
+//        DefaultAttributeRegistryAccessor.getRegistry()
+//            .put(entityType, attributes);
     }
 
     public static boolean spawnMobNearPos(ServerWorld world, BlockPos pos, MobEntity mob, BiConsumer<MobEntity, BlockPos> onSpawn) {
