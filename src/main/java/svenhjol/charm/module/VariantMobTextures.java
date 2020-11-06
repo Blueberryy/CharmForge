@@ -1,17 +1,17 @@
 package svenhjol.charm.module;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.*;
-import net.minecraft.util.DyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
-import svenhjol.charm.client.VariantMobTexturesClient;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.ICharmEnum;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.client.VariantMobTexturesClient;
 
 import java.util.*;
 
@@ -72,7 +72,7 @@ public class VariantMobTextures extends CharmModule {
     }
 
     @Override
-    public void clientJoinWorld(MinecraftClient client) {
+    public void clientJoinWorld(Minecraft client) {
         // reset
         chickens = new ArrayList<>();
         cows = new ArrayList<>();
@@ -170,7 +170,7 @@ public class VariantMobTextures extends CharmModule {
     }
 
     public static ResourceLocation getSheepTexture(SheepEntity entity) {
-        DyeColor fleeceColor = entity.getColor();
+        DyeColor fleeceColor = entity.getFleeceColor();
         return sheep.getOrDefault(fleeceColor, DEFAULT_SHEEP);
     }
 
@@ -187,7 +187,7 @@ public class VariantMobTextures extends CharmModule {
 
         if (entity.isTamed()) {
             res = wolvesTame.get(res);
-        } else if (entity.isUniversallyAngry(entity.world)) {
+        } else if (entity.func_241357_a_(entity.world)) {
             res = wolvesAngry.get(res);
         }
 
@@ -195,7 +195,7 @@ public class VariantMobTextures extends CharmModule {
     }
 
     public static ResourceLocation getRandomTexture(Entity entity, List<ResourceLocation> normalSet, List<ResourceLocation> rareSet) {
-        UUID id = entity.getUuid();
+        UUID id = entity.getUniqueID();
         boolean isRare = rareVariants && !rareSet.isEmpty() && (id.getLeastSignificantBits() + id.getMostSignificantBits()) % rarity == 0;
 
         List<ResourceLocation> set = isRare ? rareSet : normalSet;
@@ -204,7 +204,7 @@ public class VariantMobTextures extends CharmModule {
     }
 
     private ResourceLocation createResource(MobType type, String texture) {
-        return new ResourceLocation(Charm.MOD_ID, PREFIX + type.asString() + "/" + texture + ".png");
+        return new ResourceLocation(Charm.MOD_ID, PREFIX + type.getString() + "/" + texture + ".png");
     }
 
     public enum MobType implements ICharmEnum { WOLF, COW, PIG, CHICKEN, SQUID, SHEEP, SNOW_GOLEM }
