@@ -1,7 +1,8 @@
 package svenhjol.charm.base.handler;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
@@ -19,6 +20,9 @@ import java.util.function.Consumer;
 public class ModuleHandler {
     public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
+
+    public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
+    public static final IEventBus FORGE_EVENT_BUS = MinecraftForge.EVENT_BUS;
 
     private static boolean hasInit = false;
 
@@ -86,7 +90,7 @@ public class ModuleHandler {
     }
 
     public static boolean isClient() {
-        return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+        throw new RuntimeException("Do not call this");
     }
 
     private static void instantiateModules() {
@@ -106,6 +110,7 @@ public class ModuleHandler {
                         module.mod = annotation.mod();
                         module.alwaysEnabled = annotation.alwaysEnabled();
                         module.enabledByDefault = annotation.enabledByDefault();
+                        module.hasSubscriptions = annotation.hasSubscriptions();
                         module.enabled = module.enabledByDefault;
                         module.description = annotation.description();
 
