@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.state.properties.ChestType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import svenhjol.charm.TileEntity.VariantChestTileEntity;
-import svenhjol.charm.TileEntity.VariantTrappedChestTileEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.tileentity.VariantChestTileEntity;
+import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

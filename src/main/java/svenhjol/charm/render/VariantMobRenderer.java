@@ -1,84 +1,84 @@
 package svenhjol.charm.render;
 
-import net.minecraft.client.render.entity.*;
+import net.minecraft.client.renderer.entity.*;
 import net.minecraft.entity.passive.*;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.module.VariantMobTextures;
 
 public class VariantMobRenderer {
-    public static class Chicken extends ChickenEntityRenderer {
-        public Chicken(EntityRenderDispatcher dispatcher) {
+    public static class Chicken extends ChickenRenderer {
+        public Chicken(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(ChickenEntity entity) {
+        public ResourceLocation getEntityTexture(ChickenEntity entity) {
             return VariantMobTextures.getChickenTexture(entity);
         }
     }
 
-    public static class Cow extends CowEntityRenderer {
-        public Cow(EntityRenderDispatcher dispatcher) {
+    public static class Cow extends CowRenderer {
+        public Cow(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(CowEntity entity) {
+        public ResourceLocation getEntityTexture(CowEntity entity) {
             return VariantMobTextures.getCowTexture(entity);
         }
     }
 
-    public static class Pig extends PigEntityRenderer {
-        public Pig(EntityRenderDispatcher dispatcher) {
+    public static class Pig extends PigRenderer {
+        public Pig(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(PigEntity entity) {
+        public ResourceLocation getEntityTexture(PigEntity entity) {
             return VariantMobTextures.getPigTexture(entity);
         }
     }
 
-    public static class Sheep extends SheepEntityRenderer {
-        public Sheep(EntityRenderDispatcher dispatcher) {
+    public static class Sheep extends SheepRenderer {
+        public Sheep(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(SheepEntity entity) {
+        public ResourceLocation getEntityTexture(SheepEntity entity) {
             return VariantMobTextures.getSheepTexture(entity);
         }
     }
 
-    public static class SnowGolem extends SnowGolemEntityRenderer {
-        public SnowGolem(EntityRenderDispatcher dispatcher) {
+    public static class SnowGolem extends SnowManRenderer {
+        public SnowGolem(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(SnowGolemEntity entity) {
+        public ResourceLocation getEntityTexture(SnowGolemEntity entity) {
             return VariantMobTextures.getSnowGolemTexture(entity);
         }
     }
 
-    public static class Squid extends SquidEntityRenderer {
-        public Squid(EntityRenderDispatcher dispatcher) {
+    public static class Squid extends SquidRenderer {
+        public Squid(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(SquidEntity entity) {
+        public ResourceLocation getEntityTexture(SquidEntity entity) {
             return VariantMobTextures.getSquidTexture(entity);
         }
     }
 
-    public static class Wolf extends WolfEntityRenderer {
-        public Wolf(EntityRenderDispatcher dispatcher) {
+    public static class Wolf extends WolfRenderer {
+        public Wolf(EntityRendererManager dispatcher) {
             super(dispatcher);
         }
 
         @Override
-        public ResourceLocation getTexture(WolfEntity entity) {
+        public ResourceLocation getEntityTexture(WolfEntity entity) {
             return VariantMobTextures.getWolfTexture(entity);
         }
     }
