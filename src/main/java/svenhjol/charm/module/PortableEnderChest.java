@@ -1,9 +1,7 @@
 package svenhjol.charm.module;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -11,6 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.PortableEnderChestClient;
@@ -26,22 +25,9 @@ public class PortableEnderChest extends CharmModule {
     public static boolean enableKeybind = true;
 
     @Override
-    public void init() {
-        // listen for network requests to open the portable ender chest
-        ServerSidePacketRegistry.INSTANCE.register(MSG_SERVER_OPEN_ENDER_CHEST, (context, data) -> {
-            context.getTaskQueue().execute(() -> {
-                ServerPlayerEntity player = (ServerPlayerEntity)context.getPlayer();
-                if (player == null || !player.inventory.contains(new ItemStack(Blocks.ENDER_CHEST)))
-                    return;
-
-                PortableEnderChest.openContainer(player);
-            });
-        });
-    }
-
-    @Override
     public void clientInit() {
         client = new PortableEnderChestClient(this);
+        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 
     public static void openContainer(ServerPlayerEntity player) {
