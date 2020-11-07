@@ -33,7 +33,6 @@ public class DecreaseRepairCost extends CharmModule {
     private void tryReduceRepairCost(AnvilUpdateEvent event) {
         ItemStack left = event.getLeft();
         ItemStack right = event.getRight();
-
         ItemStack out; // this will be the tool/armor with reduced repair cost
 
         if (left.isEmpty() || right.isEmpty())
