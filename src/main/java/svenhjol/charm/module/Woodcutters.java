@@ -2,13 +2,13 @@ package svenhjol.charm.module;
 
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.handler.ClientRegistryHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.WoodcutterBlock;
@@ -35,7 +35,7 @@ public class Woodcutters extends CharmModule {
 
     @Override
     public void clientRegister() {
-        ClientRegistryHandler.setRenderLayer(WOODCUTTER, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(WOODCUTTER, RenderType.getCutout());
     }
 
     @Override

@@ -1,11 +1,11 @@
 package svenhjol.charm.module;
 
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.handler.ClientRegistryHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -29,6 +29,6 @@ public class EntitySpawner extends CharmModule {
 
     @Override
     public void clientRegister() {
-        ClientRegistryHandler.setRenderLayer(ENTITY_SPAWNER, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(ENTITY_SPAWNER, RenderType.getCutout());
     }
 }

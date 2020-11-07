@@ -1,7 +1,6 @@
 package svenhjol.charm.base.handler;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
@@ -65,10 +64,6 @@ public class RegistryHandler {
 
     public static <T extends Container> ContainerType<T> container(ResourceLocation id, ContainerType.IFactory<T> factory) {
         return Registry.register(Registry.MENU, id, new ContainerType<>(factory));
-    }
-
-    public static <H extends Container, S extends Screen & ContainerProvider<H>> void screenHandlerClient(ContainerType<H> screenHandler, ScreenRegistry.Factory<H, S> screen) {
-        ScreenRegistry.register(screenHandler, screen);
     }
 
     public static SoundEvent sound(ResourceLocation id, SoundEvent sound) {

@@ -6,6 +6,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.block.VariantChestBlock;
@@ -14,8 +17,6 @@ import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.render.VariantChestTileEntityRenderer;
 import svenhjol.charm.tileentity.VariantChestTileEntity;
 import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
-
-import java.util.Set;
 
 @OnlyIn(Dist.CLIENT)
 public class VariantChestClient {
@@ -27,12 +28,14 @@ public class VariantChestClient {
         this.module = module;
     }
 
-    private void handleTextureStitch(SpriteAtlasTexture atlas, Set<ResourceLocation> textures) {
-        if (atlas.getId().toString().equals("minecraft:textures/atlas/chest.png")) {
+    @SubscribeEvent
+    public void onTextureStitch(TextureStitchEvent event) {
+        if (event instanceof TextureStitchEvent.Pre && event.getMap().getTextureLocation().toString().equals("minecraft:textures/atlas/chest.png")) {
+            TextureStitchEvent.Pre ev = (TextureStitchEvent.Pre)event;
             VariantChests.NORMAL_CHEST_BLOCKS.keySet().forEach(type -> {
-                addChestTexture(textures, type, ChestType.LEFT);
-                addChestTexture(textures, type, ChestType.RIGHT);
-                addChestTexture(textures, type, ChestType.SINGLE);
+                addChestTexture(ev, type, ChestType.LEFT);
+                addChestTexture(ev, type, ChestType.RIGHT);
+                addChestTexture(ev, type, ChestType.SINGLE);
             });
         }
     }
@@ -52,14 +55,14 @@ public class VariantChestClient {
         return null;
     }
 
-    private void addChestTexture(Set<ResourceLocation> textures, IVariantMaterial variant, ChestType chestType) {
-        String chestTypeName = chestType != ChestType.SINGLE ? "_" + chestType.toString().toLowerCase() : "";
+    private void addChestTexture(TextureStitchEvent.Pre event, IVariantMaterial variant, ChestType chestType) {
+        String chestTypeName = chestType != ChestType.SINGLE ? "_" + chestType.getString().toLowerCase() : "";
         String[] bases = {"trapped", "normal"};
 
         for (String base : bases) {
-            ResourceLocation id = new ResourceLocation(module.mod, "entity/chest/" + variant.toString() + "_" + base + chestTypeName);
-            VariantChestTileEntityRenderer.addTexture(variant, chestType, id, base.equals("trapped"));
-            textures.add(id);
+            ResourceLocation res = new ResourceLocation(Charm.MOD_ID, "entity/chest/" + variant.getString() + "_" + base + chestTypeName);
+            VariantChestTileEntityRenderer.addTexture(variant, chestType, res, base.equals("trapped"));
+            event.addSprite(res);
         }
     }
 }

@@ -11,8 +11,4 @@ public interface ICharmItem {
     default void register(CharmModule module, String name) {
         RegistryHandler.item(new ResourceLocation(module.mod, name), (Item)this);
     }
-
-    default void setBurnTime(int burnTime) {
-        FuelRegistry.INSTANCE.add((Item)this, burnTime);
-    }
 }

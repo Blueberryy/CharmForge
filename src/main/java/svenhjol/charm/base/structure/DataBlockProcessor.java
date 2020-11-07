@@ -23,9 +23,9 @@ import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.DecorationHelper;
 import svenhjol.charm.block.BookcaseBlock;
-import svenhjol.charm.TileEntity.BookcaseTileEntity;
-import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
 import svenhjol.charm.module.*;
+import svenhjol.charm.tileentity.BookcaseTileEntity;
+import svenhjol.charm.tileentity.EntitySpawnerTileEntity;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -171,13 +171,13 @@ public class DataBlockProcessor extends StructureProcessor {
 
         protected void armorStand() {
             EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
-            if (TileEntity == null) return;
+            if (tileEntity == null) return;
             this.tag = new CompoundNBT();
 
-            TileEntity.entity = new ResourceLocation("minecraft:armor_stand");
-            TileEntity.meta = this.data;
-            TileEntity.rotation = this.rotation;
-            TileEntity.toTag(this.tag);
+            tileEntity.entity = new ResourceLocation("minecraft:armor_stand");
+            tileEntity.meta = this.data;
+            tileEntity.rotation = this.rotation;
+            tileEntity.write(this.tag);
 
             this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
         }
@@ -207,12 +207,12 @@ public class DataBlockProcessor extends StructureProcessor {
 
                 if (random.nextFloat() < BOOKCASE_LOOT_CHANCE) {
                     BookcaseTileEntity tileEntity = Bookcases.TILE_ENTITY.create();
-                    if (TileEntity == null)
+                    if (tileEntity == null)
                         return;
 
-                    TileEntity.setLootTable(DecorationHelper.getRandomLootTable(BOOKCASE_LOOT_TABLES, random), random.nextLong());
+                    tileEntity.setLootTable(DecorationHelper.getRandomLootTable(BOOKCASE_LOOT_TABLES, random), random.nextLong());
                     this.tag = new CompoundNBT();
-                    TileEntity.toTag(this.tag);
+                    tileEntity.write(this.tag);
                 }
             } else if (ModuleHandler.enabled("charm:variant_bookshelves") && variantMaterial != VanillaVariantMaterial.OAK) {
                 state = VariantBookshelves.BOOKSHELF_BLOCKS.get(variantMaterial).getDefaultState();
@@ -253,12 +253,12 @@ public class DataBlockProcessor extends StructureProcessor {
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_CHEST_CHANCE ? RARE_CHEST_LOOT_TABLES : CHEST_LOOT_TABLES, random);
             ChestTileEntity tileEntity = TileEntityType.CHEST.create();
-            if (TileEntity == null)
+            if (tileEntity == null)
                 return;
 
-            TileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
+            tileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
-            TileEntity.write(tag);
+            tileEntity.write(tag);
         }
 
         protected void decoration() {
@@ -270,7 +270,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
         protected void entity() {
             EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
-            if (TileEntity == null) return;
+            if (tileEntity == null) return;
             tag = new CompoundNBT();
 
             String type = getValue("type", this.data, "");
@@ -281,10 +281,10 @@ public class DataBlockProcessor extends StructureProcessor {
             if (!Registry.ENTITY_TYPE.getOptional(typeId).isPresent())
                 return;
 
-            TileEntity.entity = typeId;
-            TileEntity.meta = this.data;
-            TileEntity.rotation = this.rotation;
-            TileEntity.toTag(this.tag);
+            tileEntity.entity = typeId;
+            tileEntity.meta = this.data;
+            tileEntity.rotation = this.rotation;
+            tileEntity.write(this.tag);
 
             this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
         }
@@ -321,18 +321,18 @@ public class DataBlockProcessor extends StructureProcessor {
             if (!withChance(MOB_CHANCE)) return;
 
             EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
-            if (TileEntity == null) return;
+            if (tileEntity == null) return;
 
             String type = getValue("type", this.data, "");
             if (type.isEmpty()) return;
             tag = new CompoundNBT();
 
-            TileEntity.entity = new ResourceLocation(type);
-            TileEntity.health = getValue("health", this.data, 0.0D);
-            TileEntity.persist = getValue("persist", this.data, true);
-            TileEntity.count = getValue("count", this.data, 1);
-            TileEntity.rotation = this.rotation;
-            TileEntity.toTag(this.tag);
+            tileEntity.entity = new ResourceLocation(type);
+            tileEntity.health = getValue("health", this.data, 0.0D);
+            tileEntity.persist = getValue("persist", this.data, true);
+            tileEntity.count = getValue("count", this.data, 1);
+            tileEntity.rotation = this.rotation;
+            tileEntity.write(this.tag);
 
             this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
         }
@@ -384,10 +384,10 @@ public class DataBlockProcessor extends StructureProcessor {
             state = Blocks.SPAWNER.getDefaultState();
 
             MobSpawnerTileEntity tileEntity = TileEntityType.MOB_SPAWNER.create();
-            if (TileEntity != null) {
-                TileEntity.getSpawnerBaseLogic().setEntityType(entity);
+            if (tileEntity != null) {
+                tileEntity.getSpawnerBaseLogic().setEntityType(entity);
                 tag = new CompoundNBT();
-                TileEntity.write(this.tag);
+                tileEntity.write(this.tag);
             }
         }
 
@@ -400,7 +400,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {
                 // get a crate
                 state = Crates.CRATE_BLOCKS.get(woodType).getDefaultState();
-                TileEntity = Crates.TILE_ENTITY.create();
+                tileEntity = Crates.TILE_ENTITY.create();
             } else {
                 // get a barrel
                 if (ModuleHandler.enabled("charm:variant_barrels")) {
@@ -411,16 +411,16 @@ public class DataBlockProcessor extends StructureProcessor {
                     state = Blocks.BARREL.getDefaultState();
                 }
                 state = state.with(BarrelBlock.PROPERTY_FACING, Direction.UP);
-                TileEntity = TileEntityType.BARREL.create();
+                tileEntity = TileEntityType.BARREL.create();
             }
 
-            if (TileEntity == null)
+            if (tileEntity == null)
                 return;
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
-            TileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
+            tileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
-            TileEntity.write(tag);
+            tileEntity.write(tag);
         }
 
         public boolean withChance(float chance) {

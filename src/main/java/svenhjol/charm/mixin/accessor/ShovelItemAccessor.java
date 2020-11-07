@@ -9,7 +9,7 @@ import java.util.Set;
 
 @Mixin(ShovelItem.class)
 public interface ShovelItemAccessor {
-    @Accessor("EFFECTIVE_BLOCKS")
+    @Accessor("EFFECTIVE_ON")
     static Set<Block> getEffectiveBlocks() {
         throw new IllegalStateException();
     }

@@ -1,77 +1,85 @@
 package svenhjol.charm.client;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
-import svenhjol.charm.base.helper.ScreenHelper;
+import svenhjol.charm.message.ServerOpenCrafting;
 import svenhjol.charm.module.PortableCrafting;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 public class PortableCraftingClient {
-    public TexturedButtonWidget craftingButton;
+    public ImageButton craftingButton;
     public static KeyBinding keyBinding;
 
     public PortableCraftingClient(CharmModule module) {
         if (PortableCrafting.enableKeybind) {
-            keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.charm.openCraftingTable",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_V,
-                "key.categories.inventory"
-            ));
-
-            ClientTickEvents.END_WORLD_TICK.register(client -> {
-                while (keyBinding.wasPressed()) {
-                    triggerOpenCraftingTable();
-                }
-            });
+            keyBinding = new KeyBinding("charm.key.openCraftingTable", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.inventory");
+            ClientRegistry.registerKeyBinding(keyBinding);
         }
     }
 
-    private void handleGuiSetup(Minecraft client, int width, int height, List<AbstractButtonWidget> buttons, Consumer<AbstractButtonWidget> addButton) {
-        if (client.player == null)
+    @SubscribeEvent
+    public void onKeyboardKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent event) {
+        if (keyBinding.matchesKey(event.getKeyCode(), event.getScanCode()))
+            triggerOpenCraftingTable();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOW)
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null)
             return;
 
-        if (!(client.currentScreen instanceof InventoryScreen))
+        if (!(event.getGui() instanceof InventoryScreen) || event.getGui() instanceof CreativeScreen)
             return;
 
-        InventoryScreen screen = (InventoryScreen)client.currentScreen;
-        int guiLeft = ScreenHelper.getX(screen);
+        InventoryScreen screen = (InventoryScreen)event.getGui();
 
-        this.craftingButton = new TexturedButtonWidget(guiLeft + 130, height / 2 - 22, 20, 18, 0, 0, 19, CharmResources.INVENTORY_BUTTONS, click -> {
+        this.craftingButton = new ImageButton(screen.getGuiLeft() + 130, screen.height / 2 - 22, 20, 18, 0, 0, 19, CharmResources.INVENTORY_BUTTONS, click -> {
             triggerOpenCraftingTable();
         });
 
-        this.craftingButton.visible = hasCrafting(client.player);
-        addButton.accept(this.craftingButton);
+        craftingButton.visible = this.hasCrafting(mc.player);
+        event.addWidget(this.craftingButton);
     }
 
-    private void handleRenderGui(Minecraft client, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (!(client.currentScreen instanceof InventoryScreen)
-            || this.craftingButton == null
-            || client.player == null
-        ) {
+    @SubscribeEvent
+    public void onDrawForeground(GuiContainerEvent.DrawForeground event) {
+        if (!(event.getGuiContainer() instanceof InventoryScreen))
             return;
-        }
 
-        if (client.player.world.getTime() % 5 == 0)
-            this.craftingButton.visible = hasCrafting(client.player);
+        if (craftingButton == null)
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null)
+            return;
+
+        if (mc.player.world.getGameTime() % 5 == 0)
+            craftingButton.visible = this.hasCrafting(mc.player);
     }
 
     private boolean hasCrafting(PlayerEntity player) {
-        return player.inventory.contains(new ItemStack(Blocks.CRAFTING_TABLE));
+        return player.inventory.hasItemStack(new ItemStack(Blocks.CRAFTING_TABLE));
     }
 
     private void triggerOpenCraftingTable() {
-        ClientSidePacketRegistry.INSTANCE.sendToServer(PortableCrafting.MSG_SERVER_OPEN_CRAFTING, new PacketByteBuf(Unpooled.buffer()));
+        Charm.PACKET_HANDLER.sendToServer(new ServerOpenCrafting());
     }
 
     public boolean isButtonVisible() {

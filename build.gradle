@@ -13,15 +13,13 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
-apply plugin: 'eclipse'
-apply plugin: 'maven'
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
-group = project.maven_group
+group = "${project.maven_group}.${project.mod_id}"
 
 minecraft {
 	mappings channel: "${project.mapping_channel}", version: "${project.mapping_version}"
@@ -29,25 +27,19 @@ minecraft {
 
 	runs {
 		client {
-			workingDirectory project.file('run')
+			properties 'forge.logging.console.level': 'debug'
+			properties 'fml.earlyprogresswindow': 'false'
+			workingDirectory project.file('run').canonicalPath
 			arg "-mixin.config=charm.mixins.json"
-
-			// Recommended logging data for a userdev environment
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-			// Recommended logging level for the console
-			property 'forge.logging.console.level', 'debug'
+			source sourceSets.main
+			jvmArgs "-Xmx1500M"
 		}
 
 		server {
-			workingDirectory project.file('run')
+			properties 'forge.logging.console.level': 'debug'
+			workingDirectory project.file('run').canonicalPath
 			arg "-mixin.config=charm.mixins.json"
-
-			// Recommended logging data for a userdev environment
-			property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-			// Recommended logging level for the console
-			property 'forge.logging.console.level', 'debug'
+			source sourceSets.main
 		}
 	}
 }

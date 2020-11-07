@@ -22,10 +22,10 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import svenhjol.charm.TileEntity.BookcaseTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import javax.annotation.Nullable;
 

@@ -14,9 +14,9 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import svenhjol.charm.TileEntity.EntitySpawnerTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
+import svenhjol.charm.tileentity.EntitySpawnerTileEntity;
 
 import javax.annotation.Nullable;
 

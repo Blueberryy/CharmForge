@@ -33,7 +33,6 @@
     "accessor.FireBlockAccessor",
     "accessor.GoalSelectorAccessor",
     "accessor.HoeItemAccessor",
-    "accessor.IServerWorldor",
     "accessor.ItemAccessor",
     "accessor.JigsawPatternAccessor",
     "accessor.MinecraftServerAccessor",
@@ -49,8 +48,7 @@
     "accessor.SlotAccessor",
     "accessor.StructurePieceAccessor",
     "accessor.TickableSoundAccessor",
-    "accessor.VillagerEntityAccessor",
-    "accessor.WorldSaveHandlerAccessor"
+    "accessor.VillagerEntityAccessor"
   ],
   "client": [
     "AnvilScreenMixin",

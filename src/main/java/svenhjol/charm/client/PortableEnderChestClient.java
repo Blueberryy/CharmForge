@@ -1,84 +1,83 @@
 package svenhjol.charm.client;
 
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
-import net.minecraft.client.options.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
-import svenhjol.charm.base.CharmResources;
-import svenhjol.charm.module.PortableEnderChest;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.helper.ScreenHelper;
-
-import java.util.List;
-import java.util.function.Consumer;
+import svenhjol.charm.base.CharmResources;
+import svenhjol.charm.message.ServerOpenEnderChest;
+import svenhjol.charm.module.PortableEnderChest;
 
 public class PortableEnderChestClient {
-    public TexturedButtonWidget chestButton;
+    public ImageButton chestButton;
     public static KeyBinding keyBinding;
 
     public PortableEnderChestClient(CharmModule module) {
         if (PortableEnderChest.enableKeybind) {
-            keyBinding = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-                "key.charm.openEnderChest",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_B,
-                "key.categories.inventory"
-            ));
-
-            ClientTickEvents.END_WORLD_TICK.register(client -> {
-                while (keyBinding.wasPressed()) {
-                    triggerOpenChest();
-                }
-            });
+            keyBinding = new KeyBinding("charm.key.openEnderChest", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_B, "key.categories.inventory");
+            ClientRegistry.registerKeyBinding(keyBinding);
         }
     }
 
-    private void handleGuiSetup(Minecraft client, int width, int height, List<AbstractButtonWidget> buttons, Consumer<AbstractButtonWidget> addButton) {
-        if (client.player == null)
+    @SubscribeEvent
+    public void onKeyboardKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent event) {
+        if (keyBinding.matchesKey(event.getKeyCode(), event.getScanCode()))
+            triggerOpenChest();
+    }
+
+    @SubscribeEvent
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null)
             return;
 
-        if (!(client.currentScreen instanceof InventoryScreen))
+        if (!(event.getGui() instanceof InventoryScreen))
             return;
 
-        InventoryScreen screen = (InventoryScreen)client.currentScreen;
-        int guiLeft = ScreenHelper.getX(screen);
+        InventoryScreen screen = (InventoryScreen) event.getGui();
 
-        this.chestButton = new TexturedButtonWidget(guiLeft + 130, height / 2 - 22, 20, 18, 20, 0, 19, CharmResources.INVENTORY_BUTTONS, click -> {
+        this.chestButton = new ImageButton(screen.getGuiLeft() + 130, screen.height / 2 - 22, 20, 18, 20, 0, 19, CharmResources.INVENTORY_BUTTONS, click -> {
             triggerOpenChest();
         });
 
-        this.chestButton.visible = hasChest(client.player);
-        addButton.accept(this.chestButton);
+        chestButton.visible = this.hasChest(mc.player);
+        event.addWidget(this.chestButton);
     }
 
-    private void handleRenderGui(Minecraft client, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (!(client.currentScreen instanceof InventoryScreen)
-            || this.chestButton == null
-            || client.player == null
-        ) {
+    @SubscribeEvent
+    public void onDrawForeground(GuiContainerEvent.DrawForeground event) {
+        if (!(event.getGuiContainer() instanceof InventoryScreen))
             return;
-        }
 
-        if (client.player.world.getTime() % 5 == 0)
-            this.chestButton.visible = hasChest(client.player);
+        if (chestButton == null)
+            return;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null)
+            return;
+
+        if (mc.player.world.getGameTime() % 5 == 0)
+            chestButton.visible = this.hasChest(mc.player);
     }
 
     private boolean hasChest(PlayerEntity player) {
-        return player.inventory.contains(new ItemStack(Blocks.ENDER_CHEST));
+        return player.inventory.hasItemStack(new ItemStack(Blocks.ENDER_CHEST));
     }
 
     private void triggerOpenChest() {
-        ClientSidePacketRegistry.INSTANCE.sendToServer(PortableEnderChest.MSG_SERVER_OPEN_ENDER_CHEST, new PacketByteBuf(Unpooled.buffer()));
+        Charm.PACKET_HANDLER.sendToServer(new ServerOpenEnderChest());
     }
 
     public boolean isButtonVisible() {

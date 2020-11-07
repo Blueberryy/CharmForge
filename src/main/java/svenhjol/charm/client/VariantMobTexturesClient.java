@@ -1,9 +1,10 @@
 package svenhjol.charm.client;
 
 import net.minecraft.entity.EntityType;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.module.VariantMobTextures;
 import svenhjol.charm.render.VariantMobRenderer;
-import svenhjol.charm.base.CharmModule;
 
 public class VariantMobTexturesClient {
     public VariantMobTexturesClient(CharmModule module) {
@@ -11,32 +12,25 @@ public class VariantMobTexturesClient {
             return;
 
         if (VariantMobTextures.variantChickens)
-            EntityRendererRegistry.INSTANCE.register(EntityType.CHICKEN, ((dispatcher, context)
-                -> new VariantMobRenderer.Chicken(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.CHICKEN, VariantMobRenderer.Chicken::new);
 
         if (VariantMobTextures.variantCows)
-            EntityRendererRegistry.INSTANCE.register(EntityType.COW, ((dispatcher, context)
-                -> new VariantMobRenderer.Cow(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.COW, VariantMobRenderer.Cow::new);
 
         if (VariantMobTextures.variantPigs)
-            EntityRendererRegistry.INSTANCE.register(EntityType.PIG, ((dispatcher, context)
-                -> new VariantMobRenderer.Pig(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.PIG, VariantMobRenderer.Pig::new);
 
         if (VariantMobTextures.variantSheep)
-            EntityRendererRegistry.INSTANCE.register(EntityType.SHEEP, ((dispatcher, context)
-                -> new VariantMobRenderer.Sheep(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.SHEEP, VariantMobRenderer.Sheep::new);
 
         if (VariantMobTextures.variantSnowGolems)
-            EntityRendererRegistry.INSTANCE.register(EntityType.SNOW_GOLEM, ((dispatcher, context)
-                -> new VariantMobRenderer.SnowGolem(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.SNOW_GOLEM, VariantMobRenderer.SnowGolem::new);
 
         if (VariantMobTextures.variantSquids)
-            EntityRendererRegistry.INSTANCE.register(EntityType.SQUID, ((dispatcher, context)
-                -> new VariantMobRenderer.Squid(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.SQUID, VariantMobRenderer.Squid::new);
 
         if (VariantMobTextures.variantWolves)
-            EntityRendererRegistry.INSTANCE.register(EntityType.WOLF, ((dispatcher, context)
-                -> new VariantMobRenderer.Wolf(dispatcher)));
+            RenderingRegistry.registerEntityRenderingHandler(EntityType.WOLF, VariantMobRenderer.Wolf::new);
 
     }
 }

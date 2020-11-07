@@ -1,35 +1,35 @@
 package svenhjol.charm.client;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.HopperScreen;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.inventory.BeaconScreen;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
-import net.minecraft.client.gui.screen.inventory.MerchantScreen;
-import net.minecraft.client.gui.screen.inventory.ShulkerBoxScreen;
+import net.minecraft.client.gui.screen.inventory.*;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.Slot;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
-import svenhjol.charm.base.helper.ScreenHelper;
 import svenhjol.charm.gui.BookcaseScreen;
 import svenhjol.charm.gui.CrateScreen;
-import svenhjol.charm.mixin.accessor.SlotAccessor;
-import svenhjol.charm.module.InventoryTidying;
+import svenhjol.charm.message.ServerSortInventory;
 
 import java.util.*;
-import java.util.function.Consumer;
 
-import static svenhjol.charm.handler.InventoryTidyingHandler.BE;
-import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
+import static svenhjol.charm.message.ServerSortInventory.TILE;
 
 public class InventoryTidyingClient {
     private final CharmModule module;
 
     public static final int LEFT = 159;
     public static final int TOP = 12;
-    public static final List<TexturedButtonWidget> sortingButtons = new ArrayList<>();
+    public static final List<ImageButton> sortingButtons = new ArrayList<>();
 
-    public final List<Class<? extends Screen>> TileEntityScreens = new ArrayList<>();
+    public final List<Class<? extends Screen>> tileScreens = new ArrayList<>();
     public final List<Class<? extends Screen>> blacklistScreens = new ArrayList<>();
 
     public final Map<Class<? extends Screen>, Map<Integer, Integer>> screenTweaks = new HashMap<>();
@@ -43,39 +43,44 @@ public class InventoryTidyingClient {
         screenTweaks.put(MerchantScreen.class, new HashMap<Integer, Integer>() {{ put(100, 0); }});
         screenTweaks.put(InventoryScreen.class, new HashMap<Integer, Integer>() {{ put(0, 76); }});
 
-        TileEntityScreens.addAll(Arrays.asList(
-            GenericContainerScreen.class,
+        tileScreens.addAll(Arrays.asList(
+            ChestScreen.class, // yarn: GenericContainerScreen
             HopperScreen.class,
             ShulkerBoxScreen.class,
             CrateScreen.class,
             BookcaseScreen.class,
-            Generic3x3ContainerScreen.class
+            DispenserScreen.class // yarn: Generic3x3ContainerScreen
         ));
 
         blacklistScreens.addAll(Arrays.asList(
-            CreativeInventoryScreen.class,
+            CreativeScreen.class,
             BeaconScreen.class
         ));
     }
 
-    private void handleGuiSetup(Minecraft client, int width, int height, List<AbstractButtonWidget> buttons, Consumer<AbstractButtonWidget> addButton) {
-        if (client.player == null)
+    @SubscribeEvent
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        if (!module.enabled) return;
+
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null)
             return;
 
-        if (!(client.currentScreen instanceof HandledScreen))
+        if (!(event.getGui() instanceof ContainerScreen))
             return;
 
-        if (blacklistScreens.contains(client.currentScreen.getClass()))
+        if (blacklistScreens.contains(event.getGui().getClass()))
             return;
 
         sortingButtons.clear();
 
-        HandledScreen<?> screen = (HandledScreen<?>)client.currentScreen;
-        Class<? extends HandledScreen> clazz = screen.getClass();
-        ScreenHandler screenHandler = screen.getScreenHandler();
+        ContainerScreen<?> screen = (ContainerScreen<?>) event.getGui();
+        Class<? extends ContainerScreen> clazz = screen.getClass();
+        Container container = screen.getContainer();
 
-        int x = ScreenHelper.getX(screen) + LEFT;
-        int y = ScreenHelper.getY(screen) - TOP;
+        int x = screen.getGuiLeft() + LEFT;
+        int y = screen.getGuiTop() - TOP;
 
         if (screenTweaks.containsKey(clazz)) {
             Map<Integer, Integer> m = screenTweaks.get(clazz);
@@ -85,39 +90,40 @@ public class InventoryTidyingClient {
             }
         }
 
-        List<Slot> slots = screenHandler.slots;
+        List<Slot> slots = container.inventorySlots;
         for (Slot slot : slots) {
-            if (blockEntityScreens.contains(screen.getClass()) && ((SlotAccessor)slot).getIndex() == 0) {
-                this.addSortingButton(screen, x, y + slot.y, click -> sendSortMessage(BE));
+            if (tileScreens.contains(screen.getClass()) && slot.getSlotIndex() == 0) {
+                this.addSortingButton(screen, x, y + slot.yPos, click -> {
+                    Charm.PACKET_HANDLER.sendToServer(new ServerSortInventory(TILE));
+                });
             }
 
-            if (slot.inventory == client.player.inventory) {
-                this.addSortingButton(screen, x, y + slot.y, click -> sendSortMessage(PLAYER));
+            if (slot.inventory == mc.player.inventory) {
+                if (screen instanceof InventoryScreen)
+                    y += 76;
+
+                this.addSortingButton(screen, x, y + slot.yPos, click -> {
+                    Charm.PACKET_HANDLER.sendToServer(new ServerSortInventory(ServerSortInventory.PLAYER));
+                });
                 break;
             }
         }
 
-        sortingButtons.forEach(addButton);
+        sortingButtons.forEach(event::addWidget);
     }
 
-    private void handleRenderGui(Minecraft client, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (client.currentScreen instanceof InventoryScreen
-            && !blacklistScreens.contains(client.currentScreen.getClass())
+    @SubscribeEvent
+    public void onDrawForeground(GuiContainerEvent.DrawForeground event) {
+        // redraw all buttons on inventory to handle recipe open/close
+        if (event.getGuiContainer() instanceof InventoryScreen
+            && !blacklistScreens.contains(event.getGuiContainer().getClass())
         ) {
-            // handles the recipe being open/closed
-            InventoryScreen screen = (InventoryScreen)client.currentScreen;
-            int x = ScreenHelper.getX(screen);
-            sortingButtons.forEach(button -> button.setPos(x + LEFT, button.y));
+            InventoryScreen screen = (InventoryScreen)event.getGuiContainer();
+            sortingButtons.forEach(button -> button.setPosition(screen.getGuiLeft() + LEFT, button.y));
         }
     }
 
-    private void addSortingButton(Screen screen, int x, int y, ButtonWidget.PressAction onPress) {
-        sortingButtons.add(new TexturedButtonWidget(x, y, 10, 10, 40, 0, 10, CharmResources.INVENTORY_BUTTONS, onPress));
-    }
-
-    private void sendSortMessage(int type) {
-        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-        data.writeInt(type);
-        ClientSidePacketRegistry.INSTANCE.sendToServer(InventoryTidying.MSG_SERVER_TIDY_INVENTORY, data);
+    private void addSortingButton(Screen screen, int x, int y, Button.IPressable onPress) {
+        sortingButtons.add(new ImageButton(x, y, 10, 10, 40, 0, 10, CharmResources.INVENTORY_BUTTONS, onPress));
     }
 }

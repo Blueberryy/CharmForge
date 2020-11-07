@@ -1,39 +1,36 @@
 package svenhjol.charm.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.inventory.CreativeScreen;
 import net.minecraft.client.gui.screen.inventory.InventoryScreen;
+import net.minecraft.client.gui.widget.button.ImageButton;
+import net.minecraftforge.client.event.GuiContainerEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.helper.ScreenHelper;
 import svenhjol.charm.module.PortableCrafting;
 import svenhjol.charm.module.PortableEnderChest;
 
-
 public class InventoryButtonClient {
-    public TexturedButtonWidget recipeButton;
+    public ImageButton recipeButton;
 
-    public InventoryButtonClient() {
-
-    }
-
-    private void handleGuiSetup(Minecraft client, int width, int height, List<AbstractButtonWidget> buttons, Consumer<AbstractButtonWidget> addButton) {
-        Screen currentScreen = client.currentScreen;
-
-        if (!(currentScreen instanceof InventoryScreen))
+    @SubscribeEvent
+    public void onInitGui(GuiScreenEvent.InitGuiEvent.Post event) {
+        if (!(event.getGui() instanceof InventoryScreen) || event.getGui() instanceof CreativeScreen)
             return;
 
-        if (!buttons.isEmpty() && buttons.get(0) instanceof TexturedButtonWidget)
-            this.recipeButton = (TexturedButtonWidget)buttons.get(0);
+        // get recipe button from the widgetlist
+        if (!event.getWidgetList().isEmpty() && event.getWidgetList().get(0) instanceof ImageButton)
+            this.recipeButton = (ImageButton)event.getWidgetList().get(0);
 
-        redrawButtons((InventoryScreen)currentScreen);
+        redrawButtons((InventoryScreen)event.getGui());
     }
 
-    private void handleRenderGui(Minecraft client, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        Screen currentScreen = client.currentScreen;
-        if (!(currentScreen instanceof InventoryScreen))
+    @SubscribeEvent
+    public void onDrawForeground(GuiContainerEvent.DrawForeground event) {
+        if (!(event.getGuiContainer() instanceof InventoryScreen) || event.getGuiContainer() instanceof CreativeScreen)
             return;
 
-        redrawButtons((InventoryScreen)currentScreen);
+        redrawButtons((InventoryScreen)event.getGuiContainer());
     }
 
     private void redrawButtons(InventoryScreen screen) {
@@ -45,21 +42,21 @@ public class InventoryButtonClient {
                 // recipe, crafting and chest buttons
                 if (this.recipeButton != null)
                     this.recipeButton.visible = false;
-                PortableCrafting.client.craftingButton.setPos(left + 104, y);
-                PortableEnderChest.client.chestButton.setPos(left + 130, y);
+                PortableCrafting.client.craftingButton.setPosition(left + 104, y);
+                PortableEnderChest.client.chestButton.setPosition(left + 130, y);
 
             } else {
                 // just the recipe and crafting buttons
                 if (this.recipeButton != null)
                     this.recipeButton.visible = true;
-                PortableCrafting.client.craftingButton.setPos(left + 130, y);
+                PortableCrafting.client.craftingButton.setPosition(left + 130, y);
 
             }
         } else if (PortableEnderChest.client != null && PortableEnderChest.client.isButtonVisible()) {
             // just the recipe and chest buttons
             if (this.recipeButton != null)
                 this.recipeButton.visible = true;
-            PortableEnderChest.client.chestButton.setPos(left + 130, y);
+            PortableEnderChest.client.chestButton.setPosition(left + 130, y);
         }
     }
 }

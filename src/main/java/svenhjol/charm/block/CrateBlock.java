@@ -25,11 +25,11 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlockWithEntity;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.module.Crates;
+import svenhjol.charm.tileentity.CrateTileEntity;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -90,7 +90,7 @@ public class CrateBlock extends CharmBlockWithEntity {
 
             if (!world.isRemote && player.isCreative() && !crate.isEmpty()) {
                 ItemStack stack = new ItemStack(getBlockByMaterial(this.type));
-                CompoundNBT tag = crate.toTag(new CompoundNBT());
+                CompoundNBT tag = crate.write(new CompoundNBT());
 
                 if (!tag.isEmpty())
                     stack.setTagInfo(BLOCK_ENTITY_TAG, tag);
@@ -116,7 +116,7 @@ public class CrateBlock extends CharmBlockWithEntity {
             CrateTileEntity crate = (CrateTileEntity)tileEntity;
 
             builder = builder.withDynamicDrop(CONTENTS, ((context, consumer) -> {
-                for (int i = 0; i < crate.size(); i++) {
+                for (int i = 0; i < crate.getSizeInventory(); i++) {
                     consumer.accept(crate.getStackInSlot(i));
                 }
             }));
@@ -173,7 +173,7 @@ public class CrateBlock extends CharmBlockWithEntity {
         if (crate == null)
             return ItemStack.EMPTY;
 
-        CompoundNBT tag = crate.toTag(new CompoundNBT());
+        CompoundNBT tag = crate.write(new CompoundNBT());
         if (!tag.isEmpty())
             stack.setTagInfo(BLOCK_ENTITY_TAG, tag);
 

@@ -2,6 +2,7 @@ package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.InventoryButtonClient;
@@ -14,8 +15,11 @@ public class Core extends CharmModule {
     @Config(name = "Inventory button return", description = "If inventory crafting or inventory ender chest modules are enabled, pressing escape or inventory key returns you to the inventory rather than closing the window.")
     public static boolean inventoryButtonReturn = false;
 
+    public InventoryButtonClient inventoryButtonClient;
+
     @Override
     public void clientRegister() {
-        new InventoryButtonClient();
+        inventoryButtonClient = new InventoryButtonClient();
+        ModuleHandler.FORGE_EVENT_BUS.register(inventoryButtonClient);
     }
 }
