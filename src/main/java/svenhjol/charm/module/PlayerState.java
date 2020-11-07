@@ -1,33 +1,29 @@
 package svenhjol.charm.module;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.PlayerStateClient;
+import svenhjol.charm.message.ClientUpdatePlayerState;
+import svenhjol.charm.message.ServerUpdatePlayerState;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-@Module(mod = Charm.MOD_ID, description = "Synchronize additional state from server to client.", alwaysEnabled = true)
+@Module(mod = Charm.MOD_ID, description = "Synchronize additional state from server to client.", alwaysEnabled = true, hasSubscriptions = true)
 public class PlayerState extends CharmModule {
-    public static final ResourceLocation MSG_SERVER_UPDATE_PLAYER_STATE = new ResourceLocation(Charm.MOD_ID, "server_update_player_state");
-    public static final ResourceLocation MSG_CLIENT_UPDATE_PLAYER_STATE = new ResourceLocation(Charm.MOD_ID, "client_update_player_state");
     public static List<BiConsumer<ServerPlayerEntity, CompoundNBT>> listeners = new ArrayList<>();
 
     public static PlayerStateClient client;
@@ -35,47 +31,20 @@ public class PlayerState extends CharmModule {
     @Config(name = "Server state update interval", description = "Interval (in ticks) on which additional world state will be synchronised to the client.")
     public static int serverStateInverval = 120;
 
-    @Override
-    public void register() {
-        // register server message handler to call the serverCallback
-        ServerSidePacketRegistry.INSTANCE.register(MSG_SERVER_UPDATE_PLAYER_STATE, (context, data) -> {
-            context.getTaskQueue().execute(() -> {
-                ServerPlayerEntity player = (ServerPlayerEntity)context.getPlayer();
-                if (player == null)
-                    return;
-
-                serverCallback(player);
-            });
-        });
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.END
+            && event.player.world.isRemote
+            && event.player.world.getGameTime() % serverStateInverval == 0
+        ) {
+            Charm.PACKET_HANDLER.sendToServer(new ServerUpdatePlayerState());
+        }
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
     public void clientRegister() {
         client = new PlayerStateClient();
-
-        // send a state update request on a heartbeat (serverStateInterval)
-        PlayerTickCallback.EVENT.register((player -> {
-            if (player.world.isRemote && player.world.getTime() % serverStateInverval == 0)
-                ClientSidePacketRegistry.INSTANCE.sendToServer(MSG_SERVER_UPDATE_PLAYER_STATE, new PacketByteBuf(Unpooled.buffer()));
-        }));
-
-        // register client message handler to call the clientCallback
-        ClientSidePacketRegistry.INSTANCE.register(MSG_CLIENT_UPDATE_PLAYER_STATE, (context, data) -> {
-            CompoundNBT tag = new CompoundNBT();
-
-            try {
-                byte[] byteData = Base64.getDecoder().decode(data.readString());
-                tag = NbtIo.readCompressed(new ByteArrayInputStream(byteData));
-            } catch (IOException e) {
-                Charm.LOG.warn("Failed to decompress player state");
-            }
-
-            CompoundNBT finalTag = tag;
-            context.getTaskQueue().execute(() -> {
-                clientCallback(finalTag);
-            });
-        });
     }
 
     /**
@@ -88,32 +57,18 @@ public class PlayerState extends CharmModule {
         long dayTime = world.getDayTime() % 24000;
         CompoundNBT tag = new CompoundNBT();
 
-        tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, StructureFeature.MINESHAFT));
-        tag.putBoolean("stronghold", PosHelper.isInsideStructure(world, pos, StructureFeature.STRONGHOLD));
-        tag.putBoolean("fortress", PosHelper.isInsideStructure(world, pos, StructureFeature.FORTRESS));
-        tag.putBoolean("shipwreck", PosHelper.isInsideStructure(world, pos, StructureFeature.SHIPWRECK));
-        tag.putBoolean("village", world.isNearOccupiedPointOfInterest(pos));
+        tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, Structure.field_236367_c_));
+        tag.putBoolean("stronghold", PosHelper.isInsideStructure(world, pos, Structure.field_236375_k_));
+        tag.putBoolean("fortress", PosHelper.isInsideStructure(world, pos, Structure.field_236378_n_));
+        tag.putBoolean("shipwreck", PosHelper.isInsideStructure(world, pos, Structure.field_236373_i_));
+        tag.putBoolean("village", world.isVillage(pos));
         tag.putBoolean("day", dayTime > 0 && dayTime < 12700);
 
         // send updated player data to listeners
         listeners.forEach(action -> action.accept(player, tag));
 
         // send updated player data to client
-        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
-        String serialized = null;
-
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NbtIo.writeCompressed(tag, out);
-            serialized = Base64.getEncoder().encodeToString(out.toByteArray());
-        } catch (IOException e) {
-            Charm.LOG.warn("Failed to compress player state");
-        }
-
-        if (serialized != null) {
-            buffer.writeString(serialized);
-            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, MSG_CLIENT_UPDATE_PLAYER_STATE, buffer);
-        }
+        Charm.PACKET_HANDLER.sendToPlayer(new ClientUpdatePlayerState(tag), player);
     }
 
     /**
