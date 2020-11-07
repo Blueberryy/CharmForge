@@ -6,21 +6,26 @@ import net.minecraft.block.JukeboxBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.BackgroundMusicSelector;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SimpleSound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraftforge.client.event.sound.SoundEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
-import svenhjol.charm.module.MusicImprovements;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DimensionHelper;
 import svenhjol.charm.base.helper.SoundHelper;
+import svenhjol.charm.module.MusicImprovements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,17 +52,21 @@ public class MusicClient {
             addCreativeMusicCondition();
     }
 
-    private ActionResult handleUseBlock(PlayerEntity player, World world, Hand hand, BlockHitResult hitResult) {
-        stopRecord(player, hitResult.getBlockPos(), player.getStackInHand(hand));
-        return ActionResult.PASS;
+    @SubscribeEvent
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (!event.isCanceled())
+            stopRecord(event.getEntity(), event.getPos(), event.getItemStack());
     }
 
-    private void handlePlaySound(SoundSystem soundSystem, SoundInstance sound) {
-        checkShouldStopMusic(sound);
+    @SubscribeEvent
+    public void onSoundSource(SoundEvent.SoundSourceEvent event) {
+        if (!event.isCanceled())
+            checkShouldStopMusic(event.getSound());
     }
 
-    private void handleClientTick(Minecraft client) {
-        checkActuallyStopMusic();
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (!event.isCanceled())
+            checkActuallyStopMusic();
     }
 
     public void addCreativeMusicCondition() {
@@ -76,11 +85,11 @@ public class MusicClient {
         ) {
             BlockState state = entity.world.getBlockState(pos);
             if (state.getBlock() == Blocks.JUKEBOX && !state.get(JukeboxBlock.HAS_RECORD))
-                SoundHelper.getSoundManager().stopSounds(null, SoundCategory.MUSIC);
+                SoundHelper.getSoundManager().stop(null, SoundCategory.MUSIC);
         }
     }
 
-    public void checkShouldStopMusic(SoundInstance sound) {
+    public void checkShouldStopMusic(ISound sound) {
         if (sound.getCategory() == SoundCategory.MUSIC) {
             // check if there are any records playing
             SoundHelper.getPlayingSounds().forEach((category, s) -> {
@@ -112,7 +121,7 @@ public class MusicClient {
             if (!DimensionHelper.isDimension(mc.world, currentDim))
                 forceStop();
 
-            if (!mc.getSoundManager().isPlaying(currentMusic)) {
+            if (!mc.getSoundHandler().isPlaying(currentMusic)) {
                 currentMusic = null;
                 timeUntilNextMusic = Math.min(MathHelper.nextInt(new Random(), ambient.getMinDelay(), 3600), timeUntilNextMusic);
             }
@@ -122,10 +131,10 @@ public class MusicClient {
 
         if (currentMusic == null && timeUntilNextMusic-- <= 0) {
             currentDim = DimensionHelper.getDimension(mc.world);
-            currentMusic = PositionedSoundInstance.music(ambient.getSound());
+            currentMusic = SimpleSound.music(ambient.getSound());
 
-            if (currentMusic.getSound() != SoundManager.MISSING_SOUND) {
-                mc.getSoundManager().play(currentMusic);
+            if (currentMusic.getSound() != SoundHandler.MISSING_SOUND) {
+                mc.getSoundHandler().play(currentMusic);
                 timeUntilNextMusic = Integer.MAX_VALUE;
             }
         }
@@ -135,7 +144,7 @@ public class MusicClient {
 
     public static boolean handleStop() {
         if (currentMusic != null) {
-            Minecraft.getInstance().getSoundManager().stop(currentMusic);
+            Minecraft.getInstance().getSoundHandler().stop(currentMusic);
             currentMusic = null;
             timeUntilNextMusic = 0;
         }
@@ -143,11 +152,11 @@ public class MusicClient {
     }
 
     public static boolean handlePlaying(BackgroundMusicSelector music) {
-        return currentMusic != null && music.getSound().getId().equals(currentMusic.getId());
+        return currentMusic != null && music.getSoundEvent().getName().equals(currentMusic.getSoundLocation());
     }
 
     public static void forceStop() {
-        Minecraft.getInstance().getSoundManager().stop(currentMusic);
+        Minecraft.getInstance().getSoundHandler().stop(currentMusic);
         currentMusic = null;
         timeUntilNextMusic = 3600;
     }
@@ -165,7 +174,7 @@ public class MusicClient {
 
         // if none available, just play a default background track
         if (condition == null)
-            condition = new MusicCondition(Minecraft.getInstance().getMusicType());
+            condition = new MusicCondition(Minecraft.getInstance().getBackgroundMusicSelector());
 
         return condition;
     }

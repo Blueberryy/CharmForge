@@ -1,8 +1,8 @@
 package svenhjol.charm.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.sound.MusicSound;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.BackgroundMusicSelector;
+import net.minecraft.util.SoundEvent;
 
 import java.util.function.Predicate;
 
@@ -10,24 +10,24 @@ public class MusicCondition {
     private final SoundEvent sound;
     private final int minDelay;
     private final int maxDelay;
-    private Predicate<MinecraftClient> condition;
+    private Predicate<Minecraft> condition;
 
-    public MusicCondition(SoundEvent sound, int minDelay, int maxDelay, Predicate<MinecraftClient> condition) {
+    public MusicCondition(SoundEvent sound, int minDelay, int maxDelay, Predicate<Minecraft> condition) {
         this.sound = sound;
         this.minDelay = minDelay;
         this.maxDelay = maxDelay;
         this.condition = condition;
     }
 
-    public MusicCondition(MusicSound music) {
-        this.sound = music.getSound();
+    public MusicCondition(BackgroundMusicSelector music) {
+        this.sound = music.getSoundEvent();
         this.minDelay = music.getMinDelay();
         this.maxDelay = music.getMaxDelay();
     }
 
     public boolean handle() {
         if (condition == null) return false;
-        return condition.test(MinecraftClient.getInstance());
+        return condition.test(Minecraft.getInstance());
     }
 
     public SoundEvent getSound() {
