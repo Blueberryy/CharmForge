@@ -5,26 +5,28 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
 
-@Module(mod = Charm.MOD_ID, description = "Right-clicking on a grass path block with a hoe turns it back into dirt.")
+@Module(mod = Charm.MOD_ID, description = "Right-clicking on a grass path block with a hoe turns it back into dirt.", hasSubscriptions = true)
 public class PathToDirt extends CharmModule {
-    @Override
-    public void init() {
-        UseBlockCallback.EVENT.register(this::convertPath);
+    @SubscribeEvent
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (!event.isCanceled()) {
+            boolean result = convertPath(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos());
+            event.setCanceled(result);
+        }
     }
 
-    private ActionResult convertPath(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
-        BlockPos pos = hitResult.getPos();
+    private boolean convertPath(PlayerEntity player, World world, Hand hand, BlockPos pos) {
         ItemStack stack = player.getHeldItem(hand);
 
         if (world != null && stack.getItem() instanceof HoeItem) {
@@ -38,10 +40,10 @@ public class PathToDirt extends CharmModule {
 
                     // damage the hoe a bit
                     stack.damageItem(1, player, p -> p.swingArm(hand));
-                    return ActionResult.SUCCESS;
+                    return true;
                 }
             }
         }
-        return ActionResult.PASS;
+        return false;
     }
 }

@@ -22,8 +22,7 @@ public class DirtToPath extends CharmModule {
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!event.isCanceled()) {
             boolean result = convertDirt(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos());
-            if (result)
-                event.setCanceled(true);
+            event.setCanceled(result);
         }
     }
 
