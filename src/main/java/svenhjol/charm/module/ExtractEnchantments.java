@@ -7,6 +7,7 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.text.StringTextComponent;
 import org.apache.logging.log4j.util.TriConsumer;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -77,7 +78,7 @@ public class ExtractEnchantments extends CharmModule {
 
         // set the display name on the returned item
         if (name != null && !name.isEmpty())
-            out.setCustomName(new LiteralText(name));
+            out.setDisplayName(new StringTextComponent(name));
 
         apply.accept(out, cost, 1);
         return ActionResult.SUCCESS;

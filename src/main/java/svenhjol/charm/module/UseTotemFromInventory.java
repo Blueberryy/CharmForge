@@ -18,11 +18,11 @@ public class UseTotemFromInventory extends CharmModule {
         if (ModuleHandler.enabled("charm:use_totem_from_inventory") && entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity)entity;
 
-            if (player.inventory.contains(totem)) {
-                if (player.getOffHandStack().getItem() == Items.TOTEM_OF_UNDYING) {
-                    return player.getOffHandStack();
+            if (player.inventory.hasItemStack(totem)) {
+                if (player.getHeldItemOffhand().getItem() == Items.TOTEM_OF_UNDYING) {
+                    return player.getHeldItemOffhand();
                 } else {
-                    return player.inventory.getStack(player.inventory.method_7371(totem));
+                    return player.inventory.getStackInSlot(player.inventory.getSlotFor(totem));
                 }
             }
         }

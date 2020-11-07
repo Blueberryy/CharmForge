@@ -17,12 +17,12 @@ import net.minecraft.world.gen.feature.structure.MineshaftPieces;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import svenhjol.charm.Charm;
-import svenhjol.charm.TileEntity.CrateTileEntity;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.StructurePieceAccessor;
+import svenhjol.charm.tileentity.CrateTileEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,16 +180,16 @@ public class MineshaftImprovements extends CharmModule {
 
                 BlockPos blockpos = new BlockPos(x, y, z);
 
-                if (box.contains(blockpos)) {
+                if (box.isVecInside(blockpos)) {
                     BlockState state = Crates.getRandomCrateBlock(rand).getDefaultState();
                     ResourceLocation loot = crateLootTables.get(rand.nextInt(crateLootTables.size()));
 
                     world.setBlockState(blockpos, state, 2);
 
                     TileEntity tileEntity = world.getTileEntity(blockpos);
-                    if (TileEntity instanceof CrateTileEntity) {
-                        ((CrateTileEntity) TileEntity).setLootTable(loot, rand.nextLong());
-                        TileEntity.toTag(new CompoundNBT());
+                    if (tileEntity instanceof CrateTileEntity) {
+                        ((CrateTileEntity) tileEntity).setLootTable(loot, rand.nextLong());
+                        tileEntity.write(new CompoundNBT());
                     }
                 }
             }
@@ -220,8 +220,8 @@ public class MineshaftImprovements extends CharmModule {
                             BlockPos pos = new BlockPos(((StructurePieceAccessor)piece).getBoundingBox().minX + x, ((StructurePieceAccessor)piece).getBoundingBox().minY + y, ((StructurePieceAccessor)piece).getBoundingBox().minZ + z);
 
                             if (world.isAirBlock(pos)
-                                && world.getBlockState(pos.down()).isFullCube(world, pos.down())
-                                && !world.isSkyVisibleAllowingSea(pos)) {
+                                && world.getBlockState(pos.down()).isOpaqueCube(world, pos.down())
+                                && !world.canBlockSeeSky(pos)) {
                                 world.setBlockState(pos, state, 11);
                             }
                         }
@@ -236,9 +236,9 @@ public class MineshaftImprovements extends CharmModule {
             ((StructurePieceAccessor)piece).invokeGetXWithOffset(x, z),
             ((StructurePieceAccessor)piece).invokeGetYWithOffset(y),
             ((StructurePieceAccessor)piece).invokeGetZWithOffset(x, z));
-        return box.contains(blockpos)
-            && world.getBlockState(blockpos.up()).isOpaque()
-            && world.isAir(blockpos.down());
+        return box.isVecInside(blockpos)
+            && world.getBlockState(blockpos.up()).isSolid()
+            && world.isAirBlock(blockpos.down());
     }
 
     private static boolean validFloorBlock(StructurePiece piece, ISeedReader world, int x, int y, int z, MutableBoundingBox box) {
@@ -248,10 +248,10 @@ public class MineshaftImprovements extends CharmModule {
             ((StructurePieceAccessor)piece).invokeGetZWithOffset(x, z)
         );
 
-        boolean vecInside = box.contains(blockpos);
-        boolean solidBelow = world.getBlockState(blockpos.down()).isOpaque();
+        boolean vecInside = box.isVecInside(blockpos);
+        boolean solidBelow = world.getBlockState(blockpos.down()).isSolid();
         boolean notSlabBelow = !(world.getBlockState(blockpos.down()).getBlock() instanceof SlabBlock);
-        boolean airAbove = world.isAir(blockpos.up());
+        boolean airAbove = world.isAirBlock(blockpos.up());
         return vecInside
             && solidBelow
             && notSlabBelow

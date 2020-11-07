@@ -20,7 +20,7 @@ public class StackableEnchantedBooks extends CharmModule {
 
     public static ItemStack getReducedStack(ItemStack stack) {
         if (stack.getItem() == Items.ENCHANTED_BOOK) {
-            stack.decrement(1);
+            stack.shrink(1);
             return stack;
         }
         return ItemStack.EMPTY;

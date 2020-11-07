@@ -1,6 +1,6 @@
 package svenhjol.charm.handler;
 
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,7 +20,7 @@ public class InventoryTidyingHandler {
         testCompare.put(clazzTest(BlockItem.class), blockCompare());
     }
 
-    public static void sort(Inventory inventory, int startSlot, int endSlot) {
+    public static void sort(IInventory inventory, int startSlot, int endSlot) {
         List<ItemStack> stacks = new ArrayList<>();
 
         populate(inventory, stacks, startSlot, endSlot);
@@ -29,7 +29,7 @@ public class InventoryTidyingHandler {
         setInventory(inventory, stacks, startSlot, endSlot); // TODO handle fail here
     }
 
-    public static void populate(Inventory inventory, List<ItemStack> stacks, int startSlot, int endSlot) {
+    public static void populate(IInventory inventory, List<ItemStack> stacks, int startSlot, int endSlot) {
         for (int i = startSlot; i < endSlot; i++) {
             ItemStack stackInSlot = inventory.getStackInSlot(i);
 
@@ -80,7 +80,7 @@ public class InventoryTidyingHandler {
         stacks.sort(InventoryTidyingHandler::compare); // TODO world's crappiest sorting
     }
 
-    private static boolean setInventory(Inventory inventory, List<ItemStack> stacks, int startSlot, int endSlot) {
+    private static boolean setInventory(IInventory inventory, List<ItemStack> stacks, int startSlot, int endSlot) {
         for (int i = startSlot; i < endSlot; i++) {
             int j = i - startSlot;
             ItemStack stack = j >= stacks.size() ? ItemStack.EMPTY : stacks.get(j);

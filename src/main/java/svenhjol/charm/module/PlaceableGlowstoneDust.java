@@ -1,22 +1,16 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockRayTraceResult;
-import net.minecraft.util.hit.HitResult;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
@@ -45,12 +39,12 @@ public class PlaceableGlowstoneDust extends CharmModule {
     }
 
     public static boolean tryPlaceDust(World world, RayTraceResult hitResult) {
-        if (hitResult.getType() != HitResult.Type.BLOCK)
+        if (hitResult.getType() != RayTraceResult.Type.BLOCK)
             return false;
 
         BlockRayTraceResult BlockRayTraceResult = (BlockRayTraceResult)hitResult;
-        BlockPos pos = BlockRayTraceResult.getBlockPos();
-        Direction side = BlockRayTraceResult.getSide();
+        BlockPos pos = BlockRayTraceResult.getPos();
+        Direction side = BlockRayTraceResult.getFace();
         BlockState state = world.getBlockState(pos);
         BlockPos offsetPos = pos.offset(side);
 
@@ -60,7 +54,7 @@ public class PlaceableGlowstoneDust extends CharmModule {
 
             BlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getBlock() == Blocks.WATER)
-                placedState = placedState.with(Properties.WATERLOGGED, true);
+                placedState = placedState.with(BlockStateProperties.WATERLOGGED, true);
 
             world.setBlockState(offsetPos, placedState, 2);
             world.playSound(null, offsetPos, SoundEvents.BLOCK_NYLIUM_PLACE, SoundCategory.BLOCKS, 1.0F, 1.0F);
@@ -74,14 +68,14 @@ public class PlaceableGlowstoneDust extends CharmModule {
         ItemStack stack = player.getHeldItem(hand);
 
         if (world != null && stack.getItem() == Items.GLOWSTONE_DUST) {
-            player.swingHand(hand);
+            player.swingArm(hand);
 
             if (!world.isRemote) {
                 boolean result = tryPlaceDust(world, hitResult);
 
                 if (result) {
                     if (!player.isCreative())
-                        stack.decrement(1);
+                        stack.shrink(1);
 
                     return ActionResult.SUCCESS;
                 }

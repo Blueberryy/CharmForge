@@ -41,7 +41,6 @@ public class Charm {
             Crates.class,
             DecreaseRepairCost.class,
             DirtToPath.class,
-            Moonstones.class,
             EndermitePowder.class,
             EntitySpawner.class,
             ExtendNetherite.class,

@@ -1,10 +1,10 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LadderBlock;
-import net.minecraft.block.TrapdoorBlock;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.block.TrapDoorBlock;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -43,9 +43,9 @@ public class VariantLadders extends CharmModule {
     }
 
     public static boolean canEnterTrapdoor(World world, BlockPos pos, BlockState state) {
-        if (isEnabled && state.get(TrapdoorBlock.OPEN)) {
+        if (isEnabled && state.get(TrapDoorBlock.OPEN)) {
             BlockState down = world.getBlockState(pos.down());
-            return LADDER_BLOCKS.values().stream().anyMatch(b -> b == down.getBlock()) && down.get(LadderBlock.FACING) == state.get(TrapdoorBlock.FACING);
+            return LADDER_BLOCKS.values().stream().anyMatch(b -> b == down.getBlock()) && down.get(LadderBlock.FACING) == state.get(TrapDoorBlock.HORIZONTAL_FACING);
         }
 
         return false;

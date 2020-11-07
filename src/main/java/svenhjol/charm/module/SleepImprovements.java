@@ -1,21 +1,23 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.LogicalSide;
 import svenhjol.charm.Charm;
-import svenhjol.charm.mixin.accessor.IServerWorldor;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.mixin.accessor.ServerWorldAccessor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Module(mod = Charm.MOD_ID, description = "Allows the night to pass when a specified number of players are asleep.")
+@Module(mod = Charm.MOD_ID, description = "Allows the night to pass when a specified number of players are asleep.", hasSubscriptions = true)
 public class SleepImprovements extends CharmModule {
     @Config(name = "Faster sleep", description = "If true, the sleeping player does not need to wait as long before ending the night.")
     public static boolean fasterSleep = false;
@@ -23,13 +25,14 @@ public class SleepImprovements extends CharmModule {
     @Config(name = "Number of required players", description = "The number of players required to sleep in order to bring the next day.")
     public static int requiredPlayers = 1;
 
-    @Override
-    public void init() {
-        ServerTickEvents.END_WORLD_TICK.register(this::tryEndNight);
+    @SubscribeEvent
+    public void onWorldTick(TickEvent.WorldTickEvent event) {
+        if (!event.isCanceled() && event.side != LogicalSide.CLIENT)
+            tryEndNight((ServerWorld)event.world);
     }
 
     private void tryEndNight(ServerWorld world) {
-        if (world == null || world.getTime() % 20 != 0 || !world.getRegistryKey().equals(World.OVERWORLD))
+        if (world == null || world.getGameTime() % 20 != 0 || !world.getDimensionKey().equals(World.OVERWORLD))
             return;
 
         MinecraftServer server = world.getServer();
@@ -38,8 +41,8 @@ public class SleepImprovements extends CharmModule {
         if (currentPlayerCount < requiredPlayers)
             return;
 
-        List<ServerPlayerEntity> validPlayers = server.getPlayerManager().getPlayerList().stream()
-            .filter(p -> !p.isSpectator() && (fasterSleep ? p.isSleeping() : p.isSleepingLongEnough()))
+        List<ServerPlayerEntity> validPlayers = server.getPlayerList().getPlayers().stream()
+            .filter(p -> !p.isSpectator() && (fasterSleep ? p.isSleeping() : p.isPlayerFullyAsleep()))
             .collect(Collectors.toList());
 
         if (validPlayers.size() < requiredPlayers)
@@ -47,12 +50,12 @@ public class SleepImprovements extends CharmModule {
 
         /** copypasta from {@link ServerWorld#tick} */
         if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
-            long l = world.getTimeOfDay() + 24000L;
-            world.setTimeOfDay(l - l % 24000L);
+            long l = world.getDayTime() + 24000L;
+            world.func_241114_a_(l - l % 24000L);
         }
 
-        ((IServerWorldor)world).invokeWakeUpAllPlayers();
+        ((ServerWorldAccessor)world).invokeWakeUpAllPlayers();
         if (world.getGameRules().getBoolean(GameRules.DO_WEATHER_CYCLE))
-            ((IServerWorldor)world).invokeResetRainAndThunder();
+            ((ServerWorldAccessor)world).invokeResetRainAndThunder();
     }
 }

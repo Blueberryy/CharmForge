@@ -5,10 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.HuskEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -29,16 +30,17 @@ public class HuskImprovements extends CharmModule {
     @Config(name = "Maximum drops", description = "Maximum sand dropped when husk is killed.")
     public static int maxDrops = 2;
 
-    @Override
-    public void init() {
-        EntityDropsCallback.EVENT.register(this::tryDrop);
+    @SubscribeEvent
+    public void onLivingDrops(LivingDropsEvent event) {
+        if (!event.isCanceled())
+            tryDrop(event.getEntityLiving(), event.getSource(), event.getLootingLevel());
     }
 
     public static boolean canSpawn() {
         return ModuleHandler.enabled("charm:husk_improvements") && spawnAnywhere;
     }
 
-    private ActionResult tryDrop(Entity entity, DamageSource source, int lootingLevel) {
+    private void tryDrop(Entity entity, DamageSource source, int lootingLevel) {
         if (dropSand
             && !entity.world.isRemote
             && entity instanceof HuskEntity
@@ -48,6 +50,5 @@ public class HuskImprovements extends CharmModule {
             int amount = ItemHelper.getAmountWithLooting(world.rand, maxDrops, lootingLevel, (float)lootingBoost);
             world.addEntity(new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(Blocks.SAND, amount)));
         }
-        return ActionResult.PASS;
     }
 }

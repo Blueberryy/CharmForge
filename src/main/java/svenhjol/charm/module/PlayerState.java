@@ -1,24 +1,20 @@
 package svenhjol.charm.module;
 
 import io.netty.buffer.Unpooled;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NbtIo;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.Charm;
-import svenhjol.charm.client.PlayerStateClient;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.client.PlayerStateClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -88,8 +84,8 @@ public class PlayerState extends CharmModule {
      */
     public static void serverCallback(ServerPlayerEntity player) {
         ServerWorld world = player.getServerWorld();
-        BlockPos pos = player.getBlockPos();
-        long dayTime = world.getTimeOfDay() % 24000;
+        BlockPos pos = player.getPosition();
+        long dayTime = world.getDayTime() % 24000;
         CompoundNBT tag = new CompoundNBT();
 
         tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, StructureFeature.MINESHAFT));

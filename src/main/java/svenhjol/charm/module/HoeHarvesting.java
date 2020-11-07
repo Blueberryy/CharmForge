@@ -53,13 +53,13 @@ public class HoeHarvesting extends CharmModule {
             Item blockItem = block.asItem();
             BlockState newState = block.getDefaultState();
 
-            List<ItemStack> drops = Block.getDroppedStacks(state, serverWorld, pos, null, player, ItemStack.EMPTY);
+            List<ItemStack> drops = Block.getDrops(state, serverWorld, pos, null, player, ItemStack.EMPTY);
             for (ItemStack drop : drops) {
                 if (drop.getItem() == blockItem)
-                    drop.decrement(1);
+                    drop.shrink(1);
 
                 if (!drop.isEmpty())
-                    Block.dropStack(world, pos, drop);
+                    Block.spawnAsEntity(world, pos, drop);
             }
 
             world.playEvent(2001, pos, Block.getStateId(newState));

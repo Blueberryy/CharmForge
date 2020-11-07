@@ -1,7 +1,7 @@
 package svenhjol.charm.module;
 
-import net.minecraft.block.entity.BarrelTileEntity;
-import net.minecraft.block.entity.TileEntityType;
+import net.minecraft.tileentity.BarrelTileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;

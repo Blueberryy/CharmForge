@@ -1,13 +1,18 @@
 package svenhjol.charm.module;
 
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.InventoryTidyingClient;
 import svenhjol.charm.handler.InventoryTidyingHandler;
+
+import java.util.List;
 
 import static svenhjol.charm.handler.InventoryTidyingHandler.BE;
 import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
@@ -41,7 +46,7 @@ public class InventoryTidying extends CharmModule {
     }
 
     public static void serverCallback(ServerPlayerEntity player, int type) {
-        ScreenHandler useContainer;
+        ContainerScreen<?> useContainer;
 
         if (player.isSpectator())
             return;
@@ -54,15 +59,15 @@ public class InventoryTidying extends CharmModule {
             return;
         }
 
-        List<Slot> slots = useContainer.slots;
+        List<Slot> slots = useContainer.getContainer().inventorySlots;
         for (Slot slot : slots) {
-            Inventory inventory = slot.inventory;
+            IInventory inventory = slot.inventory;
 
             if (type == PLAYER && slot.inventory == player.inventory) {
                 InventoryTidyingHandler.sort(player.inventory, 9, 36);
                 break;
             } else if (type == BE) {
-                InventoryTidyingHandler.sort(inventory, 0, inventory.size());
+                InventoryTidyingHandler.sort(inventory, 0, inventory.getSizeInventory());
                 break;
             }
         }

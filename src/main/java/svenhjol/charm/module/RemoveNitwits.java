@@ -1,10 +1,10 @@
 package svenhjol.charm.module;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerData;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.util.ActionResult;
-import net.minecraft.village.VillagerData;
-import net.minecraft.village.VillagerProfession;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -25,7 +25,7 @@ public class RemoveNitwits extends CharmModule {
 
             if (data.getProfession() == VillagerProfession.NITWIT) {
                 villager.setVillagerData(data.withProfession(VillagerProfession.NONE));
-                Charm.LOG.debug("Changed nitwit's profession to NONE: " + villager.getUuidAsString());
+                Charm.LOG.debug("Changed nitwit's profession to NONE: " + villager.getCachedUniqueIdString());
             }
         }
 

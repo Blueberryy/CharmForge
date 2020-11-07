@@ -1,17 +1,16 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockRayTraceResult;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -25,20 +24,20 @@ public class PathToDirt extends CharmModule {
     }
 
     private ActionResult convertPath(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
-        BlockPos pos = hitResult.getBlockPos();
+        BlockPos pos = hitResult.getPos();
         ItemStack stack = player.getHeldItem(hand);
 
         if (world != null && stack.getItem() instanceof HoeItem) {
             BlockState state = world.getBlockState(pos);
             if (state.getBlock() == Blocks.GRASS_PATH) {
-                player.swingHand(hand);
+                player.swingArm(hand);
 
                 if (!world.isRemote) {
                     world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 11);
                     world.playSound(null, pos, SoundEvents.ITEM_SHOVEL_FLATTEN, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
                     // damage the hoe a bit
-                    stack.damage(1, player, p -> p.swingHand(hand));
+                    stack.damageItem(1, player, p -> p.swingArm(hand));
                     return ActionResult.SUCCESS;
                 }
             }

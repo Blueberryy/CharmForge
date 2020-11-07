@@ -1,42 +1,54 @@
 package svenhjol.charm.module;
 
-import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
 
-@Module(mod = Charm.MOD_ID, description = "Tamed animals do not take direct damage from players.")
+@Module(mod = Charm.MOD_ID, description = "Tamed animals do not take direct damage from players.", hasSubscriptions = true)
 public class TamedAnimalsNoDamage extends CharmModule {
-    @Override
-    public void init() {
-        AttackEntityCallback.EVENT.register(this::tryIgnoreAttack);
-        HurtEntityCallback.EVENT.register(this::tryIgnoreDamage);
+
+    @SubscribeEvent
+    public void onAttackEntity(AttackEntityEvent event) {
+        if (!event.isCanceled()) {
+            boolean result = tryIgnoreAttack(event.getPlayer(), event.getEntity().getEntityWorld(), event.getTarget());
+            if (result)
+                event.setCanceled(true);
+        }
     }
 
-    private ActionResult tryIgnoreAttack(PlayerEntity player, World world, Hand hand, Entity entity, EntityHitResult hitResult) {
+    @SubscribeEvent
+    public void onLivingHurt(LivingHurtEvent event) {
+        if (!event.isCanceled()) {
+            boolean result = tryIgnoreDamage(event.getEntityLiving(), event.getSource(), event.getAmount());
+            if (result)
+                event.setCanceled(true);
+        }
+    }
+
+    private boolean tryIgnoreAttack(PlayerEntity player, World world, Entity entity) {
         if (entity instanceof TameableEntity
             && ((TameableEntity)entity).isTamed()
             && !player.isCreative()
         ) {
-            return ActionResult.FAIL;
+            return true;
         }
 
-        return ActionResult.PASS;
+        return false;
     }
 
-    private ActionResult tryIgnoreDamage(LivingEntity entity, DamageSource damageSource, float amount) {
+    private boolean tryIgnoreDamage(LivingEntity entity, DamageSource damageSource, float amount) {
         if (!(entity instanceof PlayerEntity)) {
-            Entity attacker = damageSource.getAttacker();
-            Entity source = damageSource.getSource();
+            Entity attacker = damageSource.getImmediateSource();
+            Entity source = damageSource.getTrueSource();
 
             PlayerEntity player = null;
 
@@ -45,9 +57,9 @@ public class TamedAnimalsNoDamage extends CharmModule {
 
             if (player != null && !player.isCreative())
                 if (entity instanceof TameableEntity && ((TameableEntity) entity).isTamed())
-                    return ActionResult.FAIL; // the positive outcome!
+                    return true;
         }
 
-        return ActionResult.PASS;
+        return false;
     }
 }

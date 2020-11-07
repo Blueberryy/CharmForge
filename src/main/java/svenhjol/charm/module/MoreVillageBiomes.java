@@ -1,15 +1,14 @@
 package svenhjol.charm.module;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.VillagerEntity;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.entity.merchant.villager.VillagerData;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.villager.VillagerType;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.village.VillagerData;
-import net.minecraft.village.VillagerType;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeKeys;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeatures;
+import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.BiomeHelper;
@@ -23,29 +22,29 @@ import java.util.List;
 public class MoreVillageBiomes extends CharmModule {
     @Override
     public void init() {
-        List<RegistryKey<Biome>> plainsBiomeKeys = new ArrayList<>(Arrays.asList(
-            BiomeKeys.JUNGLE, BiomeKeys.BAMBOO_JUNGLE, BiomeKeys.SWAMP
+        List<RegistryKey<Biome>> plainsBiomes = new ArrayList<>(Arrays.asList(
+            Biomes.JUNGLE, Biomes.BAMBOO_JUNGLE, Biomes.SWAMP
         ));
 
-        List<RegistryKey<Biome>> taigaBiomeKeys = new ArrayList<>(Arrays.asList(
-            BiomeKeys.SNOWY_TAIGA
+        List<RegistryKey<Biome>> taigaBiomes = new ArrayList<>(Arrays.asList(
+            Biomes.SNOWY_TAIGA
         ));
 
-        List<RegistryKey<Biome>> snowyBiomeKeys = new ArrayList<>(Arrays.asList(
-            BiomeKeys.ICE_SPIKES
+        List<RegistryKey<Biome>> snowyBiomes = new ArrayList<>(Arrays.asList(
+            Biomes.ICE_SPIKES
         ));
 
-        for (RegistryKey<Biome> biomeKey : plainsBiomeKeys) {
+        for (RegistryKey<Biome> biomeKey : plainsBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
             BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_PLAINS);
         }
 
-        for (RegistryKey<Biome> biomeKey : taigaBiomeKeys) {
+        for (RegistryKey<Biome> biomeKey : taigaBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
             BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_TAIGA);
         }
 
-        for (RegistryKey<Biome> biomeKey : snowyBiomeKeys) {
+        for (RegistryKey<Biome> biomeKey : snowyBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
             BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_SNOWY);
         }
@@ -64,7 +63,7 @@ public class MoreVillageBiomes extends CharmModule {
             ServerWorld world = (ServerWorld)entity.world;
 
             if (data.getType() == VillagerType.PLAINS) {
-                Biome biome = BiomeHelper.getBiome(world, villager.getBlockPos());
+                Biome biome = BiomeHelper.getBiome(world, villager.getPosition());
                 Biome.Category category = biome.getCategory();
 
                 if (category.equals(Biome.Category.JUNGLE) || category.equals(Biome.Category.SWAMP))
