@@ -4,11 +4,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.villager.VillagerType;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.BiomeHelper;
@@ -18,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Module(mod = Charm.MOD_ID, description = "Villages can spawn in swamps and jungles.")
+@Module(mod = Charm.MOD_ID, description = "Villages can spawn in swamps and jungles.", hasSubscriptions = true)
 public class MoreVillageBiomes extends CharmModule {
     @Override
     public void init() {
@@ -36,27 +38,31 @@ public class MoreVillageBiomes extends CharmModule {
 
         for (RegistryKey<Biome> biomeKey : plainsBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_PLAINS);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244154_t);
         }
 
         for (RegistryKey<Biome> biomeKey : taigaBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_TAIGA);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244158_x);
         }
 
         for (RegistryKey<Biome> biomeKey : snowyBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, ConfiguredStructureFeatures.VILLAGE_SNOWY);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244157_w);
         }
-
-        AddEntityCallback.EVENT.register(this::changeVillagerSkin);
     }
 
-    private ActionResult changeVillagerSkin(Entity entity) {
+    @SubscribeEvent
+    public void onVillagerJoinWorld(EntityJoinWorldEvent event) {
+        if (!event.isCanceled())
+            changeVillagerSkin(event.getEntity());
+    }
+
+    private void changeVillagerSkin(Entity entity) {
         if (!entity.world.isRemote
             && entity instanceof VillagerEntity
-            && entity.updateNeeded
-            && entity.age == 0
+            && entity.addedToChunk
+            && entity.ticksExisted == 0
         ) {
             VillagerEntity villager = (VillagerEntity) entity;
             VillagerData data = villager.getVillagerData();
@@ -67,10 +73,8 @@ public class MoreVillageBiomes extends CharmModule {
                 Biome.Category category = biome.getCategory();
 
                 if (category.equals(Biome.Category.JUNGLE) || category.equals(Biome.Category.SWAMP))
-                    villager.setVillagerData(data.withType(VillagerType.forBiome(BiomeHelper.getBiomeKeyAtPosition(world, villager.getBlockPos()))));
+                    villager.setVillagerData(data.withType(VillagerType.func_242371_a(BiomeHelper.getBiomeKeyAtPosition(world, villager.getPosition()))));
             }
         }
-
-        return ActionResult.PASS;
     }
 }
