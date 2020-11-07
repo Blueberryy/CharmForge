@@ -4,17 +4,18 @@ import com.mojang.brigadier.StringReader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.command.arguments.BlockStateParser;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
@@ -33,13 +34,18 @@ public class HoeHarvesting extends CharmModule {
         addHarvestable("minecraft:nether_wart[age=3]");
         addHarvestable("minecraft:potatoes[age=7]");
         addHarvestable("minecraft:wheat[age=7]");
-
-        UseBlockCallback.EVENT.register(this::tryHarvest);
     }
 
-    public ActionResult tryHarvest(PlayerEntity player, World world, Hand hand, BlockRayTraceResult hitResult) {
+    @SubscribeEvent
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
+        if (!event.isCanceled()) {
+            boolean result = tryHarvest(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos());
+            event.setCanceled(result);
+        }
+    }
+
+    public boolean tryHarvest(PlayerEntity player, World world, Hand hand, BlockPos pos) {
         ItemStack held = player.getHeldItem(hand);
-        BlockPos pos = hitResult.getPos();
 
         if (!world.isRemote && held.getItem() instanceof HoeItem) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
@@ -48,7 +54,7 @@ public class HoeHarvesting extends CharmModule {
             Block block = state.getBlock();
 
             if (!harvestable.contains(state))
-                return ActionResult.PASS;
+                return false;
 
             Item blockItem = block.asItem();
             BlockState newState = block.getDefaultState();
@@ -67,18 +73,18 @@ public class HoeHarvesting extends CharmModule {
 
             // damage the hoe a bit
             held.damageItem(1, player, p -> p.swingArm(hand));
-            return ActionResult.SUCCESS;
+            return true;
         }
 
-        return ActionResult.PASS;
+        return false;
     }
 
     public static void addHarvestable(String blockState) {
         BlockState state;
 
         try {
-            BlockArgumentParser parser = new BlockArgumentParser(new StringReader(blockState), false).parse(false);
-            state = parser.getBlockState();
+            BlockStateParser parser = new BlockStateParser(new StringReader(blockState), false).parse(false);
+            state = parser.getState();
         } catch (Exception e) {
             state = null;
         }
