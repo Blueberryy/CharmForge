@@ -3,36 +3,81 @@ package svenhjol.charm.client;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResult;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.ITextProperties;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.items.CapabilityItemHandler;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.block.CrateBlock;
+import svenhjol.charm.gui.CrateScreen;
 import svenhjol.charm.handler.TooltipInventoryHandler;
 import svenhjol.charm.module.Crates;
+import svenhjol.charm.tileentity.CrateTileEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CratesClient {
     public CratesClient(CharmModule module) {
+        ScreenManager.registerFactory(Crates.CONTAINER, CrateScreen::new);
+    }
+
+    @SubscribeEvent
+    public void onItemTooltip(ItemTooltipEvent event) {
+        handleItemTooltip(event.getItemStack(), event.getToolTip());
+    }
+
+    @SubscribeEvent
+    public void onRenderTooltip(RenderTooltipEvent event) {
+        handleRenderTooltip(event.getMatrixStack(), event.getStack(), event.getLines(), event.getX(), event.getY());
+    }
+
+    private void handleItemTooltip(ItemStack stack, List<ITextComponent> lines) {
         if (!Crates.showTooltip)
             return;
-    }
 
-    private ActionResult handleRenderTooltip(MatrixStack matrices, ItemStack stack, List<? extends OrderedText> lines, int x, int y) {
-        if (stack != null && ItemHelper.getBlockClass(stack) == CrateBlock.class) {
-            boolean result = renderTooltip(matrices, stack, lines, x, y);
-            if (result)
-                return ActionResult.SUCCESS;
+        if (stack.isEmpty() || ItemHelper.getBlockClass(stack) != CrateBlock.class || stack.getTag() == null || stack.getTag().isEmpty())
+            return;
+
+        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
+
+        if (tag != null) {
+            if (!tag.contains("id", Constants.NBT.TAG_STRING)) {
+                tag = tag.copy();
+                tag.putString("id", "charm:crate");
+            }
+            TileEntity tile = TileEntity.readTileEntity(null, tag);
+
+            if (tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                List<ITextComponent> toolTipCopy = new ArrayList<>(lines);
+
+                for (int i = 1; i < toolTipCopy.size(); i++) {
+                    final ITextComponent t = toolTipCopy.get(i);
+                    final String s = t.getString();
+
+                    // shamelessly lifted from Quark
+                    if (!s.startsWith("\u00a7") || s.startsWith("\u00a7o"))
+                        lines.remove(t);
+                }
+            }
         }
-        return ActionResult.PASS;
     }
 
-    private boolean renderTooltip(MatrixStack matrices, ItemStack stack, List<? extends OrderedText> lines, int tx, int ty) {
+    private boolean handleRenderTooltip(MatrixStack matrices, ItemStack stack, List<? extends ITextProperties> lines, int tx, int ty) {
         final Minecraft mc = Minecraft.getInstance();
 
         if (!stack.hasTag())
@@ -48,14 +93,14 @@ public class CratesClient {
             tag.putString("id", "charm:crate");
         }
         BlockItem blockItem = (BlockItem) stack.getItem();
-        TileEntity tileEntity = TileEntity.createFromTag(blockItem.getBlock().getDefaultState(), tag);
-        if (TileEntity == null)
+        TileEntity tileEntity = TileEntity.readTileEntity(blockItem.getBlock().getDefaultState(), tag);
+        if (tileEntity == null)
             return false;
 
-        CrateTileEntity crate = (CrateTileEntity) TileEntity;
+        CrateTileEntity crate = (CrateTileEntity) tileEntity;
         NonNullList<ItemStack> items = crate.getItems();
 
-        int size = crate.size();
+        int size = crate.getSizeInventory();
 
         int x = tx - 5;
         int y = ty - 35;
@@ -63,25 +108,25 @@ public class CratesClient {
         int h = 27;
         int right = x + w;
 
-        if (right > mc.getWindow().getScaledWidth())
-            x -= (right - mc.getWindow().getScaledWidth());
+        if (right > mc.getMainWindow().getScaledWidth())
+            x -= (right - mc.getMainWindow().getScaledWidth());
 
         if (y < 0)
             y = ty + lines.size() * 10 + 5;
 
         RenderSystem.pushMatrix();
-        DiffuseLighting.enable();
+        RenderHelper.enableStandardItemLighting();
         RenderSystem.enableRescaleNormal();
         RenderSystem.color3f(1f, 1f, 1f);
         RenderSystem.translatef(0, 0, 700);
         mc.getTextureManager().bindTexture(CharmResources.SLOT_WIDGET);
 
-        DiffuseLighting.disable();
+        RenderHelper.disableStandardItemLighting();
         TooltipInventoryHandler.renderTooltipBackground(mc, matrices, x, y, 9, 1, -1);
         RenderSystem.color3f(1f, 1f, 1f);
 
         ItemRenderer render = mc.getItemRenderer();
-        DiffuseLighting.enable();
+        RenderHelper.enableStandardItemLighting();
         RenderSystem.enableDepthTest();
 
         for (int i = 0; i < size; i++) {
@@ -97,8 +142,8 @@ public class CratesClient {
             int yp = y + 6 + (i / 9) * 18;
 
             if (!itemstack.isEmpty()) {
-                render.renderGuiItemIcon(itemstack, xp, yp);
-                render.renderGuiItemOverlay(mc.textRenderer, itemstack, xp, yp);
+                render.renderItemAndEffectIntoGUI(itemstack, xp, yp);
+                render.renderItemOverlays(mc.fontRenderer, itemstack, xp, yp);
             }
         }
 
