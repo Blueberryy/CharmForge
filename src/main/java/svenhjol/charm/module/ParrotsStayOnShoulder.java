@@ -4,26 +4,33 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.PlayerEntityAccessor;
 
-@Module(mod = Charm.MOD_ID, description = "Parrots stay on your shoulder when jumping and falling. Crouch to make them dismount.")
+@Module(mod = Charm.MOD_ID, description = "Parrots stay on your shoulder when jumping and falling. Crouch to make them dismount.", hasSubscriptions = true)
 public class ParrotsStayOnShoulder extends CharmModule {
     private static boolean isEnabled = false;
 
     @Override
     public void init() {
         isEnabled = true;
-        PlayerTickCallback.EVENT.register(this::dismountParrot);
+    }
+
+    @SubscribeEvent
+    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (!event.isCanceled())
+            tryDismountParrot(event.player);
     }
 
     public static boolean shouldParrotStayMounted(World world, long shoulderTime) {
         return shoulderTime + 20L < world.getGameTime() && isEnabled;
     }
 
-    public void dismountParrot(PlayerEntity player) {
+    public void tryDismountParrot(PlayerEntity player) {
         if (!player.world.isRemote
             && player.world.getGameTime() % 10 == 0
             && player.isSneaking()
