@@ -22,7 +22,6 @@ import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -37,7 +36,6 @@ import java.util.function.Supplier;
 @SuppressWarnings("UnusedReturnValue")
 public class RegistryHandler {
     private static final Map<IForgeRegistry<?>, List<IForgeRegistryEntry<?>>> REGISTRY = new HashMap<>();
-    private static final DeferredRegister<Block> t = DeferredRegister.create(ForgeRegistries.BLOCKS, Charm.MOD_ID);
 
     @SubscribeEvent
     public static void onRegister(RegistryEvent.Register<?> event) {
