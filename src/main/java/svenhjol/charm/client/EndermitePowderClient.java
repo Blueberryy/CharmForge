@@ -1,11 +1,12 @@
 package svenhjol.charm.client;
 
-import svenhjol.charm.module.EndermitePowder;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.module.EndermitePowder;
+import svenhjol.charm.render.EndermitePowderRenderer;
 
 public class EndermitePowderClient {
     public EndermitePowderClient(CharmModule module) {
-        EntityRendererRegistry.INSTANCE.register(EndermitePowder.ENTITY, ((dispatcher, context)
-            -> new EndermiteEntityRenderer(dispatcher)));
+        RenderingRegistry.registerEntityRenderingHandler(EndermitePowder.ENTITY, EndermitePowderRenderer::new);
     }
 }
