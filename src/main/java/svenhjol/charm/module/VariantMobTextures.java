@@ -1,7 +1,6 @@
 package svenhjol.charm.module;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.*;
 import net.minecraft.item.DyeColor;
@@ -72,7 +71,8 @@ public class VariantMobTextures extends CharmModule {
     }
 
     @Override
-    public void clientJoinWorld(Minecraft client) {
+    public void init() {
+
         // reset
         chickens = new ArrayList<>();
         cows = new ArrayList<>();

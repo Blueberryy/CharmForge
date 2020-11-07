@@ -40,7 +40,7 @@ public class RegistryHandler {
     private static final DeferredRegister<Block> t = DeferredRegister.create(ForgeRegistries.BLOCKS, Charm.MOD_ID);
 
     @SubscribeEvent
-    public void onRegister(RegistryEvent.Register<?> event) {
+    public static void onRegister(RegistryEvent.Register<?> event) {
         IForgeRegistry registry = event.getRegistry();
 
         if (REGISTRY.containsKey(registry)) {

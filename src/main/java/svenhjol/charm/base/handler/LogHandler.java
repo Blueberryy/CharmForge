@@ -19,7 +19,7 @@ public class LogHandler {
     }
 
     public void debug(Marker marker, String msg) {
-        if (Core.debug) {
+        if (true || Core.debug) {
             info(marker, msg);
         } else {
             getLogger().debug(marker, msg);
