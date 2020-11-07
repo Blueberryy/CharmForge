@@ -1,13 +1,13 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.InventoryTidyingClient;
 import svenhjol.charm.handler.InventoryTidyingHandler;
@@ -24,42 +24,30 @@ public class InventoryTidying extends CharmModule {
 
     @Override
     public void init() {
-        // listen for network requests to run the server callback
-        ServerSidePacketRegistry.INSTANCE.register(MSG_SERVER_TIDY_INVENTORY, (context, data) -> {
-            int type = data.readInt();
-
-            context.getTaskQueue().execute(() -> {
-                ServerPlayerEntity player = (ServerPlayerEntity)context.getPlayer();
-                if (player == null)
-                    return;
-
-                InventoryTidying.serverCallback(player, type);
-            });
-        });
-
         InventoryTidyingHandler.init();
     }
 
     @Override
     public void clientInit() {
         client = new InventoryTidyingClient(this);
+        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 
     public static void serverCallback(ServerPlayerEntity player, int type) {
-        ContainerScreen<?> useContainer;
+        Container useContainer;
 
         if (player.isSpectator())
             return;
 
-        if (type == PLAYER && player.playerScreenHandler != null) {
-            useContainer = player.playerScreenHandler;
-        } else if (type == BE && player.currentScreenHandler != null) {
-            useContainer = player.currentScreenHandler;
+        if (type == PLAYER && player.container != null) {
+            useContainer = player.container;
+        } else if (type == BE && player.openContainer != null) {
+            useContainer = player.openContainer;
         } else {
             return;
         }
 
-        List<Slot> slots = useContainer.getContainer().inventorySlots;
+        List<Slot> slots = useContainer.inventorySlots;
         for (Slot slot : slots) {
             IInventory inventory = slot.inventory;
 
