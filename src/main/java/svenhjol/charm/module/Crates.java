@@ -2,7 +2,6 @@ package svenhjol.charm.module;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
@@ -11,6 +10,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
@@ -18,7 +18,6 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.CrateBlock;
 import svenhjol.charm.client.CratesClient;
 import svenhjol.charm.container.CrateContainer;
-import svenhjol.charm.gui.CrateScreen;
 import svenhjol.charm.tileentity.CrateTileEntity;
 
 import java.util.*;
@@ -40,6 +39,8 @@ public class Crates extends CharmModule {
 
     public static boolean isEnabled = false;
 
+    public CratesClient client;
+
     @Override
     public void register() {
         for (VanillaVariantMaterial type : VanillaVariantMaterial.values()) {
@@ -58,8 +59,8 @@ public class Crates extends CharmModule {
 
     @Override
     public void clientInit() {
-        new CratesClient(this);
-        ScreenManager.registerFactory(CONTAINER, CrateScreen::new);
+        client = new CratesClient(this);
+        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 
     public static boolean canCrateInsertItem(ItemStack stack) {

@@ -5,12 +5,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.PickaxeItem;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 
@@ -21,10 +21,9 @@ public class EnderPearlBlock extends CharmBlock {
         super(module, "ender_pearl_block", AbstractBlock.Properties
             .create(Material.GLASS)
             .sound(SoundType.GLASS)
+            .harvestTool(ToolType.PICKAXE)
             .hardnessAndResistance(2.0F)
         );
-
-        this.setEffectiveTool(PickaxeItem.class);
     }
 
     @Override

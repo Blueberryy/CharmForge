@@ -19,8 +19,8 @@ import svenhjol.charm.village.BeekeeperTradeOffers;
 import java.util.Arrays;
 import java.util.List;
 
-import static svenhjol.charm.event.StructureSetupEvent.addVillageHouse;
 import static svenhjol.charm.event.StructureSetupEvent.VillageType;
+import static svenhjol.charm.event.StructureSetupEvent.addVillageHouse;
 
 @Module(mod = Charm.MOD_ID, description = "Beekeepers are villagers that trade beekeeping items. Their job site is the beehive.", hasSubscriptions = true)
 public class Beekeepers extends CharmModule {
@@ -28,9 +28,12 @@ public class Beekeepers extends CharmModule {
     public static VillagerProfession BEEKEEPER;
 
     @Override
-    public void init() {
+    public void register() {
         BEEKEEPER = VillagerHelper.addProfession(ID, PointOfInterestType.BEEHIVE, SoundEvents.BLOCK_BEEHIVE_WORK);
+    }
 
+    @Override
+    public void init() {
         // HACK: set ticketCount so that villager can use it as job site
         ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setMaxFreeTickets(1);
     }

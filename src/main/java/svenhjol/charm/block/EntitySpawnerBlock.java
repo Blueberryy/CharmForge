@@ -15,12 +15,12 @@ import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.block.CharmBlockWithEntity;
+import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.tileentity.EntitySpawnerTileEntity;
 
 import javax.annotation.Nullable;
 
-public class EntitySpawnerBlock extends CharmBlockWithEntity {
+public class EntitySpawnerBlock extends CharmBlock {
     public EntitySpawnerBlock(CharmModule module) {
         super(module, "entity_spawner", AbstractBlock.Properties
             .create(Material.AIR)

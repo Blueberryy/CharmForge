@@ -31,6 +31,8 @@ public class Woodcutters extends CharmModule {
         RECIPE_TYPE = RegistryHandler.recipeType(RECIPE_ID.toString());
         RECIPE_SERIALIZER = RegistryHandler.recipeSerializer(RECIPE_ID.toString(), new WoodcuttingRecipe.Serializer<>(WoodcuttingRecipe::new));
         SCREEN_HANDLER = RegistryHandler.container(BLOCK_ID, WoodcutterContainer::new);
+
+        Lumberjacks.registerAfterWoodcutters();
     }
 
     @Override

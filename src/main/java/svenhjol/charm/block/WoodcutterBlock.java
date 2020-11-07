@@ -7,7 +7,6 @@ import net.minecraft.block.StonecutterBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
@@ -19,6 +18,7 @@ import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.ICharmBlock;
 import svenhjol.charm.container.WoodcutterContainer;
@@ -30,11 +30,12 @@ public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     private static final ITextComponent TITLE = new TranslationTextComponent("container.charm.woodcutter");
 
     public WoodcutterBlock(CharmModule module) {
-        super(AbstractBlock.Properties.from(Blocks.STONECUTTER));
+        super(AbstractBlock.Properties
+            .from(Blocks.STONECUTTER)
+            .harvestTool(ToolType.AXE));
+
         register(module, "woodcutter");
         this.module = module;
-
-        setEffectiveTool(AxeItem.class);
     }
 
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {

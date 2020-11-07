@@ -35,9 +35,15 @@ public class ModuleHandler {
     private static boolean hasInit = false;
 
     public static void init() {
-        if (hasInit)
-            return;
+        if (hasInit) return;
 
+        // register forge events
+        MOD_EVENT_BUS.register(RegistryHandler.class);
+        MOD_EVENT_BUS.addListener(ModuleHandler::onCommonSetup);
+        MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
+        FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
+
+        // create all charm-based modules
         instantiateModules();
 
         // both-side initializers
@@ -51,11 +57,6 @@ public class ModuleHandler {
             eachModule(CharmModule::clientRegister);
             MOD_EVENT_BUS.addListener(ModuleHandler::onClientSetup);
         });
-
-        // register load events
-        MOD_EVENT_BUS.addListener(ModuleHandler::onCommonSetup);
-        MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
-        FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
 
         /** @deprecated listen for server setup events (dedicated server only) */
         //DedicatedServerSetupCallback.EVENT.register(server -> {

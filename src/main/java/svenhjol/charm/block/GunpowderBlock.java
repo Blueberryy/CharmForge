@@ -5,10 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ShovelItem;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ToolType;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmFallingBlock;
 
@@ -17,10 +17,9 @@ public class GunpowderBlock extends CharmFallingBlock {
         super(module, "gunpowder_block", Properties
             .create(Material.SAND)
             .sound(SoundType.SAND)
+            .harvestTool(ToolType.SHOVEL)
             .hardnessAndResistance(0.5F)
         );
-
-        setEffectiveTool(ShovelItem.class);
     }
 
     @Override

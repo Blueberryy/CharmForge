@@ -20,17 +20,45 @@ import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.village.PointOfInterestType;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import svenhjol.charm.Charm;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @SuppressWarnings("UnusedReturnValue")
 public class RegistryHandler {
+    private static final Map<IForgeRegistry<?>, List<IForgeRegistryEntry<?>>> REGISTRY = new HashMap<>();
+    private static final DeferredRegister<Block> t = DeferredRegister.create(ForgeRegistries.BLOCKS, Charm.MOD_ID);
+
+    @SubscribeEvent
+    public void onRegister(RegistryEvent.Register<?> event) {
+        IForgeRegistry registry = event.getRegistry();
+
+        if (REGISTRY.containsKey(registry)) {
+            REGISTRY.get(registry).forEach(entry -> {
+                Charm.LOG.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName());
+                registry.register(entry);
+            });
+        }
+    }
+
     public static Block block(ResourceLocation id, Block block) {
-        return Registry.register(Registry.BLOCK, id, block);
+        return addToRegistry(ForgeRegistries.BLOCKS, id, block);
     }
 
     public static <T extends TileEntity> TileEntityType<T> tileEntity(ResourceLocation id, Supplier<T> supplier, Block... blocks) {
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, id, TileEntityType.Builder.create(supplier, blocks).build(null));
+        TileEntityType<T> build = TileEntityType.Builder.create(supplier, blocks).build(null);
+        addToRegistry(ForgeRegistries.TILE_ENTITIES, id, build);
+        return build;
     }
 
     public static StructureFeature<?, ?> configuredFeature(ResourceLocation id, StructureFeature<?, ?> configuredFeature) {
@@ -39,11 +67,12 @@ public class RegistryHandler {
     }
 
     public static <T extends Entity> EntityType<T> entity(ResourceLocation id, EntityType<T> entityType) {
-        return Registry.register(Registry.ENTITY_TYPE, id, entityType);
+        addToRegistry(ForgeRegistries.ENTITIES, id, entityType);
+        return entityType;
     }
 
     public static Item item(ResourceLocation id, Item item) {
-        return Registry.register(Registry.ITEM, id, item);
+        return addToRegistry(ForgeRegistries.ITEMS, id, item);
     }
 
     public static LootFunctionType lootFunctionType(ResourceLocation id, LootFunctionType lootFunctionType) {
@@ -51,7 +80,7 @@ public class RegistryHandler {
     }
 
     public static PointOfInterestType pointOfInterestType(ResourceLocation id, PointOfInterestType poit) {
-        return Registry.register(Registry.POINT_OF_INTEREST_TYPE, id, poit);
+        return addToRegistry(ForgeRegistries.POI_TYPES, id, poit);
     }
 
     public static <T extends IRecipe<?>> IRecipeType<T> recipeType(String recipeId) {
@@ -59,15 +88,18 @@ public class RegistryHandler {
     }
 
     public static <S extends IRecipeSerializer<T>, T extends IRecipe<?>> S recipeSerializer(String recipeId, S serializer) {
-        return IRecipeSerializer.register(recipeId, serializer);
+        addToRegistry(ForgeRegistries.RECIPE_SERIALIZERS, new ResourceLocation(recipeId), serializer);
+        return serializer;
     }
 
     public static <T extends Container> ContainerType<T> container(ResourceLocation id, ContainerType.IFactory<T> factory) {
-        return Registry.register(Registry.MENU, id, new ContainerType<>(factory));
+        ContainerType<T> container = new ContainerType<>(factory);
+        addToRegistry(ForgeRegistries.CONTAINERS, id, container);
+        return container;
     }
 
     public static SoundEvent sound(ResourceLocation id, SoundEvent sound) {
-        return Registry.register(Registry.SOUND_EVENT, id, sound);
+        return addToRegistry(ForgeRegistries.SOUND_EVENTS, id, sound);
     }
 
     public static IStructurePieceType structurePiece(ResourceLocation id, IStructurePieceType structurePieceType) {
@@ -75,6 +107,13 @@ public class RegistryHandler {
     }
 
     public static VillagerProfession villagerProfession(ResourceLocation id, VillagerProfession profession) {
-        return Registry.register(Registry.VILLAGER_PROFESSION, id, profession);
+        return addToRegistry(ForgeRegistries.PROFESSIONS, id, profession);
+    }
+
+    private static <T extends IForgeRegistryEntry<T>> T addToRegistry(IForgeRegistry<T> type, ResourceLocation id, T entry) {
+        entry.setRegistryName(id);
+        REGISTRY.putIfAbsent(type, new ArrayList<>());
+        REGISTRY.get(type).add(entry);
+        return entry;
     }
 }

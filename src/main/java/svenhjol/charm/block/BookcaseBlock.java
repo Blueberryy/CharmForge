@@ -23,13 +23,13 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.block.CharmBlockWithEntity;
+import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import javax.annotation.Nullable;
 
-public class BookcaseBlock extends CharmBlockWithEntity {
+public class BookcaseBlock extends CharmBlock {
     public static final IntegerProperty SLOTS = IntegerProperty.create("slots", 0, BookcaseTileEntity.SIZE);
 
     protected CharmModule module;

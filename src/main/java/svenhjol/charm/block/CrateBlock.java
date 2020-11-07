@@ -26,7 +26,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.block.CharmBlockWithEntity;
+import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.tileentity.CrateTileEntity;
@@ -34,7 +34,7 @@ import svenhjol.charm.tileentity.CrateTileEntity;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class CrateBlock extends CharmBlockWithEntity {
+public class CrateBlock extends CharmBlock {
     private static final String BLOCK_ENTITY_TAG = "TileEntityTag";
     private static final ResourceLocation CONTENTS = new ResourceLocation("contents");
     private IVariantMaterial type;

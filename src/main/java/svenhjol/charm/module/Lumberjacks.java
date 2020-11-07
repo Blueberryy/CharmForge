@@ -27,8 +27,7 @@ public class Lumberjacks extends CharmModule {
     public static VillagerProfession LUMBERJACK;
     public static PointOfInterestType POIT;
 
-    @Override
-    public void init() {
+    public static void registerAfterWoodcutters() {
         POIT = VillagerHelper.addPointOfInterestType(Woodcutters.BLOCK_ID, Woodcutters.WOODCUTTER, 1);
         LUMBERJACK = VillagerHelper.addProfession(VILLAGER_ID, POIT, SoundEvents.ENTITY_VILLAGER_WORK_MASON);
     }
