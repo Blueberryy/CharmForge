@@ -8,9 +8,11 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
@@ -39,16 +41,29 @@ public class ModuleHandler {
 
         // register forge events
         MOD_EVENT_BUS.register(RegistryHandler.class);
+        MOD_EVENT_BUS.addListener(ModuleHandler::onConstructMod);
         MOD_EVENT_BUS.addListener(ModuleHandler::onCommonSetup);
         MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
         FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
 
-        // create all charm-based modules
-        instantiateModules();
 
         // both-side initializers
         BiomeHandler.init();
         // TODO: forge module enabled conditions should register here
+
+        /** @deprecated listen for server setup events (dedicated server only) */
+        //DedicatedServerSetupCallback.EVENT.register(server -> {
+        //    eachEnabledModule(m -> m.dedicatedServerInit(server));
+        //});
+
+        hasInit = true;
+    }
+
+    public static void onConstructMod(FMLConstructModEvent event) {
+        Charm.LOG.info("here");
+
+        // create all charm-based modules
+        instantiateModules();
 
         // early init, always run, use for registering things
         eachModule(CharmModule::register);
@@ -58,12 +73,6 @@ public class ModuleHandler {
             MOD_EVENT_BUS.addListener(ModuleHandler::onClientSetup);
         });
 
-        /** @deprecated listen for server setup events (dedicated server only) */
-        //DedicatedServerSetupCallback.EVENT.register(server -> {
-        //    eachEnabledModule(m -> m.dedicatedServerInit(server));
-        //});
-
-        hasInit = true;
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
