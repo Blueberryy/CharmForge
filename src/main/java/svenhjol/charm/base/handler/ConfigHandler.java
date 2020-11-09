@@ -1,146 +1,148 @@
 package svenhjol.charm.base.handler;
 
-import com.moandjiezana.toml.Toml;
-import com.moandjiezana.toml.TomlWriter;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 
-import java.io.*;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class ConfigHandler {
+    private final static List<Runnable> refreshConfig = new ArrayList<>();
 
-    public static void createConfig(String mod, Map<String, CharmModule> modules) {
-        Map<String, Map<String, Object>> finalConfig = new LinkedHashMap<>();
+    public void createConfig(Map<String, CharmModule> moduleMap) {
+        List<CharmModule> modules = new ArrayList<>(moduleMap.values());
 
-        String configName = mod.equals(Charm.MOD_ID) ? Charm.MOD_ID : Charm.MOD_ID + "-" + mod;
-        String configPath = "./config/" + configName + ".toml";
+        // build config tree for modules
+        ForgeConfigSpec spec = new ForgeConfigSpec.Builder().configure((b -> buildConfig(b, new ArrayList<>(modules)))).getRight();
 
-        modules.forEach((moduleName, module) -> {
-            finalConfig.put(moduleName, new LinkedHashMap<>());
-            finalConfig.get(moduleName).put("Description", module.description);
+        // register this mod's config
+        ModContainer container = ModLoadingContext.get().getActiveContainer();
+        ModConfig config = new ModConfig(ModConfig.Type.COMMON, spec, container);
+        container.addConfig(config);
 
-            if (!module.alwaysEnabled)
-                finalConfig.get(moduleName).put("Enabled", module.enabled);
+        // config is loaded too late to do vanilla overrides, parse it here
+        this.earlyConfigHack(config, modules);
+
+        refreshAllConfig();
+    }
+
+    public static void refreshAllConfig() {
+        refreshConfig.forEach(Runnable::run);
+    }
+
+    private Void buildConfig(ForgeConfigSpec.Builder builder, List<CharmModule> modules) {
+        modules.forEach(module -> {
+            if (!module.description.isEmpty())
+                builder.comment(module.description);
+
+            if (module.alwaysEnabled) {
+                module.enabled = true;
+                return;
+            }
+
+            ForgeConfigSpec.ConfigValue<Boolean> val = builder.define(
+                module.getName() + " enabled", module.enabledByDefault
+            );
+
+            refreshConfig.add(() -> module.depends(val.get()));
         });
 
-        // read config from disk and add to the config map
-        try {
-            Map<?, ?> loadedConfig = readConfig(Paths.get(configPath));
+        modules.forEach(module -> {
+            builder.push(module.getName());
 
-            for (Map.Entry<?, ?> entry : loadedConfig.entrySet()) {
-                Object key = entry.getKey();
-                if (!(key instanceof String))
-                    continue;
-
-                String moduleName = (String)key;
-                if (!finalConfig.containsKey(moduleName))
-                    continue;
-
-                Map<String, Object> value = (Map<String, Object>)entry.getValue();
-                Map<String, Object> fixed = value.entrySet().stream()
-                        .collect(Collectors.toMap(e -> e.getKey().replace("\"", ""), Map.Entry::getValue));
-                finalConfig.get(moduleName).putAll(fixed);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to read config for " + configName, e);
-        }
-
-        // parse config and apply values to modules
-        for (Map.Entry<String, CharmModule> entry : modules.entrySet()) {
-            String moduleName = entry.getKey();
-            CharmModule module = entry.getValue();
-
-            // set module enabled/disabled
-            module.enabled = (boolean)finalConfig.get(moduleName).getOrDefault("Enabled", module.enabledByDefault);
-
-            // get and set module config options
-            ArrayList<Field> fields = new ArrayList<>(Arrays.asList(module.getClass().getDeclaredFields()));
+            List<Field> fields = new ArrayList<>(Arrays.asList(module.getClass().getDeclaredFields()));
             fields.forEach(field -> {
+                Config annotation = field.getDeclaredAnnotation(Config.class);
+                if (annotation == null)
+                    return;
+
+                field.setAccessible(true);
+                String name = annotation.name();
+                String description = annotation.description();
+
+                if (name.isEmpty())
+                    name = field.getName();
+
+                if (!description.isEmpty())
+                    builder.comment(description);
+
                 try {
-                    Config annotation = field.getDeclaredAnnotation(Config.class);
-                    if (annotation == null)
-                        return;
+                    ForgeConfigSpec.ConfigValue<?> val;
+                    Object defaultVal = field.get(null);
 
-                    field.setAccessible(true);
-                    String name = annotation.name();
-
-                    if (name.isEmpty())
-                        name = field.getName();
-
-                    Object val = field.get(null);
-
-                    if (finalConfig.get(moduleName).containsKey(name)) {
-                        Object configVal = finalConfig.get(moduleName).get(name);
-
-                        if (val instanceof Integer && configVal instanceof Double)
-                            configVal = (int)(double)configVal;  // this is stupidland
-
-                        field.set(null, configVal);
-                        finalConfig.get(moduleName).put(name, configVal);
+                    if (defaultVal instanceof List) {
+                        val = builder.defineList(name, (List<?>) defaultVal, o -> true);
                     } else {
-                        finalConfig.get(moduleName).put(name, val);
+                        val = builder.define(name, defaultVal);
                     }
-                } catch (Exception e) {
-                    Charm.LOG.error("Failed to set config for " + moduleName + ": " + e.getMessage());
+                    refreshConfig.add(() -> {
+                        try {
+                            field.set(null, val.get());
+                        } catch (IllegalAccessException e) {
+                            Charm.LOG.error("Could not set config value for " + module.getName());
+                            throw new RuntimeException(e);
+                        }
+                    });
+
+                } catch (ReflectiveOperationException e) {
+                    Charm.LOG.error("Failed to get config for " + module.getName());
                 }
             });
-        }
-
-        // write out the config
-        try {
-            writeConfig(Paths.get(configPath), finalConfig);
-        } catch (Exception e) {
-            Charm.LOG.error("Failed to write config: " + e.getMessage());
-        }
+            builder.pop();
+        });
+        return null;
     }
 
-    private static Map<?, ?> readConfig(Path path) throws IOException {
-        touch(path);
+    private void earlyConfigHack(ModConfig config, List<CharmModule> modules) {
+        List<String> lines;
 
-        Toml toml = new Toml();
-        Reader reader = Files.newBufferedReader(path);
-        Map<?, ?> map = toml.read(reader).toMap();
-        reader.close();
-        return map;
-    }
-
-    private static void writeConfig(Path path, Map<?, ?> map) throws IOException {
-        touch(path);
-
-        TomlWriter toml = new TomlWriter();
-        Writer writer = Files.newBufferedWriter(path);
-        toml.write(map, writer);
-        writer.close();
-    }
-
-    private static void touch(Path path) throws IOException {
-        File file = path.toFile();
-
-        if (file.exists())
+        Path path = FMLPaths.CONFIGDIR.get();
+        if (path == null) {
+            Charm.LOG.warn("Could not fetch config dir path");
             return;
-
-        File dir = file.getParentFile();
-
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                throw new IOException("Could not create config parent directories");
-            }
-        } else if (!dir.isDirectory()) {
-            throw new IOException("Parent file is not a directory");
         }
 
-        try (Writer writer = new FileWriter(file)) {
-            writer.write("\n");
+        String name = config.getFileName();
+        if (name == null) {
+            Charm.LOG.warn("Could not fetch mod config filename");
+            return;
+        }
+
+        Path configPath = Paths.get(path.toString() + File.separator + name);
+        if (Files.isRegularFile(path)) {
+            Charm.LOG.warn("Config file does not exist: " + path);
+            return;
+        }
+
+        try {
+            lines = Files.readAllLines(configPath);
+            for (String line : lines) {
+                if (!line.contains("enabled")) continue;
+                modules.forEach(module -> {
+                    if (line.contains(module.getName())) {
+                        if (line.contains("false")) {
+                            module.enabled = false;
+                        } else if (line.contains("true")) {
+                            module.enabled = true;
+                        }
+                    }
+                });
+            }
+        } catch (Exception e) {
+            Charm.LOG.warn("Could not read config file: " + e);
         }
     }
 }

@@ -17,8 +17,8 @@ public abstract class CharmModule {
     public String mod = "";
     public String category = "";
 
-    public boolean depends() {
-        return true;
+    public void depends(boolean test) {
+        this.enabled = this.enabled && test;
     }
 
     public String getName() {

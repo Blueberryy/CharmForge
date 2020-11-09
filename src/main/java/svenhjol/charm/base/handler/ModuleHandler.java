@@ -67,6 +67,8 @@ public class ModuleHandler {
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
+        ConfigHandler.refreshAllConfig();
+
         eachEnabledModule(module -> {
             if (module.hasSubscriptions)
                 FORGE_EVENT_BUS.register(module);
@@ -84,7 +86,7 @@ public class ModuleHandler {
     }
 
     public static void onModConfig(ModConfig.ModConfigEvent event) {
-
+        ConfigHandler.refreshAllConfig();
     }
 
     public static void onLoadComplete(FMLLoadCompleteEvent event) {
@@ -121,6 +123,8 @@ public class ModuleHandler {
     }
 
     private static void instantiateModules() {
+        ConfigHandler configHandler = new ConfigHandler();
+
         AVAILABLE_MODULES.forEach((mod, modules) -> {
             Map<String, CharmModule> loaded = new TreeMap<>();
 
@@ -154,11 +158,12 @@ public class ModuleHandler {
             });
 
             // config for this module set
-            ConfigHandler.createConfig(mod, loaded);
+            configHandler.createConfig(loaded);
 
             // add loaded modules
             loaded.forEach((moduleName, module) ->
                 LOADED_MODULES.put(moduleName, module));
+
         });
     }
 
