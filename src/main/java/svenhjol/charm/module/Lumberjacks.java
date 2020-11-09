@@ -18,7 +18,6 @@ import svenhjol.charm.village.LumberjackTradeOffers;
 import java.util.Arrays;
 import java.util.List;
 
-import static svenhjol.charm.event.StructureSetupEvent.VillageType;
 import static svenhjol.charm.event.StructureSetupEvent.addVillageHouse;
 
 @Module(mod = Charm.MOD_ID, description = "Lumberjacks are villagers that trade wooden items. Their job site is the woodcutter.", hasSubscriptions = true)
@@ -32,16 +31,16 @@ public class Lumberjacks extends CharmModule {
         LUMBERJACK = VillagerHelper.addProfession(VILLAGER_ID, POIT, SoundEvents.ENTITY_VILLAGER_WORK_MASON);
     }
 
-    @SubscribeEvent
-    public void onStructureSetup(StructureSetupEvent event) {
+    @Override
+    public void init() {
         addVillageHouse(StructureSetupEvent.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_1"), 10);
-        addVillageHouse(VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_2"), 10);
-        addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack_1"), 10);
-        addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_1"), 5);
-        addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_2"), 10);
-        addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_lumberjack_1"), 10);
-        addVillageHouse(VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberbee_1"), 10);
-        addVillageHouse(VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_lumberjack_1"), 5);
+        addVillageHouse(StructureSetupEvent.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_2"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_1"), 5);
+        addVillageHouse(StructureSetupEvent.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_2"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_lumberjack_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberbee_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_lumberjack_1"), 5);
     }
 
     @SubscribeEvent

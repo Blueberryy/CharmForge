@@ -19,7 +19,6 @@ import svenhjol.charm.village.BeekeeperTradeOffers;
 import java.util.Arrays;
 import java.util.List;
 
-import static svenhjol.charm.event.StructureSetupEvent.VillageType;
 import static svenhjol.charm.event.StructureSetupEvent.addVillageHouse;
 
 @Module(mod = Charm.MOD_ID, description = "Beekeepers are villagers that trade beekeeping items. Their job site is the beehive.", hasSubscriptions = true)
@@ -36,15 +35,12 @@ public class Beekeepers extends CharmModule {
     public void init() {
         // HACK: set ticketCount so that villager can use it as job site
         ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setMaxFreeTickets(1);
-    }
 
-    @SubscribeEvent
-    public void onStructureSetup(StructureSetupEvent event) {
-        addVillageHouse(VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), 10);
-        addVillageHouse(VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), 10);
-        addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), 10);
-        addVillageHouse(VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_2"), 10);
-        addVillageHouse(VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_beekeeper_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_2"), 10);
+        addVillageHouse(StructureSetupEvent.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_beekeeper_1"), 10);
     }
 
     @SubscribeEvent
