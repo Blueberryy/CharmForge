@@ -2,6 +2,7 @@ package svenhjol.charm.base.handler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
@@ -12,7 +13,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
@@ -46,22 +46,14 @@ public class ModuleHandler {
         MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
         FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
 
-
         // both-side initializers
         BiomeHandler.init();
         // TODO: forge module enabled conditions should register here
-
-        /** @deprecated listen for server setup events (dedicated server only) */
-        //DedicatedServerSetupCallback.EVENT.register(server -> {
-        //    eachEnabledModule(m -> m.dedicatedServerInit(server));
-        //});
 
         hasInit = true;
     }
 
     public static void onConstructMod(FMLConstructModEvent event) {
-        Charm.LOG.info("here");
-
         // create all charm-based modules
         instantiateModules();
 
@@ -71,8 +63,8 @@ public class ModuleHandler {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
             eachModule(CharmModule::clientRegister);
             MOD_EVENT_BUS.addListener(ModuleHandler::onClientSetup);
+            MOD_EVENT_BUS.addListener(ModuleHandler::onTextureStitch);
         });
-
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -89,6 +81,10 @@ public class ModuleHandler {
 
     public static void onClientSetup(FMLClientSetupEvent event) {
         eachEnabledModule(CharmModule::clientInit);
+    }
+
+    public static void onTextureStitch(TextureStitchEvent event) {
+        eachEnabledModule(module -> module.clientTextureStitch(event));
     }
 
     public static void onModConfig(ModConfig.ModConfigEvent event) {

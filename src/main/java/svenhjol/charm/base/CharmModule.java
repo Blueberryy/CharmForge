@@ -3,6 +3,7 @@ package svenhjol.charm.base;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,10 @@ public abstract class CharmModule {
 
     public void clientRegister() {
         // run on client, even if not enabled (enabled flag is available)
+    }
+
+    public void clientTextureStitch(TextureStitchEvent event) {
+        // runs on client when Forge's texture stich event is fired
     }
 
     public void init() {
