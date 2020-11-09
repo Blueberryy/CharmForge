@@ -19,8 +19,7 @@ public class ItemStackTileEntityRendererMixin {
     private ItemStack itemStackToRender;
 
     /**
-     * Allows modules to define their own blockItem entity renderers
-     * to show in the player's inventory.
+     * Fetch the item stack so we can render the glint further down
      */
     @Inject(
         method = "func_239207_a_",
@@ -28,7 +27,7 @@ public class ItemStackTileEntityRendererMixin {
         cancellable = true
     )
     private void hookRender(ItemStack stack, ItemCameraTransforms.TransformType mode, MatrixStack matrixStack, IRenderTypeBuffer vertexConsumerProvider, int i, int j, CallbackInfo ci) {
-        // TODO: probably some forge-specific way to do this
+        this.itemStackToRender = stack;
     }
 
     /**
