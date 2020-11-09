@@ -28,7 +28,7 @@ public class EntitySpawner extends CharmModule {
     }
 
     @Override
-    public void clientRegister() {
+    public void clientInit() {
         RenderTypeLookup.setRenderLayer(ENTITY_SPAWNER, RenderType.getCutout());
     }
 }

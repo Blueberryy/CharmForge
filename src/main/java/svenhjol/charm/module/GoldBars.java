@@ -17,7 +17,7 @@ public class GoldBars extends CharmModule {
     }
 
     @Override
-    public void clientRegister() {
+    public void clientInit() {
         RenderTypeLookup.setRenderLayer(GOLD_BARS, RenderType.getCutout());
     }
 }
