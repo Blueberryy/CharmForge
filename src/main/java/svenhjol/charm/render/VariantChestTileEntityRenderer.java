@@ -5,16 +5,15 @@ import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.tileentity.ChestTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.state.properties.ChestType;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.tileentity.VariantChestTileEntity;
 import svenhjol.charm.tileentity.VariantTrappedChestTileEntity;
 
-import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("NullableProblems")
 public class VariantChestTileEntityRenderer<T extends VariantChestTileEntity> extends ChestTileEntityRenderer<T> {
     private static final Map<IVariantMaterial, Map<ChestType, RenderMaterial>> normalTextures = new HashMap<>();
     private static final Map<IVariantMaterial, Map<ChestType, RenderMaterial>> trappedTextures = new HashMap<>();
@@ -34,20 +33,19 @@ public class VariantChestTileEntityRenderer<T extends VariantChestTileEntity> ex
         textures.get(material).put(chestType, new RenderMaterial(Atlases.CHEST_ATLAS, id));
     }
 
-    @Nullable
-    public static RenderMaterial getChestMaterial(TileEntity tileEntity, ChestType chestType) {
-        if (!(tileEntity instanceof VariantChestTileEntity))
-            return null;
+    @Override
+    public RenderMaterial getMaterial(T tileEntity, ChestType chestType) {
+        IVariantMaterial material = tileEntity.getMaterialType();
 
-        Map<IVariantMaterial, Map<ChestType, RenderMaterial>> textures = tileEntity instanceof VariantTrappedChestTileEntity
-            ? trappedTextures
-            : normalTextures;
+        if (material != null) {
+            Map<IVariantMaterial, Map<ChestType, RenderMaterial>> textures = tileEntity instanceof VariantTrappedChestTileEntity
+                ? trappedTextures
+                : normalTextures;
 
-        IVariantMaterial material = ((VariantChestTileEntity)tileEntity).getMaterialType();
+            if (textures.containsKey(material))
+                return textures.get(material).getOrDefault(chestType, Atlases.getChestMaterial(tileEntity, chestType, false));
+        }
 
-        if (textures.containsKey(material))
-            return textures.get(material).getOrDefault(chestType, null);
-
-        return null;
+        return Atlases.getChestMaterial(tileEntity, chestType, false);
     }
 }

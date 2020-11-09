@@ -4,6 +4,7 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -35,8 +36,9 @@ public class EntitySpawnerBlock extends CharmBlock {
     }
 
     @Override
-    public void createBlockItem(ResourceLocation id) {
-        // don't
+    @Nullable
+    public BlockItem createBlockItem(ResourceLocation id) {
+        return null;
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -106,8 +107,8 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements IWaterLoggab
     }
 
     @Override
-    public void createBlockItem(ResourceLocation id) {
-        // don't
+    public BlockItem createBlockItem(ResourceLocation id) {
+        return null;
     }
 
     @Override
