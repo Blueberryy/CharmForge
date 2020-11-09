@@ -62,11 +62,6 @@ public class RegistryHandler {
         return build;
     }
 
-    public static <T extends TileEntity> TileEntityType<T> tileEntity2(ResourceLocation id, TileEntityType<T> type) {
-        register(ForgeRegistries.TILE_ENTITIES, id, type);
-        return type;
-    }
-
     public static StructureFeature<?, ?> configuredFeature(ResourceLocation id, StructureFeature<?, ?> configuredFeature) {
         WorldGenRegistries.register(WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE, id, configuredFeature);
         return configuredFeature;
