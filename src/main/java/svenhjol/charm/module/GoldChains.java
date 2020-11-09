@@ -17,7 +17,7 @@ public class GoldChains extends CharmModule {
     }
 
     @Override
-    public void clientRegister() {
+    public void clientInit() {
         RenderTypeLookup.setRenderLayer(GOLD_CHAIN, RenderType.getCutout());
     }
 }

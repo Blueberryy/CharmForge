@@ -1,8 +1,7 @@
 package svenhjol.charm.base.handler;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.internal.LinkedTreeMap;
+import com.moandjiezana.toml.Toml;
+import com.moandjiezana.toml.TomlWriter;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
@@ -16,15 +15,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConfigHandler {
 
-    // TODO: should probably use toml
     public static void createConfig(String mod, Map<String, CharmModule> modules) {
         Map<String, Map<String, Object>> finalConfig = new LinkedHashMap<>();
 
         String configName = mod.equals(Charm.MOD_ID) ? Charm.MOD_ID : Charm.MOD_ID + "-" + mod;
-        String configPath = "./config/" + configName + ".json";
+        String configPath = "./config/" + configName + ".toml";
 
         modules.forEach((moduleName, module) -> {
             finalConfig.put(moduleName, new LinkedHashMap<>());
@@ -47,7 +46,10 @@ public class ConfigHandler {
                 if (!finalConfig.containsKey(moduleName))
                     continue;
 
-                finalConfig.get(moduleName).putAll((LinkedTreeMap)entry.getValue());
+                Map<String, Object> value = (Map<String, Object>)entry.getValue();
+                Map<String, Object> fixed = value.entrySet().stream()
+                        .collect(Collectors.toMap(e -> e.getKey().replace("\"", ""), Map.Entry::getValue));
+                finalConfig.get(moduleName).putAll(fixed);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to read config for " + configName, e);
@@ -105,9 +107,9 @@ public class ConfigHandler {
     private static Map<?, ?> readConfig(Path path) throws IOException {
         touch(path);
 
-        Gson gson = new Gson();
+        Toml toml = new Toml();
         Reader reader = Files.newBufferedReader(path);
-        Map<?, ?> map = gson.fromJson(reader, Map.class);
+        Map<?, ?> map = toml.read(reader).toMap();
         reader.close();
         return map;
     }
@@ -115,9 +117,9 @@ public class ConfigHandler {
     private static void writeConfig(Path path, Map<?, ?> map) throws IOException {
         touch(path);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        TomlWriter toml = new TomlWriter();
         Writer writer = Files.newBufferedWriter(path);
-        gson.toJson(map, writer);
+        toml.write(map, writer);
         writer.close();
     }
 
@@ -138,7 +140,7 @@ public class ConfigHandler {
         }
 
         try (Writer writer = new FileWriter(file)) {
-            writer.write("{}");
+            writer.write("\n");
         }
     }
 }

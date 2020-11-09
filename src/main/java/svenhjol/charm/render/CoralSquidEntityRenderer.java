@@ -28,6 +28,7 @@ public class CoralSquidEntityRenderer extends MobRenderer<CoralSquidEntity, Cora
     /**
      * Copypasta from SquidEntityRenderer.
      */
+    @Override
     protected void applyRotations(CoralSquidEntity squidEntity, MatrixStack matrixStack, float f, float g, float h) {
         float i = MathHelper.lerp(h, squidEntity.prevTiltAngle, squidEntity.tiltAngle);
         float j = MathHelper.lerp(h, squidEntity.prevRollAngle, squidEntity.rollAngle);
@@ -38,7 +39,8 @@ public class CoralSquidEntityRenderer extends MobRenderer<CoralSquidEntity, Cora
         matrixStack.translate(0.0D, -1.2000000476837158D, 0.0D);
     }
 
-    protected float getAnimationProgress(CoralSquidEntity squidEntity, float f) {
+    @Override
+    protected float handleRotationFloat(CoralSquidEntity squidEntity, float f) {
         return MathHelper.lerp(f, squidEntity.prevTentacleAngle, squidEntity.tentacleAngle);
     }
 }
