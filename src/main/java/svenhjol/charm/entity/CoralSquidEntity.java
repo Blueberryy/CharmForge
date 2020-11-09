@@ -251,8 +251,9 @@ public class CoralSquidEntity extends WaterMobEntity {
         this.move(MoverType.SELF, this.getMotion());
     }
 
+    @Override
     @OnlyIn(Dist.CLIENT)
-    public void handleStatus(byte status) {
+    public void handleStatusUpdate(byte status) {
         if (status == 19) {
             this.squidRotation = 0.0F;
         } else {
