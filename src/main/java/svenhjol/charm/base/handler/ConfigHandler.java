@@ -11,7 +11,11 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ConfigHandler {
 
@@ -42,7 +46,10 @@ public class ConfigHandler {
                 if (!finalConfig.containsKey(moduleName))
                     continue;
 
-                finalConfig.get(moduleName).putAll((HashMap)entry.getValue());
+                Map<String, Object> value = (Map<String, Object>)entry.getValue();
+                Map<String, Object> fixed = value.entrySet().stream()
+                        .collect(Collectors.toMap(e -> e.getKey().replace("\"", ""), Map.Entry::getValue));
+                finalConfig.get(moduleName).putAll(fixed);
             }
         } catch (Exception e) {
             throw new RuntimeException("Failed to read config for " + configName, e);
