@@ -4,16 +4,20 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.item.CharmItem;
+import svenhjol.charm.message.ClientSetGlowingEntities;
+import svenhjol.charm.module.BatBuckets;
 
 public class BatBucketItem extends CharmItem {
     public static final String STORED_BAT = "stored_bat";
@@ -63,14 +67,8 @@ public class BatBucketItem extends CharmItem {
         player.swingArm(hand);
 
         // send message to client to start glowing
-        if (!world.isRemote) {
-            // TODO: handle packet
-//            PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
-//            data.writeDouble(BatBuckets.glowingRange);
-//            data.writeInt(BatBuckets.glowingTime);
-//
-//            ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, BatBuckets.MSG_CLIENT_SET_GLOWING, data);
-        }
+        if (!world.isRemote)
+            Charm.PACKET_HANDLER.sendToPlayer(new ClientSetGlowingEntities(BatBuckets.glowingRange, BatBuckets.glowingTime * 20), (ServerPlayerEntity) player);
 
         if (!player.isCreative())
             player.setHeldItem(hand, new ItemStack(Items.BUCKET));
