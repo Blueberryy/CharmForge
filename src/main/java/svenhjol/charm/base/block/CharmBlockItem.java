@@ -15,6 +15,11 @@ public class CharmBlockItem extends BlockItem {
     public CharmBlockItem(ICharmBlock block, Properties settings) {
         super((Block) block, settings);
 
+        // set blockitem's registryname same as block's
+        Block b = (Block)block;
+        if (b.getRegistryName() != null)
+            this.setRegistryName(b.getRegistryName());
+
         int burnTime = block.getBurnTime();
         if (burnTime > 0)
             this.burnTime = burnTime;
@@ -23,7 +28,8 @@ public class CharmBlockItem extends BlockItem {
         this.inventoryTickConsumer = block.getInventoryTickConsumer();
     }
 
-    public int getBurnTime() {
+    @Override
+    public int getBurnTime(ItemStack stack) {
         return burnTime;
     }
 
