@@ -14,8 +14,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -46,7 +45,7 @@ minecraft {
 
 dependencies {
 	minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-	annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+
 	// third party
 	compileOnly fg.deobf("vazkii.quark:Quark:${project.quark_version}")
 	compileOnly fg.deobf("vazkii.autoreglib:AutoRegLib:${project.arl_version}")
@@ -104,7 +103,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
-    archiveName = "${project.archives_base_name}.${extension}"
+    archiveName = "${project.archives_base_name}-${project.mod_version}.${extension}"
 
 	manifest {
         attributes([
