@@ -46,9 +46,10 @@ minecraft {
 
 dependencies {
 	minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
-
+	annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 	// third party
-//	compile fg.deobf("vazkii.autoreglib:AutoRegLib:${project.arl_version}")
+	compileOnly fg.deobf("vazkii.quark:Quark:${project.quark_version}")
+	compileOnly fg.deobf("vazkii.autoreglib:AutoRegLib:${project.arl_version}")
 	compileOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}:${project.jei_version}:api")
 	runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}:${project.jei_version}")
 
@@ -70,6 +71,10 @@ repositories {
 		// for Mappings
 		name "gigaherz"
 		url "http://dogforce-games.com/maven/"
+	}
+	flatDir {
+		// for including local jar files
+		dirs "libs"
 	}
 }
 
