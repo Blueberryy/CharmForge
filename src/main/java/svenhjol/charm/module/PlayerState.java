@@ -57,10 +57,10 @@ public class PlayerState extends CharmModule {
         long dayTime = world.getDayTime() % 24000;
         CompoundNBT tag = new CompoundNBT();
 
-        tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, Structure.field_236367_c_));
-        tag.putBoolean("stronghold", PosHelper.isInsideStructure(world, pos, Structure.field_236375_k_));
-        tag.putBoolean("fortress", PosHelper.isInsideStructure(world, pos, Structure.field_236378_n_));
-        tag.putBoolean("shipwreck", PosHelper.isInsideStructure(world, pos, Structure.field_236373_i_));
+        tag.putBoolean("mineshaft", PosHelper.isInsideStructure(world, pos, Structure.MINESHAFT));
+        tag.putBoolean("stronghold", PosHelper.isInsideStructure(world, pos, Structure.STRONGHOLD));
+        tag.putBoolean("fortress", PosHelper.isInsideStructure(world, pos, Structure.FORTRESS));
+        tag.putBoolean("shipwreck", PosHelper.isInsideStructure(world, pos, Structure.SHIPWRECK));
         tag.putBoolean("village", world.isVillage(pos));
         tag.putBoolean("day", dayTime > 0 && dayTime < 12700);
 

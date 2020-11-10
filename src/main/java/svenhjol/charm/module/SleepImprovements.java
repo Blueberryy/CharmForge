@@ -60,7 +60,7 @@ public class SleepImprovements extends CharmModule {
         /** copypasta from {@link ServerWorld#tick} */
         if (world.getGameRules().getBoolean(GameRules.DO_DAYLIGHT_CYCLE)) {
             long l = world.getDayTime() + 24000L;
-            world.func_241114_a_(l - l % 24000L);
+            world.setDayTime(l - l % 24000L);
         }
 
         ((ServerWorldAccessor)world).invokeWakeUpAllPlayers();

@@ -45,7 +45,7 @@ public class EndermitePowderItem extends CharmItem {
         // server
         if (!worldIn.isRemote) {
             ServerWorld serverWorld = (ServerWorld)worldIn;
-            BlockPos pos = serverWorld.func_241117_a_(Structure.field_236379_o_, playerIn.getPosition(), 1500, false);
+            BlockPos pos = serverWorld.func_241117_a_(Structure.END_CITY, playerIn.getPosition(), 1500, false);
             if (pos != null) {
                 EndermitePowderEntity entity = new EndermitePowderEntity(worldIn, pos.getX(), pos.getZ());
                 Vector3d look = playerIn.getLookVec();
