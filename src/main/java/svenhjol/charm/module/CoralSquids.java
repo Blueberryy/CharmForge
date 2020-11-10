@@ -39,7 +39,7 @@ public class CoralSquids extends CharmModule {
     @Override
     public void register() {
         CORAL_SQUID = RegistryHandler.entity(ID, EntityType.Builder.create(CoralSquidEntity::new, EntityClassification.WATER_CREATURE)
-            .size(0.4F, 0.4F)
+            .size(0.54F, 0.54F)
             .trackingRange(8)
             .build(ID.getPath()));
 
