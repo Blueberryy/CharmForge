@@ -21,7 +21,7 @@ public class ArmorInvisibility extends CharmModule {
 
     @Override
     public void init() {
-        isEnabled = true;
+        isEnabled = true; // cache
 
         invisibleItems.addAll(Arrays.asList(
             Items.LEATHER_HELMET,

@@ -36,18 +36,18 @@ public class VariantMobTextures extends CharmModule {
     public static Map<ResourceLocation, ResourceLocation> wolvesAngry = new HashMap<>();
     public static Map<DyeColor, ResourceLocation> sheep = new HashMap<>();
 
-    private static VariantMobTexturesClient client;
+    public VariantMobTexturesClient client;
 
-    @Config(name = "Variant cows", description = "If true, cows may spawn with different textures.")
+    @Config(name = "Variant cows", description = "If true, cows may spawn with different textures. This is disabled if Quark is present.")
     public static boolean variantCows = true;
 
-    @Config(name = "Variant chickens", description = "If true, chickens may spawn with different textures.")
+    @Config(name = "Variant chickens", description = "If true, chickens may spawn with different textures. This is disabled if Quark is present.")
     public static boolean variantChickens = true;
 
-    @Config(name = "Variant pigs", description = "If true, pigs may spawn with different textures.")
+    @Config(name = "Variant pigs", description = "If true, pigs may spawn with different textures. This is disabled if Quark is present.")
     public static boolean variantPigs = true;
 
-    @Config(name = "Variant sheep", description = "If true, sheep face and 'shorn' textures match their wool color.")
+    @Config(name = "Variant sheep", description = "If true, sheep face and 'shorn' textures match their wool color. This is disabled if Quark is present.")
     public static boolean variantSheep = true;
 
     @Config(name = "Variant snow golems", description = "If true, snow golems may spawn with different derp faces.")
@@ -64,6 +64,9 @@ public class VariantMobTextures extends CharmModule {
 
     @Config(name = "Rarity of rare variants", description = "Approximately 1 in X chance of a mob spawning as a rare variant.")
     public static int rarity = 1000;
+
+    @Config(name = "Override", description = "Some animal textures are disabled if Quark is present. Set true to force enable them.")
+    public static boolean override = false;
 
     @Override
     public void clientInit() {

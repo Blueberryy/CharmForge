@@ -1,6 +1,7 @@
 package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.block.CandleBlock;
 import svenhjol.charm.item.BeeswaxItem;
 import svenhjol.charm.base.CharmModule;
@@ -19,10 +20,14 @@ public class Candles extends CharmModule {
     @Config(name = "Lit when placed", description = "If true, candles will be lit when placed rather than needing a flint and steel.")
     public static boolean litWhenPlaced = false;
 
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
+
     @Override
     public void register() {
         CANDLE = new CandleBlock(this);
         BEESWAX = new BeeswaxItem(this);
+        depends(!ModHelper.isLoaded("quark") || override);
     }
 
     @Override

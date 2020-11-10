@@ -17,7 +17,9 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.helper.PosHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.PlacedGlowstoneDustBlock;
 
@@ -25,9 +27,13 @@ import svenhjol.charm.block.PlacedGlowstoneDustBlock;
 public class PlaceableGlowstoneDust extends CharmModule {
     public static PlacedGlowstoneDustBlock PLACED_GLOWSTONE_DUST;
 
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
+
     @Override
     public void register() {
         PLACED_GLOWSTONE_DUST = new PlacedGlowstoneDustBlock(this);
+        depends(!ModHelper.isLoaded("quark") || override);
     }
 
     @Override

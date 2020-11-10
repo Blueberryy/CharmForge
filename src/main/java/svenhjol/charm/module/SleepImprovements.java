@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.ServerWorldAccessor;
@@ -24,6 +25,14 @@ public class SleepImprovements extends CharmModule {
 
     @Config(name = "Number of required players", description = "The number of players required to sleep in order to bring the next day.")
     public static int requiredPlayers = 1;
+
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
+
+    @Override
+    public void register() {
+        depends(!ModHelper.isLoaded("quark") || override);
+    }
 
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event) {

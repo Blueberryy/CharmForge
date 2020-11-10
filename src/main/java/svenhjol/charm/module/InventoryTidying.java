@@ -4,10 +4,11 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
+import svenhjol.charm.base.helper.ModHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.InventoryTidyingClient;
 import svenhjol.charm.handler.InventoryTidyingHandler;
@@ -20,7 +21,14 @@ import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
 @Module(mod = Charm.MOD_ID, description = "Button to automatically tidy inventories.")
 public class InventoryTidying extends CharmModule {
     public static InventoryTidyingClient client;
-    public static final ResourceLocation MSG_SERVER_TIDY_INVENTORY = new ResourceLocation(Charm.MOD_ID, "server_tidy_inventory");
+
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
+
+    @Override
+    public void register() {
+        depends(!ModHelper.isLoaded("quark") || override);
+    }
 
     @Override
     public void init() {

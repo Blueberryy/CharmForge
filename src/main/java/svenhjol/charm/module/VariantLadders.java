@@ -12,6 +12,8 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
+import svenhjol.charm.base.helper.ModHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.VariantLadderBlock;
 
@@ -23,8 +25,10 @@ import java.util.Map;
 @Module(mod = Charm.MOD_ID, description = "Ladders available in all types of vanilla wood.")
 public class VariantLadders extends CharmModule {
     public static final Map<IVariantMaterial, VariantLadderBlock> LADDER_BLOCKS = new HashMap<>();
-
     public static boolean isEnabled = false;
+
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
 
     @Override
     public void register() {
@@ -32,7 +36,8 @@ public class VariantLadders extends CharmModule {
             LADDER_BLOCKS.put(type, new VariantLadderBlock(this, type));
         });
 
-        isEnabled = this.enabled;
+        depends(!ModHelper.isLoaded("quark") || override);
+        isEnabled = this.enabled; // cached
     }
 
     @Override

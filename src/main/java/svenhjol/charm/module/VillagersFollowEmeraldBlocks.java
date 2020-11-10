@@ -10,10 +10,20 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.MobHelper;
+import svenhjol.charm.base.helper.ModHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "Villagers are attracted when the player holds a block of emeralds.", hasSubscriptions = true)
 public class VillagersFollowEmeraldBlocks extends CharmModule {
+    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
+    public static boolean override = false;
+
+    @Override
+    public void register() {
+        depends(!ModHelper.isLoaded("quark") || override);
+    }
+
     @SubscribeEvent
     public void onEntityJoinWorld(EntityJoinWorldEvent event) {
         if (!event.isCanceled())

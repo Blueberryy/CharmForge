@@ -30,7 +30,7 @@ public class GlowBalls extends CharmModule {
             .size(0.25F, 0.25F)
             .build(ID.getPath()));
 
-        this.enabled = ModuleHandler.enabled("charm:placeable_glowstone_dust");
+        depends(ModuleHandler.enabled("charm:placeable_glowstone_dust"));
     }
 
     @Override

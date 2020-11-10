@@ -10,8 +10,10 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.helper.StructureHelper;
 import svenhjol.charm.base.helper.VillagerHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.PointOfInterestTypeAccessor;
 import svenhjol.charm.village.BeekeeperTradeOffers;
@@ -26,9 +28,14 @@ public class Beekeepers extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "beekeeper");
     public static VillagerProfession BEEKEEPER;
 
+    @Config(name = "Override", description = "This module is automatically disabled if Buzzier Bees is present. Set true to force enable.")
+    public static boolean override = false;
+
     @Override
     public void register() {
         BEEKEEPER = VillagerHelper.addProfession(ID, PointOfInterestType.BEEHIVE, SoundEvents.BLOCK_BEEHIVE_WORK);
+
+        depends(!ModHelper.isLoaded("buzzier_bees") || override);
     }
 
     @Override
