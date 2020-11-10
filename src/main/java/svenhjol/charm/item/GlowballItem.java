@@ -10,15 +10,15 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.item.ICharmItem;
-import svenhjol.charm.entity.GlowBallEntity;
+import svenhjol.charm.entity.GlowballEntity;
 
-public class GlowBallItem extends EnderPearlItem implements ICharmItem {
+public class GlowballItem extends EnderPearlItem implements ICharmItem {
     protected CharmModule module;
 
-    public GlowBallItem(CharmModule module) {
+    public GlowballItem(CharmModule module) {
         super(new Item.Properties().maxStackSize(16).group(ItemGroup.MISC));
         this.module = module;
-        this.register(module, "glow_ball");
+        this.register(module, "glowball");
     }
 
     @Override
@@ -29,11 +29,11 @@ public class GlowBallItem extends EnderPearlItem implements ICharmItem {
 
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getHeldItem(hand);
-        world.playSound(null, user.getPosX(), user.getPosY(), user.getPosZ(), SoundEvents.ENTITY_ENDER_PEARL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
+        world.playSound(null, user.getPosX(), user.getPosY(), user.getPosZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
         user.getCooldownTracker().setCooldown(this, 10);
 
         if (!world.isRemote) {
-            GlowBallEntity entity = new GlowBallEntity(world, user);
+            GlowballEntity entity = new GlowballEntity(world, user);
             entity.setItem(itemStack);
             entity.func_234612_a_(user, user.rotationPitch, user.rotationYaw, 0.0F, 1.5F, 1.0F);
             world.addEntity(entity);

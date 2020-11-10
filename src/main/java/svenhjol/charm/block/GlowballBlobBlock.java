@@ -30,13 +30,13 @@ import svenhjol.charm.base.block.CharmBlock;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlacedGlowstoneDustBlock extends CharmBlock implements IWaterLoggable {
+public class GlowballBlobBlock extends CharmBlock implements IWaterLoggable {
     public static final Map<Direction, VoxelShape> SHAPE = new HashMap<>();
     public static final DirectionProperty FACING = BlockStateProperties.FACING;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-    public PlacedGlowstoneDustBlock(CharmModule module) {
-        super(module, "placed_glowstone_dust", Properties.from(Blocks.REDSTONE_WIRE)
+    public GlowballBlobBlock(CharmModule module) {
+        super(module, "glowball_blob", Properties.from(Blocks.REDSTONE_WIRE)
             .setLightLevel(l -> 8));
 
         this.setDefaultState(getDefaultState().with(WATERLOGGED, false));
@@ -118,10 +118,10 @@ public class PlacedGlowstoneDustBlock extends CharmBlock implements IWaterLoggab
 
     static {
         SHAPE.put(Direction.UP, Block.makeCuboidShape(3.0D, 0.0D, 3.0D, 13.0D, 1.0D, 13.0D));
-        SHAPE.put(Direction.DOWN, Block.makeCuboidShape(3.0D, 16.0D, 3.0D, 13.0D, 15.0D, 13.0D));
+        SHAPE.put(Direction.DOWN, Block.makeCuboidShape(3.0D, 15.0D, 3.0D, 13.0D, 16.0D, 13.0D));
         SHAPE.put(Direction.EAST, Block.makeCuboidShape(0.0D, 3.0D, 3.0D, 1.0D, 13.0D, 13.0D));
         SHAPE.put(Direction.SOUTH, Block.makeCuboidShape(3.0D, 3.0D, 0.0D, 13.0D, 13.0D, 1.0D));
-        SHAPE.put(Direction.WEST, Block.makeCuboidShape(16.0D, 3.0D, 3.0D, 15.0D, 13.0D, 13.0D));
-        SHAPE.put(Direction.NORTH, Block.makeCuboidShape(3.0D, 3.0D, 16.0D, 13.0D, 13.0D, 15.0D));
+        SHAPE.put(Direction.WEST, Block.makeCuboidShape(15.0D, 3.0D, 3.0D, 16.0D, 13.0D, 13.0D));
+        SHAPE.put(Direction.NORTH, Block.makeCuboidShape(3.0D, 3.0D, 15.0D, 13.0D, 13.0D, 16.0D));
     }
 }
