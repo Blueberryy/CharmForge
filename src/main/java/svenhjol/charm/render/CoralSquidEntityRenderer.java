@@ -32,7 +32,7 @@ public class CoralSquidEntityRenderer extends MobRenderer<CoralSquidEntity, Cora
     protected void applyRotations(CoralSquidEntity squidEntity, MatrixStack matrixStack, float f, float g, float h) {
         float i = MathHelper.lerp(h, squidEntity.prevTiltAngle, squidEntity.tiltAngle);
         float j = MathHelper.lerp(h, squidEntity.prevRollAngle, squidEntity.rollAngle);
-        matrixStack.translate(0.0D, 0.5D, 0.0D);
+        matrixStack.translate(0.0D, 0.25D, 0.0D);
         matrixStack.rotate(Vector3f.YP.rotationDegrees(180.0F - g));
         matrixStack.rotate(Vector3f.XP.rotationDegrees(i));
         matrixStack.rotate(Vector3f.YP.rotationDegrees(j));
