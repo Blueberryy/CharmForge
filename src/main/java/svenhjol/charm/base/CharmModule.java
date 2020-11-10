@@ -1,6 +1,5 @@
 package svenhjol.charm.base;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -51,10 +50,6 @@ public abstract class CharmModule {
 
     public void loadWorld(MinecraftServer server) {
         // run on server on world load, only executed if module enabled
-    }
-
-    public void clientJoinWorld(Minecraft client) {
-        // run on client on world load, only executed if module enabled
     }
 
     public void serverInit(MinecraftServer server) {
