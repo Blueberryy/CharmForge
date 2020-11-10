@@ -38,17 +38,17 @@ public class MoreVillageBiomes extends CharmModule {
 
         for (RegistryKey<Biome> biomeKey : plainsBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244154_t);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_PLAINS);
         }
 
         for (RegistryKey<Biome> biomeKey : taigaBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244158_x);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_TAIGA);
         }
 
         for (RegistryKey<Biome> biomeKey : snowyBiomes) {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.field_244157_w);
+            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_SNOWY);
         }
     }
 

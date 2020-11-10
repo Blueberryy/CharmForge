@@ -51,16 +51,16 @@ public class WanderingTraderImprovements extends CharmModule {
     public void init() {
         if (tradeStructureMaps) {
             traderMaps.addAll(Arrays.asList(
-                new StructureMap(Structure.field_236372_h_, false), // ruined portal
-                new StructureMap(Structure.field_236381_q_, false), // village
-                new StructureMap(Structure.field_236374_j_, false), // swamp hut
-                new StructureMap(Structure.field_236373_i_, false), // shipwreck
-                new StructureMap(Structure.field_236377_m_, false), // ocean ruin
-                new StructureMap(Structure.field_236366_b_, false), // pillager outpost
-                new StructureMap(Structure.field_236367_c_, false), // mineshaft
-                new StructureMap(Structure.field_236371_g_, false), // igloo
-                new StructureMap(Structure.field_236369_e_, true), // jungle temple
-                new StructureMap(Structure.field_236370_f_, true) // desert pyramid
+                new StructureMap(Structure.RUINED_PORTAL, false), // ruined portal
+                new StructureMap(Structure.VILLAGE, false), // village
+                new StructureMap(Structure.SWAMP_HUT, false), // swamp hut
+                new StructureMap(Structure.SHIPWRECK, false), // shipwreck
+                new StructureMap(Structure.OCEAN_RUIN, false), // ocean ruin
+                new StructureMap(Structure.PILLAGER_OUTPOST, false), // pillager outpost
+                new StructureMap(Structure.MINESHAFT, false), // mineshaft
+                new StructureMap(Structure.IGLOO, false), // igloo
+                new StructureMap(Structure.JUNGLE_PYRAMID, true), // jungle temple
+                new StructureMap(Structure.DESERT_PYRAMID, true) // desert pyramid
             ));
         }
 

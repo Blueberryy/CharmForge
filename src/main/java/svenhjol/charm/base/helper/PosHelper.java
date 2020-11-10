@@ -34,7 +34,7 @@ public class PosHelper {
     }
 
     public static boolean isInsideStructure(ServerWorld world, BlockPos pos, Structure<?> structure) {
-        return world.func_241112_a_().func_235010_a_(pos, true, structure).isValid();
+        return world.func_241112_a_().getStructureStart(pos, true, structure).isValid();
     }
 
     public static boolean isLikeSolid(World world, BlockPos pos) {
