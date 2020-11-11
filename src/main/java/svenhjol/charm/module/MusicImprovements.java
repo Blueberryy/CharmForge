@@ -1,13 +1,14 @@
 package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.client.MusicClient;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "Playing a record in a jukebox stops background music from playing at the same.\n" +
-    "Creative music tracks may also play in survival mode.")
+    "Creative music tracks may also play in survival mode.", hasSubscriptions = true)
 public class MusicImprovements extends CharmModule {
     private MusicClient client;
 
@@ -17,5 +18,6 @@ public class MusicImprovements extends CharmModule {
     @Override
     public void clientInit() {
         client = new MusicClient(this);
+        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 }

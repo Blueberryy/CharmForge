@@ -40,13 +40,13 @@ public class MusicClient {
     private static ResourceLocation currentDim = null;
     private static int timeUntilNextMusic = 100;
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
-    public static boolean enabled;
+    public static boolean isEnabled;
 
     public MusicClient(CharmModule module) {
         this.module = module;
 
         // set statically so hooks can check this is enabled
-        enabled = module.enabled;
+        isEnabled = module.enabled;
 
         if (MusicImprovements.playCreativeMusic)
             addCreativeMusicCondition();
@@ -64,6 +64,7 @@ public class MusicClient {
             checkShouldStopMusic(event.getSound());
     }
 
+    @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (!event.isCanceled())
             checkActuallyStopMusic();
