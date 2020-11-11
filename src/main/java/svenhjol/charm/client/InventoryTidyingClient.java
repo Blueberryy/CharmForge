@@ -20,7 +20,8 @@ import svenhjol.charm.message.ServerSortInventory;
 
 import java.util.*;
 
-import static svenhjol.charm.message.ServerSortInventory.TILE;
+import static svenhjol.charm.handler.InventoryTidyingHandler.BE;
+import static svenhjol.charm.handler.InventoryTidyingHandler.PLAYER;
 
 public class InventoryTidyingClient {
     private final CharmModule module;
@@ -93,18 +94,11 @@ public class InventoryTidyingClient {
         List<Slot> slots = container.inventorySlots;
         for (Slot slot : slots) {
             if (tileScreens.contains(screen.getClass()) && slot.getSlotIndex() == 0) {
-                this.addSortingButton(screen, x, y + slot.yPos, click -> {
-                    Charm.PACKET_HANDLER.sendToServer(new ServerSortInventory(TILE));
-                });
+                this.addSortingButton(screen, x, y + slot.yPos, click -> sendSortMessage(BE));
             }
 
-            if (slot.inventory == mc.player.inventory) {
-                if (screen instanceof InventoryScreen)
-                    y += 76;
-
-                this.addSortingButton(screen, x, y + slot.yPos, click -> {
-                    Charm.PACKET_HANDLER.sendToServer(new ServerSortInventory(ServerSortInventory.PLAYER));
-                });
+            if (slot.inventory == Minecraft.getInstance().player.inventory) {
+                this.addSortingButton(screen, x, y + slot.yPos, click -> sendSortMessage(PLAYER));
                 break;
             }
         }
@@ -125,5 +119,9 @@ public class InventoryTidyingClient {
 
     private void addSortingButton(Screen screen, int x, int y, Button.IPressable onPress) {
         sortingButtons.add(new ImageButton(x, y, 10, 10, 40, 0, 10, CharmResources.INVENTORY_BUTTONS, onPress));
+    }
+
+    private void sendSortMessage(int type) {
+        Charm.PACKET_HANDLER.sendToServer(new ServerSortInventory(type));
     }
 }
