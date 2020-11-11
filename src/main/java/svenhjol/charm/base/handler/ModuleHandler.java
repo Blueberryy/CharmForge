@@ -10,7 +10,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.base.CharmModule;
@@ -79,6 +78,7 @@ public class ModuleHandler {
 
     public static void onClientSetup(FMLClientSetupEvent event) {
         eachEnabledModule(CharmModule::clientInit);
+        ColoredGlintHandler.init(); // load late so that buffer builders are populated
     }
 
     public static void onTextureStitch(TextureStitchEvent event) {
@@ -87,11 +87,6 @@ public class ModuleHandler {
 
     public static void onModConfig(ModConfig.ModConfigEvent event) {
         ConfigHandler.refreshAllConfig();
-    }
-
-    public static void onLoadComplete(FMLLoadCompleteEvent event) {
-        DecorationHandler.init(); // load late so that tags are populated
-        ColoredGlintHandler.init(); // load late so that buffer builders are populated
     }
 
     public static void onServerStarting(FMLServerStartingEvent event) {

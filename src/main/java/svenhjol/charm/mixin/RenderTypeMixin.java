@@ -12,7 +12,8 @@ import svenhjol.charm.module.Core;
 public class RenderTypeMixin {
     @Inject(
         method = "getArmorGlint",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetArmorGlint(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)
@@ -21,7 +22,8 @@ public class RenderTypeMixin {
 
     @Inject(
         method = "getArmorEntityGlint",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetArmorEntityGlint(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)
@@ -30,7 +32,8 @@ public class RenderTypeMixin {
 
     @Inject(
         method = "getEntityGlint",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetEntityGlint(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)
@@ -39,7 +42,8 @@ public class RenderTypeMixin {
 
     @Inject(
         method = "getEntityGlintDirect",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetEntityGlintDirect(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)
@@ -48,7 +52,8 @@ public class RenderTypeMixin {
 
     @Inject(
         method = "getGlint",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetGlint(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)
@@ -57,7 +62,8 @@ public class RenderTypeMixin {
 
     @Inject(
         method = "getGlintDirect",
-        at = @At("TAIL")
+        at = @At("HEAD"),
+        cancellable = true
     )
     private static void hookGetGlintDirect(CallbackInfoReturnable<RenderType> cir) {
         if (Core.debug)

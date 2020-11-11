@@ -14,6 +14,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.mixin.accessor.MinecraftAccessor;
 import svenhjol.charm.mixin.accessor.RenderStateAccessor;
 import svenhjol.charm.mixin.accessor.RenderTypeBuffersMixin;
+import svenhjol.charm.module.Core;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class ColoredGlintHandler {
     public static Map<DyeColor, RenderType> ARMOR_ENTITY_GLINT = new HashMap<>();
 
     public static boolean isEnabled;
+    public static DyeColor defaultGlintColor;
     public static ItemStack targetStack;
 
     private static boolean hasInit = false;
@@ -50,12 +52,13 @@ public class ColoredGlintHandler {
             ARMOR_ENTITY_GLINT.put(dyeColor, createArmorEntityGlint(dyeColor, TEXTURES.get(dyeColor)));
         }
 
+        defaultGlintColor = DyeColor.byTranslationKey(Core.glintColor, DyeColor.PURPLE);
+
         hasInit = true;
     }
     
     public static DyeColor getDefaultGlintColor() {
-        // TODO: should be configurable, maybe in core
-        return DyeColor.PURPLE;
+        return defaultGlintColor;
     }
 
     public static DyeColor getStackColor(ItemStack stack) {
