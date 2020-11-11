@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.1
+* Fix Coral Squid hitboxes. #351, #361
+* Fix Candles not making sound when lighting
+* Fix incompatibilities with Optifine
+* Restore Quark integration for crates and bookcases
+* Glow balls are now known as glowballs
+* Placeable Glowstone Dust has been removed
+* Update glowball texture
+* **Charm's config now uses toml format.** Old json file will not be deleted, but existing config changes **will not be copied across.**
+
 ## 2.1.0
 * Totem of Undying causing crash on server. Fixes #339
 * VariantAnimalTextures has become VariantMobTextures. This changes the charm.json config file
