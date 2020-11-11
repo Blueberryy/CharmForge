@@ -18,7 +18,7 @@ import svenhjol.charm.base.iface.Module;
 import java.util.HashMap;
 import java.util.Map;
 
-@Module(mod = Charm.MOD_ID, description = "Extract enchantments from any enchanted item into an empty book.")
+@Module(mod = Charm.MOD_ID, description = "Extract enchantments from any enchanted item into an empty book.", hasSubscriptions = true)
 public class ExtractEnchantments extends CharmModule {
     @Config(name = "Initial XP cost", description = "Initial XP cost before adding XP equivalent to the enchantment level(s) of the item.")
     public static int initialCost = 2;

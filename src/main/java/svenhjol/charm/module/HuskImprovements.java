@@ -17,7 +17,7 @@ import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
-@Module(mod = Charm.MOD_ID, description = "Husks spawn anywhere within their biome and have a chance to drop sand.")
+@Module(mod = Charm.MOD_ID, description = "Husks spawn anywhere within their biome and have a chance to drop sand.", hasSubscriptions = true)
 public class HuskImprovements extends CharmModule {
     public static double lootingBoost = 0.3D;
 

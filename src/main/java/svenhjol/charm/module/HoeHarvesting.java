@@ -25,7 +25,7 @@ import svenhjol.charm.base.iface.Module;
 import java.util.ArrayList;
 import java.util.List;
 
-@Module(mod = Charm.MOD_ID, description = "Right-click with a hoe to quickly harvest and replant a fully-grown crop.")
+@Module(mod = Charm.MOD_ID, description = "Right-click with a hoe to quickly harvest and replant a fully-grown crop.", hasSubscriptions = true)
 public class HoeHarvesting extends CharmModule {
     private static final List<BlockState> harvestable = new ArrayList<>();
 
