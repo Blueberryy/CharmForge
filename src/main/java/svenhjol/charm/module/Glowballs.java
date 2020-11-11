@@ -41,6 +41,6 @@ public class Glowballs extends CharmModule {
 
     @Override
     public void clientInit() {
-        RenderTypeLookup.setRenderLayer(GLOWBALL_BLOCK, RenderType.getCutout());
+        RenderTypeLookup.setRenderLayer(GLOWBALL_BLOCK, RenderType.getTranslucent());
     }
 }
