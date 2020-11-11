@@ -77,7 +77,6 @@ repositories {
 
 mixin {
 	add sourceSets.main, 'charm.mixins.refmap.json'
-	add sourceSets.main, 'quark.mixins.refmap.json'
 }
 
 processResources {
