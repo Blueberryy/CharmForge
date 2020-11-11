@@ -13,13 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BatBucketClient {
+public class BatBucketsClient {
     protected final CharmModule module;
     public int ticks;
     public double range;
     public static List<LivingEntity> entities = new ArrayList<>();
 
-    public BatBucketClient(CharmModule module) {
+    public BatBucketsClient(CharmModule module) {
         this.module = module;
     }
 
@@ -46,7 +46,7 @@ public class BatBucketClient {
 
     private void setNearbyEntities(PlayerEntity player) {
         entities.clear();
-        AxisAlignedBB box = player.getBoundingBox().expand(range, range / 2.0, range);
+        AxisAlignedBB box = player.getBoundingBox().grow(range, range / 2.0, range);
         Predicate<LivingEntity> selector = entity -> true;
         entities = player.world.getEntitiesWithinAABB(LivingEntity.class, box, selector);
     }
