@@ -15,5 +15,11 @@
   },
   "result": {
     "item": "charm:jungle_bookshelf"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_bookshelves"
+    }
+  ]
 }

@@ -4,5 +4,11 @@
     "item": "minecraft:dark_oak_planks"
   },
   "result": "charm:dark_oak_ladder",
-  "count": 4
+  "count": 4,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_ladders"
+    }
+  ]
 }

@@ -4,5 +4,11 @@
     "item": "minecraft:spruce_planks"
   },
   "result": "minecraft:spruce_sign",
-  "count": 1
+  "count": 1,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

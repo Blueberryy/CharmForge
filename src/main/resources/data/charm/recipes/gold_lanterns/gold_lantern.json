@@ -9,5 +9,11 @@
   },
   "result": {
     "item": "charm:gold_lantern"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:gold_lanterns"
+    }
+  ]
 }

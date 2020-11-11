@@ -4,5 +4,11 @@
     "item": "minecraft:dark_oak_planks"
   },
   "result": "minecraft:dark_oak_boat",
-  "count": 1
+  "count": 1,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

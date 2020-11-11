@@ -15,5 +15,11 @@
   },
   "result": {
     "item": "charm:kiln"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:kilns"
+    }
+  ]
 }

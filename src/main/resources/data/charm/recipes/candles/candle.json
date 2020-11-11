@@ -9,5 +9,11 @@
   },
   "result": {
     "item": "charm:candle"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:candles"
+    }
+  ]
 }

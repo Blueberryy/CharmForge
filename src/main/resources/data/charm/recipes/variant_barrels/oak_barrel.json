@@ -9,5 +9,11 @@
   },
   "result": {
     "item": "charm:oak_barrel"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_barrels"
+    }
+  ]
 }

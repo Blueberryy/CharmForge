@@ -4,5 +4,11 @@
     "item": "minecraft:crimson_planks"
   },
   "result": "minecraft:crimson_fence",
-  "count": 1
+  "count": 1,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

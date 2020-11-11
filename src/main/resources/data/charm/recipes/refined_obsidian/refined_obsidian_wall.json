@@ -12,5 +12,11 @@
   "result": {
     "item": "charm:refined_obsidian_wall",
     "count": 6
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:refined_obsidian"
+    }
+  ]
 }
