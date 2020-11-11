@@ -8,7 +8,6 @@
 * Glow balls are now known as glowballs
 * Placeable Glowstone Dust has been removed
 * Update glowball texture
-* **Charm's config now uses toml format.** Old json file will not be deleted, but existing config changes **will not be copied across.**
 
 ## 2.1.0
 * Totem of Undying causing crash on server. Fixes #339
