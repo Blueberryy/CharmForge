@@ -55,7 +55,6 @@
     "ItemRendererMixin",
     "ItemStackTileEntityRendererMixin",
     "MusicTickerMixin",
-    "SoundEngineMixin",
     "accessor.ContainerScreenAccessor",
     "accessor.MinecraftAccessor",
     "accessor.RenderStateAccessor",
