@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import svenhjol.charm.Charm;
 import svenhjol.charm.mixin.accessor.MinecraftAccessor;
 import svenhjol.charm.mixin.accessor.RenderStateAccessor;
+import svenhjol.charm.mixin.accessor.RenderTypeAccessor;
 import svenhjol.charm.mixin.accessor.RenderTypeBuffersMixin;
 import svenhjol.charm.module.Core;
 
@@ -74,27 +75,27 @@ public class ColoredGlintHandler {
     }
 
     public static RenderType getArmorGlintRenderLayer() {
-        return ARMOR_GLINT.get(getStackColor(targetStack));
+        return ARMOR_GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getArmorGlint());
     }
 
     public static RenderType getArmorEntityGlintRenderLayer() {
-        return ARMOR_ENTITY_GLINT.get(getStackColor(targetStack));
+        return ARMOR_ENTITY_GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getArmorEntityGlint());
     }
 
     public static RenderType getDirectGlintRenderLayer() {
-        return DIRECT_GLINT.get(getStackColor(targetStack));
+        return DIRECT_GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getDirectGlint());
     }
 
     public static RenderType getDirectEntityGlintRenderLayer() {
-        return DIRECT_ENTITY_GLINT.get(getStackColor(targetStack));
+        return DIRECT_ENTITY_GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getDirectEntityGlint());
     }
 
     public static RenderType getEntityGlintRenderLayer() {
-        return ENTITY_GLINT.get(getStackColor(targetStack));
+        return ENTITY_GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getEntityGlint());
     }
 
     public static RenderType getGlintRenderLayer() {
-        return GLINT.get(getStackColor(targetStack));
+        return GLINT.getOrDefault(getStackColor(targetStack), RenderTypeAccessor.getGlint());
     }
 
     private static RenderType createGlint(DyeColor dyeColor, ResourceLocation texture) {

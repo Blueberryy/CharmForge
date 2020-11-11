@@ -60,6 +60,7 @@
     "accessor.ContainerScreenAccessor",
     "accessor.MinecraftAccessor",
     "accessor.RenderStateAccessor",
+    "accessor.RenderTypeAccessor",
     "accessor.RenderTypeBuffersMixin",
     "accessor.SoundEngineAccessor",
     "accessor.SoundHandlerAccessor"
