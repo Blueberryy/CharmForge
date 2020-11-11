@@ -12,6 +12,7 @@
     "ChickenEntityMixin",
     "ChorusFruitItemMixin",
     "HuskEntityMixin",
+    "InventoryTransferHandlerMixin",
     "LivingEntityMixin",
     "MineshaftPiecesMixin",
     "PistonBlockMixin",

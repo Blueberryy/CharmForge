@@ -18,11 +18,12 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.container.CrateContainer;
+import vazkii.quark.api.ITransferManager;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class CrateTileEntity extends LockableLootTileEntity implements ICapabilityProvider, ISidedInventory {
+public class CrateTileEntity extends LockableLootTileEntity implements ICapabilityProvider, ISidedInventory, ITransferManager {
     public static int SIZE = 9;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
@@ -111,5 +112,10 @@ public class CrateTileEntity extends LockableLootTileEntity implements ICapabili
     @Override
     public void closeInventory(PlayerEntity player) {
         player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_BARREL_CLOSE, SoundCategory.BLOCKS, 0.5F, player.world.rand.nextFloat() * 0.1F + 0.9F);
+    }
+
+    @Override
+    public boolean acceptsTransfer(PlayerEntity playerEntity) {
+        return true;
     }
 }

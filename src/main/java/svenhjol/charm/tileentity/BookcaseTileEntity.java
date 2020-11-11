@@ -18,11 +18,12 @@ import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.module.Bookcases;
 import svenhjol.charm.container.BookcaseContainer;
+import vazkii.quark.api.ITransferManager;
 
 import javax.annotation.Nullable;
 import java.util.stream.IntStream;
 
-public class BookcaseTileEntity extends LockableLootTileEntity implements ISidedInventory {
+public class BookcaseTileEntity extends LockableLootTileEntity implements ISidedInventory, ITransferManager {
     public static int SIZE = 18;
     private static final int[] SLOTS = IntStream.range(0, SIZE).toArray();
     private NonNullList<ItemStack> items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
@@ -139,5 +140,10 @@ public class BookcaseTileEntity extends LockableLootTileEntity implements ISided
 
         if (world != null && world.getBlockState(pos).getBlock() instanceof BookcaseBlock)
             world.setBlockState(pos, world.getBlockState(pos).with(BookcaseBlock.SLOTS, filled), 2);
+    }
+
+    @Override
+    public boolean acceptsTransfer(PlayerEntity playerEntity) {
+        return true;
     }
 }
