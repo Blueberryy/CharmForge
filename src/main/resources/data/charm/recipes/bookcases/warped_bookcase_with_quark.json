@@ -2,16 +2,19 @@
   "type": "minecraft:crafting_shaped",
   "pattern": [
     "###",
+    "#X#",
     "###"
   ],
   "key": {
     "#": {
-      "item": "minecraft:gold_ingot"
+      "item": "minecraft:warped_planks"
+    },
+    "X": {
+      "item": "quark:warped_bookshelf"
     }
   },
   "result": {
-    "item": "charm:gold_bars",
-    "count": 16
+    "item": "charm:warped_bookcase"
   },
   "conditions": [
     {
@@ -19,14 +22,11 @@
       "values": [
         {
           "type": "charm:module_enabled",
-          "module": "charm:gold_bars"
+          "module": "charm:bookcases"
         },
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:mod_loaded",
-            "modid": "quark"
-          }
+          "type": "forge:mod_loaded",
+          "modid": "quark"
         }
       ]
     }

@@ -1,12 +1,16 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
+    " N ",
     "###",
     "###"
   ],
   "key": {
     "#": {
       "item": "minecraft:gold_ingot"
+    },
+    "N": {
+      "item": "minecraft:gold_nugget"
     }
   },
   "result": {
@@ -22,11 +26,8 @@
           "module": "charm:gold_bars"
         },
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:mod_loaded",
-            "modid": "quark"
-          }
+          "type": "forge:mod_loaded",
+          "modid": "quark"
         }
       ]
     }

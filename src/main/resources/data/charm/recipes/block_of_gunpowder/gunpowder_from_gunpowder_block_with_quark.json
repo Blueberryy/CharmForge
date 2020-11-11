@@ -7,7 +7,7 @@
   ],
   "result": {
     "item": "minecraft:gunpowder",
-    "count": 9
+    "count": 4
   },
   "conditions": [
     {
@@ -18,11 +18,8 @@
           "module": "charm:block_of_gunpowder"
         },
         {
-          "type": "forge:not",
-          "value": {
-            "type": "forge:mod_loaded",
-            "modid": "quark"
-          }
+          "type": "forge:mod_loaded",
+          "modid": "quark"
         }
       ]
     }
