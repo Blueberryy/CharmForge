@@ -20,7 +20,7 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.BatBucketClient;
 import svenhjol.charm.item.BatBucketItem;
 
-@Module(mod = Charm.MOD_ID, description = "Right-click a bat with a bucket to capture it. Right-click again to release it and locate entities around you.")
+@Module(mod = Charm.MOD_ID, description = "Right-click a bat with a bucket to capture it. Right-click again to release it and locate entities around you.", hasSubscriptions = true)
 public class BatBuckets extends CharmModule {
     public static BatBucketItem BAT_BUCKET_ITEM;
     public static BatBucketClient client = null;
