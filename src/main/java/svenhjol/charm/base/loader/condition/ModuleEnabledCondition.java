@@ -1,4 +1,4 @@
-package svenhjol.charm.loader.condition;
+package svenhjol.charm.base.loader.condition;
 
 import com.google.gson.JsonObject;
 import net.minecraft.util.ResourceLocation;

@@ -4,6 +4,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.config.ModConfig;
@@ -16,6 +17,7 @@ import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.handler.ColoredGlintHandler;
+import svenhjol.charm.base.loader.condition.ModuleEnabledCondition;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -46,7 +48,7 @@ public class ModuleHandler {
 
         // both-side initializers
         BiomeHandler.init();
-        // TODO: forge module enabled conditions should register here
+        CraftingHelper.register(new ModuleEnabledCondition.Serializer());
 
         hasInit = true;
     }
