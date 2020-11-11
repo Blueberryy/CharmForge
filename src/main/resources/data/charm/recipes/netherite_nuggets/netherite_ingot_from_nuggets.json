@@ -10,5 +10,11 @@
   },
   "result": {
     "item": "minecraft:netherite_ingot"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:netherite_nuggets"
+    }
+  ]
 }

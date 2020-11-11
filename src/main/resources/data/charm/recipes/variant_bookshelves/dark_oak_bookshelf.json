@@ -15,5 +15,11 @@
   },
   "result": {
     "item": "charm:dark_oak_bookshelf"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_bookshelves"
+    }
+  ]
 }

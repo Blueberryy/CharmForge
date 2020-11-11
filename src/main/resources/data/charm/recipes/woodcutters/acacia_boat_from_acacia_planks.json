@@ -4,5 +4,11 @@
     "item": "minecraft:acacia_planks"
   },
   "result": "minecraft:acacia_boat",
-  "count": 1
+  "count": 1,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

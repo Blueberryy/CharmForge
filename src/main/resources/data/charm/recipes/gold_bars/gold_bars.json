@@ -12,5 +12,11 @@
   "result": {
     "item": "charm:gold_bars",
     "count": 16
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:gold_bars"
+    }
+  ]
 }

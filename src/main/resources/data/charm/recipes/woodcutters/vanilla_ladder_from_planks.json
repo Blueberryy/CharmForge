@@ -4,5 +4,11 @@
     "tag": "minecraft:planks"
   },
   "result": "minecraft:ladder",
-  "count": 4
+  "count": 4,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

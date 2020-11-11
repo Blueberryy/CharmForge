@@ -15,5 +15,11 @@
   },
   "result": {
     "item": "minecraft:hopper"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_chests"
+    }
+  ]
 }

@@ -10,5 +10,11 @@
   ],
   "result": {
     "item": "charm:bubble_sea_lantern"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:coral_sea_lanterns"
+    }
+  ]
 }

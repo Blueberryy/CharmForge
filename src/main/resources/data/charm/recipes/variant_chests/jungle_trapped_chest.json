@@ -10,5 +10,11 @@
   ],
   "result": {
     "item": "charm:jungle_trapped_chest"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_chests"
+    }
+  ]
 }

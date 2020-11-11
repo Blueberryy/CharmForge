@@ -1,5 +1,6 @@
 package svenhjol.charm;
 
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.common.Mod;
 import svenhjol.charm.base.CharmMessages;
 import svenhjol.charm.base.CharmSounds;
@@ -8,6 +9,7 @@ import svenhjol.charm.base.CharmTags;
 import svenhjol.charm.base.handler.LogHandler;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.PacketHandler;
+import svenhjol.charm.loader.condition.ModuleEnabledCondition;
 import svenhjol.charm.module.*;
 
 import java.util.ArrayList;
@@ -94,5 +96,7 @@ public class Charm {
         CharmTags.init();
 
         ModuleHandler.init();
+
+        CraftingHelper.register(new ModuleEnabledCondition.Serializer());
     }
 }

@@ -4,5 +4,11 @@
     "item": "minecraft:crimson_planks"
   },
   "result": "charm:crimson_ladder",
-  "count": 4
+  "count": 4,
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_ladders"
+    }
+  ]
 }

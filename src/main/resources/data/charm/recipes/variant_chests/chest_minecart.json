@@ -14,5 +14,11 @@
   },
   "result": {
     "item": "minecraft:chest_minecart"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:variant_chests"
+    }
+  ]
 }

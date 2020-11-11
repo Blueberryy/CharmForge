@@ -14,5 +14,11 @@
   },
   "result": {
     "item": "charm:woodcutter"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:woodcutters"
+    }
+  ]
 }

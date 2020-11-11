@@ -9,5 +9,11 @@
   },
   "result": {
     "item": "charm:acacia_crate"
-  }
+  },
+  "conditions": [
+    {
+      "type": "charm:module_enabled",
+      "module": "charm:crates"
+    }
+  ]
 }
