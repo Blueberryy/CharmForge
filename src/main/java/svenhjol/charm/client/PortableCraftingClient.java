@@ -11,6 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -27,14 +28,14 @@ public class PortableCraftingClient {
 
     public PortableCraftingClient(CharmModule module) {
         if (PortableCrafting.enableKeybind) {
-            keyBinding = new KeyBinding("charm.key.openCraftingTable", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.inventory");
+            keyBinding = new KeyBinding("key.charm.openCraftingTable", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.inventory");
             ClientRegistry.registerKeyBinding(keyBinding);
         }
     }
 
     @SubscribeEvent
-    public void onKeyboardKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent event) {
-        if (keyBinding.matchesKey(event.getKeyCode(), event.getScanCode()))
+    public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
+        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenCraftingTable();
     }
 

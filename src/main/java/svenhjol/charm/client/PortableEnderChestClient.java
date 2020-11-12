@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
@@ -25,14 +26,14 @@ public class PortableEnderChestClient {
 
     public PortableEnderChestClient(CharmModule module) {
         if (PortableEnderChest.enableKeybind) {
-            keyBinding = new KeyBinding("charm.key.openEnderChest", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_B, "key.categories.inventory");
+            keyBinding = new KeyBinding("key.charm.openEnderChest", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_B, "key.categories.inventory");
             ClientRegistry.registerKeyBinding(keyBinding);
         }
     }
 
     @SubscribeEvent
-    public void onKeyboardKeyPressed(GuiScreenEvent.KeyboardKeyPressedEvent event) {
-        if (keyBinding.matchesKey(event.getKeyCode(), event.getScanCode()))
+    public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
+        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenChest();
     }
 
