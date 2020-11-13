@@ -20,16 +20,14 @@ import svenhjol.charm.base.loader.condition.ModuleEnabledCondition;
 import svenhjol.charm.module.Quark;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class ModuleHandler {
     public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
+    private static List<Class<? extends CharmModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
 
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
     public static final IEventBus FORGE_EVENT_BUS = MinecraftForge.EVENT_BUS;
@@ -65,19 +63,23 @@ public class ModuleHandler {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
-        eachEnabledModule(module -> {
-            if (module.hasSubscriptions)
-                FORGE_EVENT_BUS.register(module);
-
-            module.init();
-        });
-    }
-
     public static void onModConfig(ModConfig.ModConfigEvent event) {
         ConfigHandler.refreshAllConfig();
 
         eachEnabledModule(module -> module.enabled = module.depends());
+    }
+
+    public static void onCommonSetup(FMLCommonSetupEvent event) {
+        ENABLED_MODULES = new ArrayList<>();
+
+        eachEnabledModule(module -> {
+            if (module.hasSubscriptions)
+                FORGE_EVENT_BUS.register(module);
+
+            // this is a cache for quick lookup of enabled classes
+            ENABLED_MODULES.add(module.getClass());
+            module.init();
+        });
     }
 
     public static void onServerStarting(FMLServerStartingEvent event) {
@@ -95,6 +97,20 @@ public class ModuleHandler {
         return LOADED_MODULES;
     }
 
+    /**
+     * Use this within static hook methods for quick check if a module is enabled.
+     * @param clazz Module to check
+     * @return True if the module is enabled
+     */
+    public static boolean enabled(Class<? extends CharmModule> clazz) {
+        return ENABLED_MODULES.contains(clazz);
+    }
+
+    /**
+     * Use this anywhere to check a module's enabled status for any Charm-based (or Quark) module.
+     * @param moduleName Name (modid:module_name) of module to check
+     * @return True if the module is enabled
+     */
     public static boolean enabled(String moduleName) {
         String[] split = moduleName.split(":");
         String modName = split[0]; // TODO: check module is running

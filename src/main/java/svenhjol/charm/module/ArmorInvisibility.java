@@ -8,6 +8,7 @@ import net.minecraft.item.Items;
 import net.minecraft.potion.Effects;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Module;
 
 import java.util.ArrayList;
@@ -17,12 +18,9 @@ import java.util.List;
 @Module(mod = Charm.MOD_ID, description = "Lightweight armor is invisible and does not increase mob awareness when drinking Potion of Invisibility.")
 public class ArmorInvisibility extends CharmModule {
     public static List<Item> invisibleItems = new ArrayList<>();
-    public static boolean isEnabled = false;
 
     @Override
     public void init() {
-        isEnabled = true; // cache
-
         invisibleItems.addAll(Arrays.asList(
             Items.LEATHER_HELMET,
             Items.LEATHER_CHESTPLATE,
@@ -39,7 +37,7 @@ public class ArmorInvisibility extends CharmModule {
         if (stack.isEmpty())
             return true; // air is invisible!
 
-        if (isEnabled && entity instanceof LivingEntity) {
+        if (ModuleHandler.enabled(ArmorInvisibility.class) && entity instanceof LivingEntity) {
             if (((LivingEntity)entity).getActivePotionEffect(Effects.INVISIBILITY) != null)
                 return invisibleItems.contains(stack.getItem());
         }

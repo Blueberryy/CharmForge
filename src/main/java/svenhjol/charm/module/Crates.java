@@ -10,6 +10,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
@@ -36,8 +37,6 @@ public class Crates extends CharmModule {
     @Config(name = "Show tooltip", description = "If true, hovering over a crate will show its contents in a tooltip.")
     public static boolean showTooltip = true;
 
-    public static boolean isEnabled = false;
-
     @Override
     public void register() {
         for (VanillaVariantMaterial type : VanillaVariantMaterial.values()) {
@@ -50,16 +49,14 @@ public class Crates extends CharmModule {
 
         CONTAINER = RegistryHandler.container(ID, CrateContainer::new);
         TILE_ENTITY = RegistryHandler.tileEntity(ID, CrateTileEntity::new);
-
-        isEnabled = this.enabled;
     }
 
     public static boolean canCrateInsertItem(ItemStack stack) {
-        return !isEnabled || !INVALID_CRATE_BLOCKS.contains(ItemHelper.getBlockClass(stack));
+        return !ModuleHandler.enabled(Crates.class) || !INVALID_CRATE_BLOCKS.contains(ItemHelper.getBlockClass(stack));
     }
 
     public static boolean canShulkerBoxInsertItem(ItemStack stack) {
-        return !isEnabled || !INVALID_SHULKER_BOX_BLOCKS.contains(ItemHelper.getBlockClass(stack));
+        return !ModuleHandler.enabled(Crates.class) || !INVALID_SHULKER_BOX_BLOCKS.contains(ItemHelper.getBlockClass(stack));
     }
 
     public static CrateBlock getRandomCrateBlock(Random rand) {

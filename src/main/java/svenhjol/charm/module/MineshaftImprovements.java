@@ -47,8 +47,6 @@ public class MineshaftImprovements extends CharmModule {
     public static float blockPileChance = 0.12F;
     public static float crateChance = 0.14F;
 
-    private static boolean isEnabled = false;
-
     @Config(name = "Corridor blocks", description = "If true, stone, ore, lanterns and TNT will spawn inside mineshaft corridors.")
     public static boolean generateCorridorBlocks = true;
 
@@ -63,8 +61,6 @@ public class MineshaftImprovements extends CharmModule {
 
     @Override
     public void init() {
-        isEnabled = true;
-
         commonFloorBlocks.addAll(Arrays.asList(
             Blocks.IRON_ORE.getDefaultState(),
             Blocks.COAL_ORE.getDefaultState(),
@@ -120,7 +116,7 @@ public class MineshaftImprovements extends CharmModule {
     }
 
     public static void generatePiece(StructurePiece piece, ISeedReader world, StructureManager accessor, ChunkGenerator chunkGenerator, Random rand, MutableBoundingBox box, ChunkPos chunkPos, BlockPos blockPos) {
-        if (!isEnabled)
+        if (!ModuleHandler.enabled(MineshaftImprovements.class))
             return;
 
         if (piece instanceof MineshaftPieces.Corridor) {

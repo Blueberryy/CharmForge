@@ -8,18 +8,12 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.mixin.accessor.PlayerEntityAccessor;
 
 @Module(mod = Charm.MOD_ID, description = "Parrots stay on your shoulder when jumping and falling. Crouch to make them dismount.", hasSubscriptions = true)
 public class ParrotsStayOnShoulder extends CharmModule {
-    private static boolean isEnabled = false;
-
-    @Override
-    public void init() {
-        isEnabled = true;
-    }
-
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (!event.isCanceled())
@@ -27,7 +21,7 @@ public class ParrotsStayOnShoulder extends CharmModule {
     }
 
     public static boolean shouldParrotStayMounted(World world, long shoulderTime) {
-        return shoulderTime + 20L < world.getGameTime() && isEnabled;
+        return shoulderTime + 20L < world.getGameTime() && ModuleHandler.enabled(ParrotsStayOnShoulder.class);
     }
 
     public void tryDismountParrot(PlayerEntity player) {
