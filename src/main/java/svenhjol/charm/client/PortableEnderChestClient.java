@@ -33,7 +33,7 @@ public class PortableEnderChestClient {
 
     @SubscribeEvent
     public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
-        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
+        if (keyBinding != null && keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenChest();
     }
 

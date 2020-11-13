@@ -35,7 +35,7 @@ public class PortableCraftingClient {
 
     @SubscribeEvent
     public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
-        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
+        if (keyBinding != null && keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenCraftingTable();
     }
 
