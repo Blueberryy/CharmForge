@@ -16,7 +16,11 @@ public class GlowballsClient extends CharmClientModule {
 
     @Override
     public void register() {
-        RenderTypeLookup.setRenderLayer(Glowballs.GLOWBALL_BLOCK, RenderType.getTranslucent());
         RenderingRegistry.registerEntityRenderingHandler(Glowballs.GLOWBALL, manager -> new SpriteRenderer<>(manager, Minecraft.getInstance().getItemRenderer()));
+    }
+
+    @Override
+    public void init() {
+        RenderTypeLookup.setRenderLayer(Glowballs.GLOWBALL_BLOCK, RenderType.getTranslucent());
     }
 }

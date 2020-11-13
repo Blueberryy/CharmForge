@@ -12,7 +12,7 @@ public class VariantLaddersClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         VariantLadders.LADDER_BLOCKS.values().forEach(ladder -> {
             RenderTypeLookup.setRenderLayer(ladder, RenderType.getCutout());
         });

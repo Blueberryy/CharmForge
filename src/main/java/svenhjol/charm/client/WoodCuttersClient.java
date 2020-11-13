@@ -15,7 +15,11 @@ public class WoodCuttersClient extends CharmClientModule {
 
     @Override
     public void register() {
-        RenderTypeLookup.setRenderLayer(Woodcutters.WOODCUTTER, RenderType.getCutout());
         ScreenManager.registerFactory(Woodcutters.SCREEN_HANDLER, WoodcutterScreen::new);
+    }
+
+    @Override
+    public void init() {
+        RenderTypeLookup.setRenderLayer(Woodcutters.WOODCUTTER, RenderType.getCutout());
     }
 }

@@ -12,7 +12,7 @@ public class GoldLanternsClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         RenderTypeLookup.setRenderLayer(GoldLanterns.GOLD_LANTERN, RenderType.getCutout());
         RenderTypeLookup.setRenderLayer(GoldLanterns.GOLD_SOUL_LANTERN, RenderType.getCutout());
     }

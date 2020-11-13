@@ -12,7 +12,7 @@ public class RedstoneLanternsClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         RenderTypeLookup.setRenderLayer(RedstoneLanterns.REDSTONE_LANTERN, RenderType.getCutout());
     }
 }

@@ -12,7 +12,7 @@ public class EntitySpawnersClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         RenderTypeLookup.setRenderLayer(EntitySpawners.ENTITY_SPAWNER, RenderType.getCutout());
     }
 }

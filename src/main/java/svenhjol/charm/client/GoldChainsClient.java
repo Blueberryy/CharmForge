@@ -12,7 +12,7 @@ public class GoldChainsClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
+    public void init() {
         RenderTypeLookup.setRenderLayer(GoldChains.GOLD_CHAIN, RenderType.getCutout());
     }
 }
