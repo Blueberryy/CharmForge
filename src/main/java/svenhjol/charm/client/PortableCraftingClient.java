@@ -41,7 +41,11 @@ public class PortableCraftingClient extends CharmClientModule {
 
     @SubscribeEvent
     public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
-        if (keyBinding != null && keyBinding.matchesKey(event.getKey(), event.getScanCode()))
+        Minecraft mc = Minecraft.getInstance();
+        if (keyBinding == null || mc.world == null || mc.player == null || mc.currentScreen != null)
+            return;
+
+        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenCraftingTable();
     }
 
