@@ -35,8 +35,12 @@ public class VariantLadders extends CharmModule {
             LADDER_BLOCKS.put(type, new VariantLadderBlock(this, type));
         });
 
-        depends(!ModHelper.isLoaded("quark") || override);
         isEnabled = this.enabled; // cached
+    }
+
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 
     public static boolean canEnterTrapdoor(World world, BlockPos pos, BlockState state) {

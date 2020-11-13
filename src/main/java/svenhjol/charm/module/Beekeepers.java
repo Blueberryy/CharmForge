@@ -34,8 +34,11 @@ public class Beekeepers extends CharmModule {
     @Override
     public void register() {
         BEEKEEPER = VillagerHelper.addProfession(ID, PointOfInterestType.BEEHIVE, SoundEvents.BLOCK_BEEHIVE_WORK);
+    }
 
-        depends(!ModHelper.isLoaded("buzzier_bees") || override);
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("buzzier_bees") || override;
     }
 
     @Override

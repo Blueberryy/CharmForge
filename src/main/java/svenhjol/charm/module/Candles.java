@@ -1,13 +1,13 @@
 package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.helper.ModHelper;
-import svenhjol.charm.block.CandleBlock;
-import svenhjol.charm.item.BeeswaxItem;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DecorationHelper;
+import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.block.CandleBlock;
+import svenhjol.charm.item.BeeswaxItem;
 
 @Module(mod = Charm.MOD_ID, description = "Candles are made from beeswax and have a lower ambient light than torches.")
 public class Candles extends CharmModule {
@@ -27,7 +27,11 @@ public class Candles extends CharmModule {
     public void register() {
         CANDLE = new CandleBlock(this);
         BEESWAX = new BeeswaxItem(this);
-        depends(!ModHelper.isLoaded("quark") || override);
+    }
+
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 
     @Override

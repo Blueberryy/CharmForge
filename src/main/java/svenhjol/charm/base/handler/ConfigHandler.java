@@ -35,8 +35,6 @@ public class ConfigHandler {
 
         // config is loaded too late to do vanilla overrides, parse it here
         this.earlyConfigHack(config, modules);
-
-        refreshAllConfig();
     }
 
     public static void refreshAllConfig() {
@@ -57,7 +55,7 @@ public class ConfigHandler {
                 module.getName() + " enabled", module.enabledByDefault
             );
 
-            refreshConfig.add(() -> module.depends(val.get()));
+            refreshConfig.add(() -> module.enabled = val.get());
         });
 
         modules.forEach(module -> {

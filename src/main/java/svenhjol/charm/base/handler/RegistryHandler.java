@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-@SuppressWarnings("UnusedReturnValue")
+@SuppressWarnings({"UnusedReturnValue", "unchecked", "rawtypes"})
 public class RegistryHandler {
     private static final Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> REGISTRY = new HashMap<>();
 

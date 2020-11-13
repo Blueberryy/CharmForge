@@ -15,16 +15,16 @@ public abstract class CharmModule {
     public String mod = "";
     public Class<? extends CharmClientModule> client = null;
 
-    public void depends(boolean test) {
-        this.enabled = this.enabled && test;
-    }
-
     public String getName() {
         return this.getClass().getSimpleName();
     }
 
     public List<ResourceLocation> getRecipesToRemove() {
         return new ArrayList<>();
+    }
+
+    public boolean depends() {
+        return true; // this.enabled checks conditions here after forge syncs its config (after register, before init)
     }
 
     public void register() {

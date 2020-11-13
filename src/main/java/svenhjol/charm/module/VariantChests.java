@@ -43,7 +43,10 @@ public class VariantChests extends CharmModule {
 
         NORMAL_BLOCK_ENTITY = RegistryHandler.tileEntity(NORMAL_ID, VariantChestTileEntity::new, NORMAL_CHEST_BLOCKS.values().toArray(new Block[0]));
         TRAPPED_BLOCK_ENTITY = RegistryHandler.tileEntity(TRAPPED_ID, VariantTrappedChestTileEntity::new, TRAPPED_CHEST_BLOCKS.values().toArray(new Block[0]));
+    }
 
-        depends(!ModHelper.isLoaded("quark") || override);
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 }

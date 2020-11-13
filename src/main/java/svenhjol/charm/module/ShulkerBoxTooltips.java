@@ -13,7 +13,7 @@ public class ShulkerBoxTooltips extends CharmModule {
     public static boolean override = false;
 
     @Override
-    public void register() {
-        depends(!ModHelper.isLoaded("quark") || override);
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 }

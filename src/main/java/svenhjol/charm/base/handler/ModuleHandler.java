@@ -66,8 +66,6 @@ public class ModuleHandler {
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
-        ConfigHandler.refreshAllConfig();
-
         eachEnabledModule(module -> {
             if (module.hasSubscriptions)
                 FORGE_EVENT_BUS.register(module);
@@ -78,6 +76,8 @@ public class ModuleHandler {
 
     public static void onModConfig(ModConfig.ModConfigEvent event) {
         ConfigHandler.refreshAllConfig();
+
+        eachEnabledModule(module -> module.enabled = module.depends());
     }
 
     public static void onServerStarting(FMLServerStartingEvent event) {

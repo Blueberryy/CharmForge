@@ -26,7 +26,11 @@ public class VariantBookshelves extends CharmModule {
         VanillaVariantMaterial.getTypesWithout(VanillaVariantMaterial.OAK).forEach(type -> {
             BOOKSHELF_BLOCKS.put(type, new VariantBookshelfBlock(this, type));
         });
-        depends(!ModHelper.isLoaded("quark") || override);
+    }
+
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 
     @Override

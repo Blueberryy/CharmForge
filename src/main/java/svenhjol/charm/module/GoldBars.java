@@ -18,6 +18,10 @@ public class GoldBars extends CharmModule {
     @Override
     public void register() {
         GOLD_BARS = new GoldBarsBlock(this);
-        depends(!ModHelper.isLoaded("quark") || override);
+    }
+
+    @Override
+    public boolean depends() {
+        return !ModHelper.isLoaded("quark") || override;
     }
 }
