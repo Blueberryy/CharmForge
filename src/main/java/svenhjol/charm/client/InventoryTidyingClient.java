@@ -13,11 +13,11 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.gui.BookcaseScreen;
 import svenhjol.charm.gui.CrateScreen;
 import svenhjol.charm.message.ServerSortInventory;
-import svenhjol.charm.module.InventoryTidying;
 
 import java.util.*;
 
@@ -34,7 +34,7 @@ public class InventoryTidyingClient extends CharmClientModule {
 
     public final Map<Class<? extends Screen>, Map<Integer, Integer>> screenTweaks = new HashMap<>();
 
-    public InventoryTidyingClient(InventoryTidying module) {
+    public InventoryTidyingClient(CharmModule module) {
        super(module);
     }
 

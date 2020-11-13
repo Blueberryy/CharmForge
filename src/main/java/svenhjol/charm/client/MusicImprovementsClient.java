@@ -23,6 +23,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DimensionHelper;
 import svenhjol.charm.base.helper.SoundHelper;
 import svenhjol.charm.module.MusicImprovements;
@@ -42,7 +43,7 @@ public class MusicImprovementsClient extends CharmClientModule {
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
     public static boolean isEnabled;
 
-    public MusicImprovementsClient(MusicImprovements module) {
+    public MusicImprovementsClient(CharmModule module) {
         super(module);
     }
 

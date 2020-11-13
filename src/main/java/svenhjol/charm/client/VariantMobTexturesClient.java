@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.ICharmEnum;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.module.VariantMobTextures;
@@ -37,7 +38,7 @@ public class VariantMobTexturesClient extends CharmClientModule {
     public static Map<ResourceLocation, ResourceLocation> wolvesAngry = new HashMap<>();
     public static Map<DyeColor, ResourceLocation> sheep = new HashMap<>();
 
-    public VariantMobTexturesClient(VariantMobTextures module) {
+    public VariantMobTexturesClient(CharmModule module) {
         super(module);
     }
 

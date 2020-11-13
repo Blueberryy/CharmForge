@@ -6,12 +6,13 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.module.VariantChests;
 import svenhjol.charm.render.VariantChestTileEntityRenderer;
 
 public class VariantChestsClient extends CharmClientModule {
-    public VariantChestsClient(VariantChests module) {
+    public VariantChestsClient(CharmModule module) {
         super(module);
     }
 

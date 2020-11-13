@@ -4,7 +4,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.base.CharmClientModule;
-import svenhjol.charm.module.PlayerState;
+import svenhjol.charm.base.CharmModule;
 
 public class PlayerStateClient extends CharmClientModule {
     public boolean mineshaft = false;
@@ -16,7 +16,7 @@ public class PlayerStateClient extends CharmClientModule {
 
     public static PlayerStateClient INSTANCE;
 
-    public PlayerStateClient(PlayerState module) {
+    public PlayerStateClient(CharmModule module) {
         super(module);
         INSTANCE = this;
     }

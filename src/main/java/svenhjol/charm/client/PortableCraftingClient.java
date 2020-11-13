@@ -18,6 +18,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.message.ServerOpenCrafting;
 import svenhjol.charm.module.PortableCrafting;
@@ -26,7 +27,7 @@ public class PortableCraftingClient extends CharmClientModule {
     public ImageButton craftingButton;
     public static KeyBinding keyBinding;
 
-    public PortableCraftingClient(PortableCrafting module) {
+    public PortableCraftingClient(CharmModule module) {
         super(module);
     }
 

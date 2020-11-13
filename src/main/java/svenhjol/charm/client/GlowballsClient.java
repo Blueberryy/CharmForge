@@ -6,10 +6,11 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.SpriteRenderer;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.module.Glowballs;
 
 public class GlowballsClient extends CharmClientModule {
-    public GlowballsClient(Glowballs module) {
+    public GlowballsClient(CharmModule module) {
         super(module);
     }
 

@@ -49,7 +49,7 @@ public class ClientHandler {
                  client = clazz.getConstructor(CharmModule.class).newInstance(module);
             } catch (Exception e) {
                 CharmClient.LOG.error("Failed to create the client for " + module.getName());
-                throw new RuntimeException("The chickens escaped");
+                throw new RuntimeException("The chickens escaped", e);
             }
 
             String moduleName = module.getName();

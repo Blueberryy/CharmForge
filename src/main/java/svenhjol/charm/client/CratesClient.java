@@ -19,6 +19,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
@@ -32,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CratesClient extends CharmClientModule {
-    public CratesClient(Crates module) {
+    public CratesClient(CharmModule module) {
         super(module);
     }
 

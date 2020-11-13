@@ -8,7 +8,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
-import svenhjol.charm.module.BatBuckets;
+import svenhjol.charm.base.CharmModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class BatBucketsClient extends CharmClientModule {
     public static double range;
     public static List<LivingEntity> entities = new ArrayList<>();
 
-    public BatBucketsClient(BatBuckets module) {
+    public BatBucketsClient(CharmModule module) {
         super(module);
     }
 
