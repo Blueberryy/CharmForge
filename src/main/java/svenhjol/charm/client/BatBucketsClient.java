@@ -7,20 +7,20 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.module.BatBuckets;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BatBucketsClient {
-    protected final CharmModule module;
-    public int ticks;
-    public double range;
+public class BatBucketsClient extends CharmClientModule {
+    public static int ticks;
+    public static double range;
     public static List<LivingEntity> entities = new ArrayList<>();
 
-    public BatBucketsClient(CharmModule module) {
-        this.module = module;
+    public BatBucketsClient(BatBuckets module) {
+        super(module);
     }
 
     @SubscribeEvent

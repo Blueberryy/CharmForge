@@ -3,7 +3,7 @@ package svenhjol.charm.message;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import svenhjol.charm.base.iface.ICharmMessage;
-import svenhjol.charm.module.BatBuckets;
+import svenhjol.charm.client.BatBucketsClient;
 
 import java.util.function.Supplier;
 
@@ -28,10 +28,8 @@ public class ClientSetGlowingEntities implements ICharmMessage {
     public static class Handler {
         public static void handle(final ClientSetGlowingEntities msg, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
-                if (BatBuckets.client != null) {
-                    BatBuckets.client.range = msg.range;
-                    BatBuckets.client.ticks = msg.ticks;
-                }
+                BatBucketsClient.range = msg.range;
+                BatBucketsClient.ticks = msg.ticks;
             });
             ctx.get().setPacketHandled(true);
         }

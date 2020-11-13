@@ -1,6 +1,5 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,13 +15,13 @@ import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
+import svenhjol.charm.client.BookcasesClient;
 import svenhjol.charm.container.BookcaseContainer;
-import svenhjol.charm.gui.BookcaseScreen;
 import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import java.util.*;
 
-@Module(mod = Charm.MOD_ID, description = "Bookshelves that can hold up to 9 stacks of books and maps.")
+@Module(mod = Charm.MOD_ID, client = BookcasesClient.class, description = "Bookshelves that can hold up to 9 stacks of books and maps.")
 public class Bookcases extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "bookcase");
     public static final Map<IVariantMaterial, BookcaseBlock> BOOKCASE_BLOCKS = new HashMap<>();
@@ -59,11 +58,6 @@ public class Bookcases extends CharmModule {
 
         CONTAINER = RegistryHandler.container(ID, BookcaseContainer::new);
         TILE_ENTITY = RegistryHandler.tileEntity(ID, BookcaseTileEntity::new);
-    }
-
-    @Override
-    public void clientInit() {
-        ScreenManager.registerFactory(CONTAINER, BookcaseScreen::new);
     }
 
     public static boolean canContainItem(ItemStack stack) {

@@ -15,16 +15,21 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.message.ServerOpenEnderChest;
 import svenhjol.charm.module.PortableEnderChest;
 
-public class PortableEnderChestClient {
+public class PortableEnderChestClient extends CharmClientModule {
     public ImageButton chestButton;
     public static KeyBinding keyBinding;
 
-    public PortableEnderChestClient(CharmModule module) {
+    public PortableEnderChestClient(PortableEnderChest module) {
+        super(module);
+    }
+
+    @Override
+    public void register() {
         if (PortableEnderChest.enableKeybind) {
             keyBinding = new KeyBinding("key.charm.openEnderChest", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_B, "key.categories.inventory");
             ClientRegistry.registerKeyBinding(keyBinding);
@@ -33,7 +38,7 @@ public class PortableEnderChestClient {
 
     @SubscribeEvent
     public void onKeyboardKeyPressed(InputEvent.KeyInputEvent event) {
-        if (keyBinding.matchesKey(event.getKey(), event.getScanCode()))
+        if (keyBinding != null && keyBinding.matchesKey(event.getKey(), event.getScanCode()))
             triggerOpenChest();
     }
 

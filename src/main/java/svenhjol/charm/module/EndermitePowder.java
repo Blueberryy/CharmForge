@@ -10,8 +10,6 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
@@ -24,7 +22,7 @@ import svenhjol.charm.client.EndermitePowderClient;
 import svenhjol.charm.entity.EndermitePowderEntity;
 import svenhjol.charm.item.EndermitePowderItem;
 
-@Module(mod = Charm.MOD_ID, description = "Endermites drop endermite powder that can be used to locate an End City.", hasSubscriptions = true)
+@Module(mod = Charm.MOD_ID, client = EndermitePowderClient.class, description = "Endermites drop endermite powder that can be used to locate an End City.", hasSubscriptions = true)
 public class EndermitePowder extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "endermite_powder");
     public static EntityType<EndermitePowderEntity> ENTITY;
@@ -45,12 +43,6 @@ public class EndermitePowder extends CharmModule {
             .setUpdateInterval(10)
             .size(2.0F, 2.0F)
             .build(ID.getPath()));
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void clientRegister() {
-        new EndermitePowderClient(this);
     }
 
     @SubscribeEvent

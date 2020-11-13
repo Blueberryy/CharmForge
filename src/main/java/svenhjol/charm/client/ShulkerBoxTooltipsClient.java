@@ -15,17 +15,20 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.handler.TooltipInventoryHandler;
 import svenhjol.charm.mixin.accessor.ShulkerBoxTileEntityAccessor;
+import svenhjol.charm.module.ShulkerBoxTooltips;
 
 import java.util.List;
 
-public class ShulkerBoxTooltipsClient {
-    public ShulkerBoxTooltipsClient(CharmModule module) {}
+public class ShulkerBoxTooltipsClient extends CharmClientModule {
+    public ShulkerBoxTooltipsClient(ShulkerBoxTooltips module) {
+        super(module);
+    }
 
     @SubscribeEvent
     public void onRenderTooltip(RenderTooltipEvent event) {

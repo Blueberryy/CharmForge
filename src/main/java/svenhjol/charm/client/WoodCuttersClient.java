@@ -1,0 +1,20 @@
+package svenhjol.charm.client;
+
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import svenhjol.charm.base.CharmClientModule;
+import svenhjol.charm.gui.WoodcutterScreen;
+import svenhjol.charm.module.Woodcutters;
+
+public class WoodCuttersClient extends CharmClientModule {
+    public WoodCuttersClient(Woodcutters module) {
+        super(module);
+    }
+
+    @Override
+    public void register() {
+        RenderTypeLookup.setRenderLayer(Woodcutters.WOODCUTTER, RenderType.getCutout());
+        ScreenManager.registerFactory(Woodcutters.SCREEN_HANDLER, WoodcutterScreen::new);
+    }
+}

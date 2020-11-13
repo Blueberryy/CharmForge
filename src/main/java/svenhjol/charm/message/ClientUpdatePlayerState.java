@@ -6,7 +6,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.iface.ICharmMessage;
-import svenhjol.charm.module.PlayerState;
+import svenhjol.charm.client.PlayerStateClient;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,7 +48,7 @@ public class ClientUpdatePlayerState implements ICharmMessage {
 
     public static class Handler {
         public static void handle(final ClientUpdatePlayerState msg, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> PlayerState.clientCallback(msg.data));
+            ctx.get().enqueueWork(() -> PlayerStateClient.INSTANCE.clientCallback(msg.data));
             ctx.get().setPacketHandled(true);
         }
     }

@@ -2,21 +2,19 @@ package svenhjol.charm.base.handler;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import svenhjol.charm.CharmClient;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.handler.ColoredGlintHandler;
 import svenhjol.charm.base.loader.condition.ModuleEnabledCondition;
 
 import javax.annotation.Nullable;
@@ -37,7 +35,8 @@ public class ModuleHandler {
     private static boolean hasInit = false;
 
     public static void init() {
-        if (hasInit) return;
+        if (hasInit)
+            return;
 
         // register forge events
         MOD_EVENT_BUS.register(RegistryHandler.class);
@@ -60,11 +59,8 @@ public class ModuleHandler {
         // early init, always run, use for registering things
         eachModule(CharmModule::register);
 
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> {
-            eachModule(CharmModule::clientRegister);
-            MOD_EVENT_BUS.addListener(ModuleHandler::onClientSetup);
-            MOD_EVENT_BUS.addListener(ModuleHandler::onTextureStitch);
-        });
+        // run client things on the client thread
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
     public static void onCommonSetup(FMLCommonSetupEvent event) {
@@ -76,15 +72,6 @@ public class ModuleHandler {
 
             module.init();
         });
-    }
-
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        eachEnabledModule(CharmModule::clientInit);
-        ColoredGlintHandler.init(); // load late so that buffer builders are populated
-    }
-
-    public static void onTextureStitch(TextureStitchEvent event) {
-        eachEnabledModule(module -> module.clientTextureStitch(event));
     }
 
     public static void onModConfig(ModConfig.ModConfigEvent event) {
@@ -115,10 +102,6 @@ public class ModuleHandler {
         return module != null && module.enabled;
     }
 
-    public static boolean isClient() {
-        throw new RuntimeException("Do not call this");
-    }
-
     private static void instantiateModules() {
         ConfigHandler configHandler = new ConfigHandler();
 
@@ -141,6 +124,7 @@ public class ModuleHandler {
                         module.hasSubscriptions = annotation.hasSubscriptions();
                         module.enabled = module.enabledByDefault;
                         module.description = annotation.description();
+                        module.client = annotation.client();
 
                         String moduleName = module.getName();
                         loaded.put(moduleName, module);

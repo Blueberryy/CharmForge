@@ -12,7 +12,6 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.base.helper.PlayerHelper;
 import svenhjol.charm.base.iface.Config;
@@ -20,10 +19,9 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.BatBucketsClient;
 import svenhjol.charm.item.BatBucketItem;
 
-@Module(mod = Charm.MOD_ID, description = "Right-click a bat with a bucket to capture it. Right-click again to release it and locate entities around you.", hasSubscriptions = true)
+@Module(mod = Charm.MOD_ID, client = BatBucketsClient.class, description = "Right-click a bat with a bucket to capture it. Right-click again to release it and locate entities around you.", hasSubscriptions = true)
 public class BatBuckets extends CharmModule {
     public static BatBucketItem BAT_BUCKET_ITEM;
-    public static BatBucketsClient client = null;
 
     @Config(name = "Glowing time", description = "Number of seconds that entities will receive the glowing effect.")
     public static int glowingTime = 10;
@@ -34,12 +32,6 @@ public class BatBuckets extends CharmModule {
     @Override
     public void register() {
         BAT_BUCKET_ITEM = new BatBucketItem(this);
-    }
-
-    @Override
-    public void clientInit() {
-        client = new BatBucketsClient(this);
-        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 
     @SubscribeEvent
