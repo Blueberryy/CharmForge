@@ -20,7 +20,7 @@ public class Quark extends CharmModule {
                 compat = QuarkCompat.class.getDeclaredConstructor().newInstance();
                 Charm.LOG.info("Loaded Quark compatibility class");
             } else {
-                compat = DummyQuarkCompat.class.getDeclaredConstructor().newInstance();
+                compat = new DummyQuarkCompat();
             }
         } catch (Exception e) {
             Charm.LOG.error("Failed to load Quark compatibility class: " + e.getMessage());
