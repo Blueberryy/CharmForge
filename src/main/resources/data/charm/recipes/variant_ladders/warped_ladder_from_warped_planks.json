@@ -7,8 +7,17 @@
   "count": 4,
   "conditions": [
     {
-      "type": "charm:module_enabled",
-      "module": "charm:variant_ladders"
+      "type": "forge:and",
+      "values": [
+        {
+          "type": "charm:module_enabled",
+          "module": "charm:variant_ladders"
+        },
+        {
+          "type": "charm:module_enabled",
+          "module": "charm:woodcutters"
+        }
+      ]
     }
   ]
 }

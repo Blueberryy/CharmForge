@@ -13,11 +13,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.handler.ColoredGlintHandler;
 import svenhjol.charm.base.loader.condition.ModuleEnabledCondition;
+import svenhjol.charm.handler.ColoredGlintHandler;
+import svenhjol.charm.module.Quark;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -28,12 +30,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class ModuleHandler {
-    public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
-    public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
-
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
     public static final IEventBus FORGE_EVENT_BUS = MinecraftForge.EVENT_BUS;
-
+    public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
+    public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
     private static boolean hasInit = false;
 
     public static void init() {
@@ -111,8 +111,15 @@ public class ModuleHandler {
         String modName = split[0]; // TODO: check module is running
         String modModule = split[1];
 
-        CharmModule module = getModule(modModule);
-        return module != null && module.enabled;
+        switch (modName) {
+            case Charm.MOD_ID:
+                CharmModule module = getModule(modModule);
+                return module != null && module.enabled;
+            case "quark":
+                return Quark.compat.isModuleEnabled(modModule);
+            default:
+                return false;
+        }
     }
 
     public static boolean isClient() {
@@ -159,7 +166,7 @@ public class ModuleHandler {
 
             // add loaded modules
             loaded.forEach((moduleName, module) ->
-                LOADED_MODULES.put(moduleName, module));
+                    LOADED_MODULES.put(moduleName, module));
 
         });
     }
@@ -170,8 +177,8 @@ public class ModuleHandler {
 
     private static void eachEnabledModule(Consumer<CharmModule> consumer) {
         LOADED_MODULES.values()
-            .stream()
-            .filter(m -> m.enabled)
-            .forEach(consumer);
+                .stream()
+                .filter(m -> m.enabled)
+                .forEach(consumer);
     }
 }
