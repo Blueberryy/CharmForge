@@ -37,7 +37,7 @@ public class BatBuckets extends CharmModule {
     @SubscribeEvent
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
         if (!event.isCanceled())
-            tryCapture(event.getPlayer(), event.getWorld(), event.getHand(), event.getEntity());
+            tryCapture(event.getPlayer(), event.getWorld(), event.getHand(), event.getTarget());
     }
 
     private void tryCapture(PlayerEntity player, World world, Hand hand, Entity entity) {
