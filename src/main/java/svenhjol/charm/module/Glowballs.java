@@ -1,7 +1,5 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.util.ResourceLocation;
@@ -14,13 +12,12 @@ import svenhjol.charm.client.GlowballsClient;
 import svenhjol.charm.entity.GlowballEntity;
 import svenhjol.charm.item.GlowballItem;
 
-@Module(mod = Charm.MOD_ID, description = "Glowballs can be thrown to produce a light source where they impact.")
+@Module(mod = Charm.MOD_ID, client = GlowballsClient.class, description = "Glowballs can be thrown to produce a light source where they impact.")
 public class Glowballs extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "glowball");
     public static GlowballItem GLOWBALL_ITEM;
     public static GlowballBlobBlock GLOWBALL_BLOCK;
     public static EntityType<GlowballEntity> GLOWBALL;
-    public static GlowballsClient client;
 
     @Override
     public void register() {
@@ -32,15 +29,5 @@ public class Glowballs extends CharmModule {
             .setUpdateInterval(10)
             .size(0.25F, 0.25F)
             .build(ID.getPath()));
-    }
-
-    @Override
-    public void clientRegister() {
-        client = new GlowballsClient(this);
-    }
-
-    @Override
-    public void clientInit() {
-        RenderTypeLookup.setRenderLayer(GLOWBALL_BLOCK, RenderType.getTranslucent());
     }
 }

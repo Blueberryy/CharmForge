@@ -3,12 +3,11 @@ package svenhjol.charm.module;
 import net.minecraft.item.DyeColor;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
-import svenhjol.charm.client.InventoryButtonClient;
+import svenhjol.charm.client.CoreClient;
 
-@Module(mod = Charm.MOD_ID, alwaysEnabled = true, description = "Core configuration values.")
+@Module(mod = Charm.MOD_ID, client = CoreClient.class, alwaysEnabled = true, description = "Core configuration values.", hasSubscriptions = true)
 public class Core extends CharmModule {
     @Config(name = "Debug mode", description = "If true, routes additional debug messages into the standard game log.")
     public static boolean debug = false;
@@ -18,12 +17,4 @@ public class Core extends CharmModule {
 
     @Config(name = "Enchantment glint color", description = "Set the default glint color for all enchanted items.")
     public static String glintColor = DyeColor.PURPLE.getString();
-
-    public InventoryButtonClient inventoryButtonClient;
-
-    @Override
-    public void clientRegister() {
-        inventoryButtonClient = new InventoryButtonClient();
-        ModuleHandler.FORGE_EVENT_BUS.register(inventoryButtonClient);
-    }
 }

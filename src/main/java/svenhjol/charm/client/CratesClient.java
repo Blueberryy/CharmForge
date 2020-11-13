@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
+import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
@@ -31,8 +32,13 @@ import svenhjol.charm.tileentity.CrateTileEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CratesClient {
+public class CratesClient extends CharmClientModule {
     public CratesClient(CharmModule module) {
+        super(module);
+    }
+
+    @Override
+    public void register() {
         ScreenManager.registerFactory(Crates.CONTAINER, CrateScreen::new);
     }
 

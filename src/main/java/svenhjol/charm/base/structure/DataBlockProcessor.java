@@ -170,7 +170,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void armorStand() {
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawners.TILE_ENTITY.create();
             if (tileEntity == null) return;
             this.tag = new CompoundNBT();
 
@@ -179,7 +179,7 @@ public class DataBlockProcessor extends StructureProcessor {
             tileEntity.rotation = this.rotation;
             tileEntity.write(this.tag);
 
-            this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
+            this.state = EntitySpawners.ENTITY_SPAWNER.getDefaultState();
         }
 
         protected void block() {
@@ -269,7 +269,7 @@ public class DataBlockProcessor extends StructureProcessor {
         }
 
         protected void entity() {
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawners.TILE_ENTITY.create();
             if (tileEntity == null) return;
             tag = new CompoundNBT();
 
@@ -286,7 +286,7 @@ public class DataBlockProcessor extends StructureProcessor {
             tileEntity.rotation = this.rotation;
             tileEntity.write(this.tag);
 
-            this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
+            this.state = EntitySpawners.ENTITY_SPAWNER.getDefaultState();
         }
 
         protected void flower() {
@@ -320,7 +320,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void mob() {
             if (!withChance(MOB_CHANCE)) return;
 
-            EntitySpawnerTileEntity tileEntity = EntitySpawner.TILE_ENTITY.create();
+            EntitySpawnerTileEntity tileEntity = EntitySpawners.TILE_ENTITY.create();
             if (tileEntity == null) return;
 
             String type = getValue("type", this.data, "");
@@ -334,7 +334,7 @@ public class DataBlockProcessor extends StructureProcessor {
             tileEntity.rotation = this.rotation;
             tileEntity.write(this.tag);
 
-            this.state = EntitySpawner.ENTITY_SPAWNER.getDefaultState();
+            this.state = EntitySpawners.ENTITY_SPAWNER.getDefaultState();
         }
 
         protected void ore() {

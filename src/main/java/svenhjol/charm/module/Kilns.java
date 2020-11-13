@@ -1,6 +1,5 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.CookingRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -12,12 +11,12 @@ import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.helper.DecorationHelper;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.KilnBlock;
+import svenhjol.charm.client.KilnsClient;
 import svenhjol.charm.container.KilnScreenHandler;
-import svenhjol.charm.gui.KilnScreen;
 import svenhjol.charm.recipe.FiringRecipe;
 import svenhjol.charm.tileentity.KilnTileEntity;
 
-@Module(mod = Charm.MOD_ID, description = "A functional block that speeds up cooking of clay, bricks and terracotta.")
+@Module(mod = Charm.MOD_ID, client = KilnsClient.class, description = "A functional block that speeds up cooking of clay, bricks and terracotta.")
 public class Kilns extends CharmModule {
     public static ResourceLocation RECIPE_ID = new ResourceLocation("firing");
     public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "kiln");
@@ -25,7 +24,7 @@ public class Kilns extends CharmModule {
     public static TileEntityType<KilnTileEntity> BLOCK_ENTITY;
     public static IRecipeType<FiringRecipe> RECIPE_TYPE;
     public static CookingRecipeSerializer<FiringRecipe> RECIPE_SERIALIZER;
-    public static ContainerType<KilnScreenHandler> SCREEN_HANDLER;
+    public static ContainerType<KilnScreenHandler> CONTAINER;
 
     @Override
     public void register() {
@@ -33,12 +32,7 @@ public class Kilns extends CharmModule {
         RECIPE_TYPE = RegistryHandler.recipeType(RECIPE_ID.toString());
         RECIPE_SERIALIZER = RegistryHandler.recipeSerializer(RECIPE_ID.toString(), new CookingRecipeSerializer<>(FiringRecipe::new, 100));
         BLOCK_ENTITY = RegistryHandler.tileEntity(BLOCK_ID, KilnTileEntity::new, KILN);
-        SCREEN_HANDLER = RegistryHandler.container(BLOCK_ID, KilnScreenHandler::new);
-    }
-
-    @Override
-    public void clientInit() {
-        ScreenManager.registerFactory(SCREEN_HANDLER, KilnScreen::new);
+        CONTAINER = RegistryHandler.container(BLOCK_ID, KilnScreenHandler::new);
     }
 
     @Override

@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import svenhjol.charm.client.MusicClient;
+import svenhjol.charm.client.MusicImprovementsClient;
 
 @Mixin(MusicTicker.class)
 public class MusicTickerMixin {
@@ -21,7 +21,7 @@ public class MusicTickerMixin {
         cancellable = true
     )
     private void hookTick(CallbackInfo ci) {
-        if (MusicClient.isEnabled && MusicClient.handleTick(this.currentMusic))
+        if (MusicImprovementsClient.isEnabled && MusicImprovementsClient.handleTick(this.currentMusic))
             ci.cancel();
     }
 
@@ -31,7 +31,7 @@ public class MusicTickerMixin {
         cancellable = true
     )
     private void hookStop(CallbackInfo ci) {
-        if (MusicClient.isEnabled && MusicClient.handleStop())
+        if (MusicImprovementsClient.isEnabled && MusicImprovementsClient.handleStop())
             ci.cancel();
     }
 
@@ -41,7 +41,7 @@ public class MusicTickerMixin {
         cancellable = true
     )
     private void hookIsPlayingType(BackgroundMusicSelector music, CallbackInfoReturnable<Boolean> cir) {
-        if (MusicClient.isEnabled && MusicClient.handlePlaying(music))
+        if (MusicImprovementsClient.isEnabled && MusicImprovementsClient.handlePlaying(music))
             cir.setReturnValue(true);
     }
 }

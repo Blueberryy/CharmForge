@@ -17,16 +17,22 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.glfw.GLFW;
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.message.ServerOpenCrafting;
 import svenhjol.charm.module.PortableCrafting;
 
-public class PortableCraftingClient {
+public class PortableCraftingClient extends CharmClientModule {
     public ImageButton craftingButton;
     public static KeyBinding keyBinding;
 
     public PortableCraftingClient(CharmModule module) {
+        super(module);
+    }
+
+    @Override
+    public void register() {
         if (PortableCrafting.enableKeybind) {
             keyBinding = new KeyBinding("key.charm.openCraftingTable", InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.inventory");
             ClientRegistry.registerKeyBinding(keyBinding);

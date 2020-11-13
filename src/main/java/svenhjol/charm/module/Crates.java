@@ -10,7 +10,6 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.iface.Config;
@@ -22,7 +21,7 @@ import svenhjol.charm.tileentity.CrateTileEntity;
 
 import java.util.*;
 
-@Module(mod = Charm.MOD_ID, description = "A smaller storage solution with the benefit of being transportable.")
+@Module(mod = Charm.MOD_ID, client = CratesClient.class, description = "A smaller storage solution with the benefit of being transportable.", hasSubscriptions = true)
 public class Crates extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "crate");
     public static final Map<IVariantMaterial, CrateBlock> CRATE_BLOCKS = new HashMap<>();
@@ -39,8 +38,6 @@ public class Crates extends CharmModule {
 
     public static boolean isEnabled = false;
 
-    public CratesClient client;
-
     @Override
     public void register() {
         for (VanillaVariantMaterial type : VanillaVariantMaterial.values()) {
@@ -55,12 +52,6 @@ public class Crates extends CharmModule {
         TILE_ENTITY = RegistryHandler.tileEntity(ID, CrateTileEntity::new);
 
         isEnabled = this.enabled;
-    }
-
-    @Override
-    public void clientInit() {
-        client = new CratesClient(this);
-        ModuleHandler.FORGE_EVENT_BUS.register(client);
     }
 
     public static boolean canCrateInsertItem(ItemStack stack) {

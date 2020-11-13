@@ -22,6 +22,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DimensionHelper;
 import svenhjol.charm.base.helper.SoundHelper;
@@ -30,10 +31,10 @@ import svenhjol.charm.module.MusicImprovements;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 @SuppressWarnings("unused")
-public class MusicClient {
-    private final CharmModule module;
+public class MusicImprovementsClient extends CharmClientModule {
     private ISound musicToStop = null;
     private int ticksBeforeStop = 0;
     private static ISound currentMusic;
@@ -42,9 +43,12 @@ public class MusicClient {
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
     public static boolean isEnabled;
 
-    public MusicClient(CharmModule module) {
-        this.module = module;
+    public MusicImprovementsClient(CharmModule module) {
+        super(module);
+    }
 
+    @Override
+    public void register() {
         // set statically so hooks can check this is enabled
         isEnabled = module.enabled;
 
@@ -182,5 +186,42 @@ public class MusicClient {
 
     public static List<MusicCondition> getMusicConditions() {
         return musicConditions;
+    }
+
+    public static class MusicCondition {
+        private final net.minecraft.util.SoundEvent sound;
+        private final int minDelay;
+        private final int maxDelay;
+        private Predicate<Minecraft> condition;
+
+        public MusicCondition(net.minecraft.util.SoundEvent sound, int minDelay, int maxDelay, Predicate<Minecraft> condition) {
+            this.sound = sound;
+            this.minDelay = minDelay;
+            this.maxDelay = maxDelay;
+            this.condition = condition;
+        }
+
+        public MusicCondition(BackgroundMusicSelector music) {
+            this.sound = music.getSoundEvent();
+            this.minDelay = music.getMinDelay();
+            this.maxDelay = music.getMaxDelay();
+        }
+
+        public boolean handle() {
+            if (condition == null) return false;
+            return condition.test(Minecraft.getInstance());
+        }
+
+        public net.minecraft.util.SoundEvent getSound() {
+            return sound;
+        }
+
+        public int getMaxDelay() {
+            return maxDelay;
+        }
+
+        public int getMinDelay() {
+            return minDelay;
+        }
     }
 }

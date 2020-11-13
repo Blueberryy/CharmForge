@@ -5,8 +5,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
@@ -22,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-@Module(mod = Charm.MOD_ID, description = "Synchronize additional state from server to client.", alwaysEnabled = true, hasSubscriptions = true)
+@Module(mod = Charm.MOD_ID, client = PlayerStateClient.class, description = "Synchronize additional state from server to client.", alwaysEnabled = true, hasSubscriptions = true)
 public class PlayerState extends CharmModule {
     public static List<BiConsumer<ServerPlayerEntity, CompoundNBT>> listeners = new ArrayList<>();
 
@@ -39,12 +37,6 @@ public class PlayerState extends CharmModule {
         ) {
             Charm.PACKET_HANDLER.sendToServer(new ServerUpdatePlayerState());
         }
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public void clientRegister() {
-        client = new PlayerStateClient();
     }
 
     /**
@@ -69,18 +61,5 @@ public class PlayerState extends CharmModule {
 
         // send updated player data to client
         Charm.PACKET_HANDLER.sendToPlayer(new ClientUpdatePlayerState(tag), player);
-    }
-
-    /**
-     * Unpack the received server data from the NBT tag.
-     */
-    @OnlyIn(Dist.CLIENT)
-    public static void clientCallback(CompoundNBT data) {
-        client.mineshaft = data.getBoolean("mineshaft");
-        client.stronghold = data.getBoolean("stronghold");
-        client.fortress = data.getBoolean("fortress");
-        client.shipwreck = data.getBoolean("shipwreck");
-        client.village = data.getBoolean("village");
-        client.isDaytime = data.getBoolean("day");
     }
 }

@@ -29,7 +29,7 @@ import net.minecraft.world.Difficulty;
 import net.minecraft.world.IServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.DataBlockHelper;
-import svenhjol.charm.module.EntitySpawner;
+import svenhjol.charm.module.EntitySpawners;
 
 import java.util.*;
 
@@ -49,7 +49,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
     public String meta = "";
 
     public EntitySpawnerTileEntity() {
-        super(EntitySpawner.TILE_ENTITY);
+        super(EntitySpawners.TILE_ENTITY);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
             return;
 
         BlockPos pos = getPos();
-        List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(pos).grow(EntitySpawner.triggerDistance));
+        List<PlayerEntity> players = world.getEntitiesWithinAABB(PlayerEntity.class, new AxisAlignedBB(pos).grow(EntitySpawners.triggerDistance));
 
         if (players.size() == 0)
             return;

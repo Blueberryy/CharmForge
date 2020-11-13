@@ -1,8 +1,5 @@
 package svenhjol.charm.module;
 
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
@@ -12,11 +9,11 @@ import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.WoodcutterBlock;
+import svenhjol.charm.client.WoodCuttersClient;
 import svenhjol.charm.container.WoodcutterContainer;
-import svenhjol.charm.gui.WoodcutterScreen;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
 
-@Module(mod = Charm.MOD_ID, description = "A functional block that adds more efficient recipes for crafting wooden stairs and slabs.")
+@Module(mod = Charm.MOD_ID, client = WoodCuttersClient.class, description = "A functional block that adds more efficient recipes for crafting wooden stairs and slabs.")
 public class Woodcutters extends CharmModule {
     public static ResourceLocation RECIPE_ID = new ResourceLocation("woodcutting");
     public static ResourceLocation BLOCK_ID = new ResourceLocation(Charm.MOD_ID, "woodcutter");
@@ -33,11 +30,5 @@ public class Woodcutters extends CharmModule {
         SCREEN_HANDLER = RegistryHandler.container(BLOCK_ID, WoodcutterContainer::new);
 
         Lumberjacks.registerAfterWoodcutters();
-    }
-
-    @Override
-    public void clientInit() {
-        RenderTypeLookup.setRenderLayer(WOODCUTTER, RenderType.getCutout());
-        ScreenManager.registerFactory(SCREEN_HANDLER, WoodcutterScreen::new);
     }
 }
