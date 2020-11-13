@@ -88,8 +88,13 @@ public class ConfigHandler {
                     } else {
                         val = builder.define(name, defaultVal);
                     }
+
+                    final String finalName = name;
+                    final ForgeConfigSpec.ConfigValue<?> finalVal = val;
+
                     refreshConfig.add(() -> {
                         try {
+                            Charm.LOG.debug("[" + module.getName() + "] Setting config field " + finalName + " to " + finalVal.get());
                             field.set(null, val.get());
                         } catch (IllegalAccessException e) {
                             Charm.LOG.error("Could not set config value for " + module.getName());
