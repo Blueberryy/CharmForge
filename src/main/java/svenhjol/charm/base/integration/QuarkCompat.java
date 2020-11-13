@@ -5,6 +5,10 @@ import svenhjol.charm.base.helper.StringHelper;
 import vazkii.quark.base.module.Module;
 import vazkii.quark.base.module.ModuleLoader;
 
+/**
+ * This won't function if quark is not compiled in build.gradle.
+ * Comment out this entire class if quark is not present in the dev environment.
+ */
 @SuppressWarnings("unchecked")
 public class QuarkCompat implements IQuarkCompat {
 
