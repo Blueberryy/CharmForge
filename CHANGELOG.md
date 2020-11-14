@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.2
+* Fix keybinds opening inventories when typing in chat or other guis. #368
+* Fix dropped netherite-based items cause crash on dedicated server
+* Fix Keybind issues #363
+
 ## 2.1.1
 * Fix Coral Squid hitboxes. #351, #361
 * Fix Candles not making sound when lighting
