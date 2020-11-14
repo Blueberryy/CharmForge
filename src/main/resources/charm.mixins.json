@@ -34,6 +34,7 @@
     "accessor.FireBlockAccessor",
     "accessor.GoalSelectorAccessor",
     "accessor.ItemAccessor",
+    "accessor.ItemEntityAccessor",
     "accessor.JigsawPatternAccessor",
     "accessor.MinecraftServerAccessor",
     "accessor.MobEntityAccessor",

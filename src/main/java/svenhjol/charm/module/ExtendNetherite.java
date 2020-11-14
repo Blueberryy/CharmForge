@@ -8,6 +8,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.mixin.accessor.ItemEntityAccessor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class ExtendNetherite extends CharmModule {
             Item item = event.getEntityItem().getItem().getItem();
 
             if (netheriteItems.contains(item)) {
-                if (event.getEntityItem().getAge() <= 6020) { // 6000 is default lifetime, add a little buffer just in case
+                if (((ItemEntityAccessor)event.getEntityItem()).getAge() <= 6020) { // 6000 is default lifetime, add a little buffer just in case
                     event.setExtraLife(extendBy * 20); // in ticks
                     event.setCanceled(true);
                 }
