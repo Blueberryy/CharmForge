@@ -29,6 +29,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.DistExecutor;
 import svenhjol.charm.Charm;
 import svenhjol.charm.module.CoralSquids;
 
@@ -220,7 +221,7 @@ public class CoralSquidEntity extends WaterMobEntity {
             }
 
             if (!this.world.isRemote) {
-                this.setVelocity((double)(this.swimX * this.swimVelocityScale), (double)(this.swimY * this.swimVelocityScale), (double)(this.swimZ * this.swimVelocityScale));
+                this.setMotion((double)(this.swimX * this.swimVelocityScale), (double)(this.swimY * this.swimVelocityScale), (double)(this.swimZ * this.swimVelocityScale));
             }
 
             Vector3d vec3d = this.getMotion();
@@ -239,7 +240,7 @@ public class CoralSquidEntity extends WaterMobEntity {
                     d -= 0.08D;
                 }
 
-                this.setVelocity(0.0D, d * 0.981D, 0.0D);
+                this.setMotion(0.0D, d * 0.981D, 0.0D);
             }
 
             this.tiltAngle = (float)((double)this.tiltAngle + (double)(-90.0F - this.tiltAngle) * 0.02D);
