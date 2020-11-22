@@ -1,6 +1,7 @@
 package svenhjol.charm.base.handler;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.merchant.villager.VillagerProfession;
@@ -70,6 +71,10 @@ public class RegistryHandler {
     public static <T extends Entity> EntityType<T> entity(ResourceLocation id, EntityType<T> entityType) {
         register(ForgeRegistries.ENTITIES, id, entityType);
         return entityType;
+    }
+
+    public static Enchantment enchantment(ResourceLocation id, Enchantment enchantment) {
+        return register(ForgeRegistries.ENCHANTMENTS, id, enchantment);
     }
 
     public static Item item(ResourceLocation id, Item item) {
