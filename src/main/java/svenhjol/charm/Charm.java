@@ -66,6 +66,7 @@ public class Charm {
             PortableCrafting.class,
             PortableEnderChest.class,
             Quark.class,
+            RaidHorns.class,
             RedstoneLanterns.class,
             RedstoneSand.class,
             RefinedObsidian.class,

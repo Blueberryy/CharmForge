@@ -43,6 +43,7 @@
     "accessor.MinecraftServerAccessor",
     "accessor.MobEntityAccessor",
     "accessor.MobSpawnInfoAccessor",
+    "accessor.PatrolSpawnerAccessor",
     "accessor.PlayerEntityAccessor",
     "accessor.PointOfInterestTypeAccessor",
     "accessor.RepairContainerAccessor",
