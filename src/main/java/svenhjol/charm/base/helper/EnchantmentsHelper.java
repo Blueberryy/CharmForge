@@ -15,7 +15,6 @@ public class EnchantmentsHelper {
         EnchantmentHelper.setEnchantments(enchantments, stack);
     }
 
-
     public static boolean hasFeatherFalling(LivingEntity entity) {
         return EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FEATHER_FALLING, entity) > 0;
     }
