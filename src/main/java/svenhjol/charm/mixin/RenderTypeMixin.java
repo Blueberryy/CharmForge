@@ -8,6 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import svenhjol.charm.handler.ColoredGlintHandler;
 import svenhjol.charm.module.Core;
 
+/**
+ * In Fabric: RenderLayerMixin
+ */
 @Mixin(RenderType.class)
 public class RenderTypeMixin {
     @Inject(
@@ -26,7 +29,7 @@ public class RenderTypeMixin {
         cancellable = true
     )
     private static void hookGetArmorEntityGlint(CallbackInfoReturnable<RenderType> cir) {
-        if (Core.debug)
+        if (Core.overrideGlint)
             cir.setReturnValue(ColoredGlintHandler.getArmorEntityGlintRenderLayer());
     }
 
@@ -36,7 +39,7 @@ public class RenderTypeMixin {
         cancellable = true
     )
     private static void hookGetEntityGlint(CallbackInfoReturnable<RenderType> cir) {
-        if (Core.debug)
+        if (Core.overrideGlint)
             cir.setReturnValue(ColoredGlintHandler.getEntityGlintRenderLayer());
     }
 
@@ -46,7 +49,7 @@ public class RenderTypeMixin {
         cancellable = true
     )
     private static void hookGetEntityGlintDirect(CallbackInfoReturnable<RenderType> cir) {
-        if (Core.debug)
+        if (Core.overrideGlint)
             cir.setReturnValue(ColoredGlintHandler.getDirectEntityGlintRenderLayer());
     }
 
@@ -56,7 +59,7 @@ public class RenderTypeMixin {
         cancellable = true
     )
     private static void hookGetGlint(CallbackInfoReturnable<RenderType> cir) {
-        if (Core.debug)
+        if (Core.overrideGlint)
             cir.setReturnValue(ColoredGlintHandler.getGlintRenderLayer());
     }
 
@@ -66,7 +69,7 @@ public class RenderTypeMixin {
         cancellable = true
     )
     private static void hookGetGlintDirect(CallbackInfoReturnable<RenderType> cir) {
-        if (Core.debug)
+        if (Core.overrideGlint)
             cir.setReturnValue(ColoredGlintHandler.getDirectGlintRenderLayer());
     }
 }
