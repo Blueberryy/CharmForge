@@ -9,10 +9,10 @@ import svenhjol.charm.module.Kilns;
 
 public class KilnContainer extends AbstractFurnaceContainer {
     public KilnContainer(int syncId, PlayerInventory playerInventory) {
-        super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.SMOKER, syncId, playerInventory);
+        super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.FURNACE, syncId, playerInventory);
     }
 
     public KilnContainer(int syncId, PlayerInventory playerInventory, IInventory inventory, IIntArray propertyDelegate) {
-        super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.SMOKER, syncId, playerInventory, inventory, propertyDelegate);
+        super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.FURNACE, syncId, playerInventory, inventory, propertyDelegate);
     }
 }
