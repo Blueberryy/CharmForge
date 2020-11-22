@@ -30,6 +30,7 @@
     "StrayEntityMixin",
     "WanderingTraderSpawnerMixin",
     "accessor.BarrelTileEntityAccessor",
+    "accessor.BeeEntityAccessor",
     "accessor.BiomeGenerationSettingsAccessor",
     "accessor.BlockAccessor",
     "accessor.BlocksAccessor",
