@@ -6,8 +6,8 @@ import net.minecraft.inventory.container.WorkbenchContainer;
 import net.minecraft.util.IWorldPosCallable;
 import svenhjol.charm.module.Core;
 
-public class PortableCraftingScreenHandler extends WorkbenchContainer {
-    public PortableCraftingScreenHandler(int syncId, PlayerInventory playerInventory, IWorldPosCallable context) {
+public class PortableCraftingContainer extends WorkbenchContainer {
+    public PortableCraftingContainer(int syncId, PlayerInventory playerInventory, IWorldPosCallable context) {
         super(syncId, playerInventory, context);
     }
 

@@ -12,7 +12,7 @@ import svenhjol.charm.base.helper.DecorationHelper;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.KilnBlock;
 import svenhjol.charm.client.KilnsClient;
-import svenhjol.charm.container.KilnScreenHandler;
+import svenhjol.charm.container.KilnContainer;
 import svenhjol.charm.recipe.FiringRecipe;
 import svenhjol.charm.tileentity.KilnTileEntity;
 
@@ -24,7 +24,7 @@ public class Kilns extends CharmModule {
     public static TileEntityType<KilnTileEntity> BLOCK_ENTITY;
     public static IRecipeType<FiringRecipe> RECIPE_TYPE;
     public static CookingRecipeSerializer<FiringRecipe> RECIPE_SERIALIZER;
-    public static ContainerType<KilnScreenHandler> CONTAINER;
+    public static ContainerType<KilnContainer> CONTAINER;
 
     @Override
     public void register() {
@@ -32,7 +32,7 @@ public class Kilns extends CharmModule {
         RECIPE_TYPE = RegistryHandler.recipeType(RECIPE_ID.toString());
         RECIPE_SERIALIZER = RegistryHandler.recipeSerializer(RECIPE_ID.toString(), new CookingRecipeSerializer<>(FiringRecipe::new, 100));
         BLOCK_ENTITY = RegistryHandler.tileEntity(BLOCK_ID, KilnTileEntity::new, KILN);
-        CONTAINER = RegistryHandler.container(BLOCK_ID, KilnScreenHandler::new);
+        CONTAINER = RegistryHandler.container(BLOCK_ID, KilnContainer::new);
     }
 
     @Override

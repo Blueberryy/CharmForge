@@ -10,7 +10,7 @@ import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.PortableCraftingClient;
-import svenhjol.charm.container.PortableCraftingScreenHandler;
+import svenhjol.charm.container.PortableCraftingContainer;
 
 @Module(mod = Charm.MOD_ID, client = PortableCraftingClient.class, description = "Allows crafting from inventory if the player has a crafting table in their inventory.", hasSubscriptions = true)
 public class PortableCrafting extends CharmModule {
@@ -20,6 +20,6 @@ public class PortableCrafting extends CharmModule {
     public static boolean enableKeybind = true;
 
     public static void openContainer(ServerPlayerEntity player) {
-        player.openContainer(new SimpleNamedContainerProvider((i, inv, p) -> new PortableCraftingScreenHandler(i, inv, IWorldPosCallable.of(p.world, p.getPosition())), LABEL));
+        player.openContainer(new SimpleNamedContainerProvider((i, inv, p) -> new PortableCraftingContainer(i, inv, IWorldPosCallable.of(p.world, p.getPosition())), LABEL));
     }
 }

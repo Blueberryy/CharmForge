@@ -7,8 +7,8 @@ import net.minecraft.inventory.container.ChestContainer;
 import net.minecraft.inventory.container.ContainerType;
 import svenhjol.charm.module.Core;
 
-public class PortableEnderChestScreenHandler extends ChestContainer {
-    public PortableEnderChestScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
+public class PortableEnderChestContainer extends ChestContainer {
+    public PortableEnderChestContainer(int syncId, PlayerInventory playerInventory, Inventory inventory) {
         super(ContainerType.GENERIC_9X3, syncId, playerInventory, inventory, 3);
     }
 

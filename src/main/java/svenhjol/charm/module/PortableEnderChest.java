@@ -11,7 +11,7 @@ import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.PortableEnderChestClient;
-import svenhjol.charm.container.PortableEnderChestScreenHandler;
+import svenhjol.charm.container.PortableEnderChestContainer;
 
 @Module(mod = Charm.MOD_ID, client = PortableEnderChestClient.class, description = "Allows access to chest contents if the player has an Ender Chest in their inventory.", hasSubscriptions = true)
 public class PortableEnderChest extends CharmModule {
@@ -22,6 +22,6 @@ public class PortableEnderChest extends CharmModule {
 
     public static void openContainer(ServerPlayerEntity player) {
         player.world.playSound(null, player.getPosition(), SoundEvents.BLOCK_ENDER_CHEST_OPEN, SoundCategory.PLAYERS, 0.4F, 1.08F);
-        player.openContainer(new SimpleNamedContainerProvider((i, inv, p) -> new PortableEnderChestScreenHandler(i, inv, p.getInventoryEnderChest()), LABEL));
+        player.openContainer(new SimpleNamedContainerProvider((i, inv, p) -> new PortableEnderChestContainer(i, inv, p.getInventoryEnderChest()), LABEL));
     }
 }

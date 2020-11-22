@@ -7,7 +7,7 @@ import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.module.Kilns;
-import svenhjol.charm.container.KilnScreenHandler;
+import svenhjol.charm.container.KilnContainer;
 
 public class KilnTileEntity extends AbstractFurnaceTileEntity {
     public KilnTileEntity() {
@@ -26,6 +26,6 @@ public class KilnTileEntity extends AbstractFurnaceTileEntity {
 
     @Override
     protected Container createMenu(int id, PlayerInventory player) {
-        return new KilnScreenHandler(id, player, this, this.furnaceData);
+        return new KilnContainer(id, player, this, this.furnaceData);
     }
 }

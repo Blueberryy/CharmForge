@@ -7,12 +7,12 @@ import net.minecraft.item.crafting.RecipeBookCategory;
 import net.minecraft.util.IIntArray;
 import svenhjol.charm.module.Kilns;
 
-public class KilnScreenHandler extends AbstractFurnaceContainer {
-    public KilnScreenHandler(int syncId, PlayerInventory playerInventory) {
+public class KilnContainer extends AbstractFurnaceContainer {
+    public KilnContainer(int syncId, PlayerInventory playerInventory) {
         super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.SMOKER, syncId, playerInventory);
     }
 
-    public KilnScreenHandler(int syncId, PlayerInventory playerInventory, IInventory inventory, IIntArray propertyDelegate) {
+    public KilnContainer(int syncId, PlayerInventory playerInventory, IInventory inventory, IIntArray propertyDelegate) {
         super(Kilns.CONTAINER, Kilns.RECIPE_TYPE, RecipeBookCategory.SMOKER, syncId, playerInventory, inventory, propertyDelegate);
     }
 }

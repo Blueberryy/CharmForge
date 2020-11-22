@@ -6,13 +6,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import svenhjol.charm.container.KilnScreenHandler;
+import svenhjol.charm.container.KilnContainer;
 
 @OnlyIn(Dist.CLIENT)
-public class KilnScreen extends AbstractFurnaceScreen<KilnScreenHandler> {
+public class KilnScreen extends AbstractFurnaceScreen<KilnContainer> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/container/smoker.png");
 
-    public KilnScreen(KilnScreenHandler container, PlayerInventory inventory, ITextComponent title) {
+    public KilnScreen(KilnContainer container, PlayerInventory inventory, ITextComponent title) {
         super(container, new KilnRecipeBookScreen(), inventory, title, TEXTURE);
     }
 }
