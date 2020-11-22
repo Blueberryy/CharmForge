@@ -18,6 +18,7 @@
     "MineshaftPiecesMixin",
     "PistonBlockMixin",
     "PlayerEntityMixin",
+    "PlayerInteractionManagerMixin",
     "PotionItemMixin",
     "RecipeManagerMixin",
     "RepairContainerMixin",

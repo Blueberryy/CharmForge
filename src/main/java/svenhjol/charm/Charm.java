@@ -21,6 +21,7 @@ public class Charm {
 
     public Charm() {
         ModuleHandler.AVAILABLE_MODULES.put(Charm.MOD_ID, new ArrayList<>(Arrays.asList(
+            Acquisition.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
             AutomaticRecipeUnlock.class,
