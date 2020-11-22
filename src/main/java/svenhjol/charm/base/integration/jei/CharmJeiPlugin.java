@@ -1,25 +1,24 @@
-package svenhjol.charm.base.integration;
+package svenhjol.charm.base.integration.jei;
 
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.constants.VanillaRecipeCategoryUid;
 import mezz.jei.api.recipe.vanilla.IVanillaRecipeFactory;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.module.DecreaseRepairCost;
-import svenhjol.charm.module.ExtractEnchantments;
 import svenhjol.charm.module.NetheriteNuggets;
+import svenhjol.charm.module.Woodcutters;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 @JeiPlugin
@@ -37,9 +36,24 @@ public class CharmJeiPlugin implements IModPlugin {
 
         if (ModuleHandler.enabled(DecreaseRepairCost.class))
             registerReduceRepairCost(registration, factory);
-        /*
-        if (ModuleHandler.enabled(ExtractEnchantments.class))
-            registerExtractEnchantments(registration, factory);*/
+
+        if(ModuleHandler.enabled(Woodcutters.class))
+            registerWoodCutterRecipes(registration);
+    }
+
+    private void registerWoodCutterRecipes(IRecipeRegistration registration) {
+        World world = Minecraft.getInstance().world;
+        registration.addRecipes(world.getRecipeManager().getRecipesForType(Woodcutters.RECIPE_TYPE), WoodCuttingRecipeCategory.UID);
+    }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        if(ModuleHandler.enabled(Woodcutters.class))
+            registerWoodCutterCategory(registration);
+    }
+
+    private void registerWoodCutterCategory(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new WoodCuttingRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     private void registerReduceRepairCost(IRecipeRegistration registration, IVanillaRecipeFactory factory) {
@@ -58,30 +72,4 @@ public class CharmJeiPlugin implements IModPlugin {
         registration.addRecipes(recipes, VanillaRecipeCategoryUid.ANVIL);
     }
 
-    private void registerExtractEnchantments(IRecipeRegistration registration, IVanillaRecipeFactory factory) {
-        List<Object> recipes = new ArrayList<>();
-        Enchantment enchant = Enchantments.UNBREAKING;
-
-        ItemStack pick1 = new ItemStack(Items.DIAMOND_PICKAXE);
-        ItemStack book1 = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantmentHelper.setEnchantments(new HashMap<Enchantment, Integer>() {{ put(enchant, 2); }}, pick1);
-        EnchantmentHelper.setEnchantments(new HashMap<Enchantment, Integer>() {{ put(enchant, 1); }}, book1);
-
-        ItemStack pick2 = new ItemStack(Items.DIAMOND_PICKAXE);
-        ItemStack book2 = new ItemStack(Items.ENCHANTED_BOOK);
-        EnchantmentHelper.setEnchantments(new HashMap<Enchantment, Integer>() {{ put(enchant, 1); }}, pick2);
-        EnchantmentHelper.setEnchantments(new HashMap<Enchantment, Integer>() {{ put(enchant, 1); }}, book2);
-
-        recipes.add(factory.createAnvilRecipe(pick1,
-                Collections.singletonList(new ItemStack(Items.BOOK)),
-                Collections.singletonList(book1)
-        ));
-
-        recipes.add(factory.createAnvilRecipe(pick2,
-                Collections.singletonList(new ItemStack(Items.BOOK)),
-                Collections.singletonList(book2)
-        ));
-
-        registration.addRecipes(recipes, VanillaRecipeCategoryUid.ANVIL);
-    }
 }
