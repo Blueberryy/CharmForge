@@ -1,7 +1,8 @@
 package svenhjol.charm.entity;
 
 import com.google.common.collect.Maps;
-import net.minecraft.block.*;
+import net.minecraft.block.AbstractCoralPlantBlock;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
@@ -19,7 +20,6 @@ import net.minecraft.particles.ParticleTypes;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -34,6 +34,7 @@ import svenhjol.charm.module.CoralSquids;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Most of this is copypasta from SquidEntity.
@@ -75,28 +76,31 @@ public class CoralSquidEntity extends WaterMobEntity {
         return entityData;
     }
 
-    @Override
-    public boolean isNotColliding(IWorldReader world) {
-        // don't spawn on surface of water
-        if (!world.getBlockState(this.getPosition().up()).isIn(Blocks.WATER))
-            return false;
+    public static boolean canSpawn(EntityType<CoralSquidEntity> type, IWorldReader world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        boolean coralBelow = false;
 
-        AxisAlignedBB box = this.getBoundingBox().grow(5, 30, 5);
+        for (int y = 0; y > -16; y--) {
+            BlockPos downPos = pos.add(0, y, 0);
+            BlockState downState = world.getBlockState(downPos);
+            coralBelow = downState.getBlock() instanceof AbstractCoralPlantBlock;
 
-        BlockPos pos1 = new BlockPos(box.minX, box.minY, box.minZ);
-        BlockPos pos2 = new BlockPos(box.maxX, box.maxY, box.maxZ);
+            if (coralBelow)
+                break;
+        }
 
-        return BlockPos.getAllInBox(pos1, pos2).anyMatch(p -> {
-            BlockState state = world.getBlockState(p);
-            return state.getBlock() instanceof CoralBlock
-                || state.getBlock() instanceof CoralPlantBlock
-                || state.getBlock() instanceof CoralFanBlock;
-        });
+        boolean canSpawn = pos.getY() > 20
+            && pos.getY() < world.getSeaLevel()
+            && coralBelow;
+
+        if (canSpawn)
+            Charm.LOG.debug("Can spawn coral squid at " + pos.getCoordinatesAsString());
+
+        return canSpawn;
     }
 
     @Override
     public int getMaxSpawnedInChunk() {
-        return 8; // might be important for performance
+        return 4; // might be important for performance
     }
 
     public ResourceLocation getTexture() {

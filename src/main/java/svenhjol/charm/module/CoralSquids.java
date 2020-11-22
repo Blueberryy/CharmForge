@@ -1,6 +1,7 @@
 package svenhjol.charm.module;
 
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -9,6 +10,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.Heightmap;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
@@ -36,14 +38,19 @@ public class CoralSquids extends CharmModule {
     @Config(name = "Drop chance", description = "Chance (out of 1.0) of a coral squid dropping coral when killed by the player.")
     public static double dropChance = 0.2D;
 
+    @Config(name = "Spawn weight", description = "Chance of coral squids spawning in warm ocean biomes.")
+    public static int spawnWeight = 50;
+
     @Override
     public void register() {
-        CORAL_SQUID = RegistryHandler.entity(ID, EntityType.Builder.create(CoralSquidEntity::new, EntityClassification.WATER_CREATURE)
+        CORAL_SQUID = RegistryHandler.entity(ID, EntityType.Builder.create(CoralSquidEntity::new, EntityClassification.WATER_AMBIENT)
             .size(0.54F, 0.54F)
             .trackingRange(8)
             .build(ID.getPath()));
 
         SPAWN_EGG = RegistryHandler.item(EGG_ID, new SpawnEggItem(CORAL_SQUID, 0x0000FF, 0xFF00FF, (new Item.Properties()).group(ItemGroup.MISC)));
+
+        EntitySpawnPlacementRegistry.register(CORAL_SQUID, EntitySpawnPlacementRegistry.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CoralSquidEntity::canSpawn);
     }
 
     @Override
@@ -54,7 +61,7 @@ public class CoralSquids extends CharmModule {
 
         biomes.forEach(biomeKey -> {
             Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addSpawnEntry(biome, EntityClassification.WATER_AMBIENT, CORAL_SQUID, 40, 5, 6);
+            BiomeHelper.addSpawnEntry(biome, EntityClassification.WATER_AMBIENT, CORAL_SQUID, spawnWeight, 5, 6);
         });
     }
 }
