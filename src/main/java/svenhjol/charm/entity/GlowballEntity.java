@@ -2,6 +2,8 @@ package svenhjol.charm.entity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -66,12 +68,13 @@ public class GlowballEntity extends ProjectileItemEntity {
         Direction side = hitResult.getFace();
         BlockState state = world.getBlockState(pos);
         BlockPos offsetPos = pos.offset(side);
+        BlockState offsetState = world.getBlockState(offsetPos);
 
-        if (state.isSolidSide(world, pos, side) && (world.isAirBlock(offsetPos) || world.hasWater(offsetPos))) {
+        if (state.isSolidSide(world, pos, side)
+            && (world.isAirBlock(offsetPos) || (offsetState.getMaterial() == Material.WATER && offsetState.get(FlowingFluidBlock.LEVEL) == 0))) {
             BlockState placedState = Glowballs.GLOWBALL_BLOCK.getDefaultState()
                 .with(GlowballBlobBlock.FACING, side);
 
-            BlockState offsetState = world.getBlockState(offsetPos);
             if (offsetState.getBlock() == Blocks.WATER)
                 placedState = placedState.with(BlockStateProperties.WATERLOGGED, true);
 

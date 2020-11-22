@@ -1,8 +1,15 @@
 package svenhjol.charm.module;
 
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.dispenser.IPosition;
+import net.minecraft.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
@@ -29,5 +36,13 @@ public class Glowballs extends CharmModule {
             .setUpdateInterval(10)
             .size(0.25F, 0.25F)
             .build(ID.getPath()));
+
+        DispenserBlock.registerDispenseBehavior(GLOWBALL_ITEM, new ProjectileDispenseBehavior() {
+            protected ProjectileEntity getProjectileEntity(World world, IPosition position, ItemStack stack) {
+                return Util.make(new GlowballEntity(world, position.getX(), position.getY(), position.getZ()), (entity) -> {
+                    entity.setItem(stack);
+                });
+            }
+        });
     }
 }

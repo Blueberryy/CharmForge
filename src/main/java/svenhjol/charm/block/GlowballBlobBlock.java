@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
+import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
@@ -36,7 +37,9 @@ public class GlowballBlobBlock extends CharmBlock implements IWaterLoggable {
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     public GlowballBlobBlock(CharmModule module) {
-        super(module, "glowball_blob", Properties.from(Blocks.REDSTONE_WIRE)
+        super(module, "glowball_blob", Properties.create(Material.PLANTS) // TODO: could be MISCELLANEOUS, check
+            .doesNotBlockMovement()
+            .zeroHardnessAndResistance()
             .setLightLevel(l -> 8));
 
         this.setDefaultState(getDefaultState().with(WATERLOGGED, false));
