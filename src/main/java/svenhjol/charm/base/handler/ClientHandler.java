@@ -9,6 +9,8 @@ import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.handler.ColoredGlintHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Consumer;
@@ -19,6 +21,7 @@ import static svenhjol.charm.base.handler.ModuleHandler.MOD_EVENT_BUS;
 public class ClientHandler {
     public static Map<String, CharmClientModule> LOADED_MODULES = new TreeMap<>();
     private static boolean hasInit = false;
+    private static List<Class<? extends CharmClientModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
 
     public static void init() {
         if (hasInit)
@@ -68,6 +71,8 @@ public class ClientHandler {
             if (clientModule.getModule().hasSubscriptions)
                 FORGE_EVENT_BUS.register(clientModule);
 
+            // this is a cache for quick lookup of enabled classes
+            ENABLED_MODULES.add(clientModule.getClass());
             clientModule.init();
         });
 
@@ -76,6 +81,15 @@ public class ClientHandler {
 
     public static void onTextureStitch(TextureStitchEvent event) {
         eachEnabledModule(module -> module.textureStitch(event));
+    }
+
+    /**
+     * Use this within static hook methods for quick check if a module is enabled.
+     * @param clazz Module to check
+     * @return True if the module is enabled
+     */
+    public static boolean enabled(Class<? extends CharmClientModule> clazz) {
+        return ENABLED_MODULES.contains(clazz);
     }
 
     private static void eachModule(Consumer<CharmClientModule> consumer) {
