@@ -44,7 +44,7 @@ public class Mooblooms extends CharmModule {
 
     @Override
     public void init() {
-        MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.registerAttributes().create());
+        MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.func_234188_eI_().create());
 
         // add the mooblooms to flower forest biomes
         List<RegistryKey<Biome>> biomes = new ArrayList<>(Collections.singletonList(Biomes.FLOWER_FOREST));
