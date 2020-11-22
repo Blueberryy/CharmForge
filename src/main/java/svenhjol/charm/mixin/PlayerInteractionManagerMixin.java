@@ -29,7 +29,7 @@ public class PlayerInteractionManagerMixin {
         locals = LocalCapture.CAPTURE_FAILHARD,
         cancellable = true
     )
-    private void hookTryBreakBlockAfterBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, TileEntity blockEntity) {
+    private void hookTryBreakBlockAfterBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, int xp, TileEntity blockEntity) {
         // this differs from fabric in that we just call the acquisition hook directly
         if (Acquisition.tryOverrideBreakBlock(world, player, pos, state, blockEntity))
             cir.setReturnValue(false);
