@@ -9,11 +9,12 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.module.DecreaseRepairCost;
+import svenhjol.charm.module.Kilns;
 import svenhjol.charm.module.NetheriteNuggets;
 import svenhjol.charm.module.Woodcutters;
 
@@ -33,27 +34,41 @@ public class CharmJeiPlugin implements IModPlugin {
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         final IVanillaRecipeFactory factory = registration.getVanillaRecipeFactory();
+        RecipeManager recipeManager = Minecraft.getInstance().world.getRecipeManager();
 
         if (ModuleHandler.enabled(DecreaseRepairCost.class))
             registerReduceRepairCost(registration, factory);
 
-        if(ModuleHandler.enabled(Woodcutters.class))
-            registerWoodCutterRecipes(registration);
-    }
+        if (ModuleHandler.enabled(Woodcutters.class))
+            registerWoodCutterRecipes(registration, recipeManager);
 
-    private void registerWoodCutterRecipes(IRecipeRegistration registration) {
-        World world = Minecraft.getInstance().world;
-        registration.addRecipes(world.getRecipeManager().getRecipesForType(Woodcutters.RECIPE_TYPE), WoodCuttingRecipeCategory.UID);
+        if (ModuleHandler.enabled(Kilns.class))
+            registerKilnRecipes(registration, recipeManager);
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        if(ModuleHandler.enabled(Woodcutters.class))
+        if (ModuleHandler.enabled(Woodcutters.class))
             registerWoodCutterCategory(registration);
+
+        if (ModuleHandler.enabled(Kilns.class))
+            registerKilnCategory(registration);
     }
 
     private void registerWoodCutterCategory(IRecipeCategoryRegistration registration) {
         registration.addRecipeCategories(new WoodCuttingRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+    }
+
+    private void registerKilnCategory(IRecipeCategoryRegistration registration) {
+        registration.addRecipeCategories(new FiringRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+    }
+
+    private void registerWoodCutterRecipes(IRecipeRegistration registration, RecipeManager recipeManager) {
+        registration.addRecipes(recipeManager.getRecipesForType(Woodcutters.RECIPE_TYPE), WoodCuttingRecipeCategory.UID);
+    }
+
+    private void registerKilnRecipes(IRecipeRegistration registration, RecipeManager recipeManager) {
+        registration.addRecipes(recipeManager.getRecipesForType(Kilns.RECIPE_TYPE), FiringRecipeCategory.UID);
     }
 
     private void registerReduceRepairCost(IRecipeRegistration registration, IVanillaRecipeFactory factory) {

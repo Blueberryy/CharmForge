@@ -10,21 +10,20 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import svenhjol.charm.Charm;
 import svenhjol.charm.module.Woodcutters;
 import svenhjol.charm.recipe.WoodcuttingRecipe;
 
 class WoodCuttingRecipeCategory implements IRecipeCategory<WoodcuttingRecipe> {
-    public static final ResourceLocation UID = new ResourceLocation(Charm.MOD_ID, "woodcutting");
+    public static final ResourceLocation UID = Woodcutters.RECIPE_ID;
     private final IDrawable background;
     private final IDrawable icon;
     private final String localizedName;
 
     public WoodCuttingRecipeCategory(IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation("jei", "textures/gui/gui_vanilla.png");
-        this.background = guiHelper.createDrawable(location, 0, 220, 82, 34);
-        this.icon = guiHelper.createDrawableIngredient(new ItemStack(Woodcutters.WOODCUTTER));
-        this.localizedName = I18n.format("block.charm.woodcutter");
+        background = guiHelper.createDrawable(location, 0, 220, 82, 34);
+        icon = guiHelper.createDrawableIngredient(new ItemStack(Woodcutters.WOODCUTTER));
+        localizedName = I18n.format("block.charm.woodcutter");
     }
 
     @Override
@@ -39,17 +38,17 @@ class WoodCuttingRecipeCategory implements IRecipeCategory<WoodcuttingRecipe> {
 
     @Override
     public String getTitle() {
-        return this.localizedName;
+        return localizedName;
     }
 
     @Override
     public IDrawable getBackground() {
-        return this.background;
+        return background;
     }
 
     @Override
     public IDrawable getIcon() {
-        return this.icon;
+        return icon;
     }
 
     @Override
