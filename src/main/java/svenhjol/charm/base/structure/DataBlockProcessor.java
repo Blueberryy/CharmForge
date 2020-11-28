@@ -22,6 +22,7 @@ import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.DecorationHelper;
+import svenhjol.charm.base.helper.LootHelper;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.module.*;
 import svenhjol.charm.tileentity.BookcaseTileEntity;
@@ -241,7 +242,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (ModuleHandler.enabled("charm:variant_chests")) {
                 IVariantMaterial variantMaterial = DecorationHelper.getRandomVariantMaterial(random);
 
-                state = random.nextFloat() < 0.1F ?
+                state = random.nextFloat() < 0.05F ?
                     VariantChests.TRAPPED_CHEST_BLOCKS.get(variantMaterial).getDefaultState() :
                     VariantChests.NORMAL_CHEST_BLOCKS.get(variantMaterial).getDefaultState();
 
@@ -256,7 +257,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (tileEntity == null)
                 return;
 
-            tileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
+            tileEntity.setLootTable(LootHelper.getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
             tileEntity.write(tag);
         }
@@ -330,6 +331,8 @@ public class DataBlockProcessor extends StructureProcessor {
             tileEntity.entity = new ResourceLocation(type);
             tileEntity.health = getValue("health", this.data, 0.0D);
             tileEntity.persist = getValue("persist", this.data, true);
+            tileEntity.armor = getValue("armor", this.data, "");
+            tileEntity.effects = getValue("effects", this.data, "");
             tileEntity.count = getValue("count", this.data, 1);
             tileEntity.rotation = this.rotation;
             tileEntity.write(this.tag);
@@ -418,7 +421,7 @@ public class DataBlockProcessor extends StructureProcessor {
                 return;
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
-            tileEntity.setLootTable(getLootTable(data, lootTable), random.nextLong());
+            tileEntity.setLootTable(LootHelper.getLootTable(data, lootTable), random.nextLong());
             tag = new CompoundNBT();
             tileEntity.write(tag);
         }

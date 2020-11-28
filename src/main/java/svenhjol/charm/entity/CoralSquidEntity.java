@@ -93,7 +93,7 @@ public class CoralSquidEntity extends WaterMobEntity {
             && coralBelow;
 
         if (canSpawn)
-            Charm.LOG.debug("Can spawn coral squid at " + pos.getCoordinatesAsString());
+            Charm.LOG.debug("Can spawn coral squid at " + pos.toString());
 
         return canSpawn;
     }

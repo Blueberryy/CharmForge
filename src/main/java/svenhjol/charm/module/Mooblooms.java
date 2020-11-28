@@ -50,8 +50,7 @@ public class Mooblooms extends CharmModule {
         List<RegistryKey<Biome>> biomes = new ArrayList<>(Collections.singletonList(Biomes.FLOWER_FOREST));
 
         biomes.forEach(biomeKey -> {
-            Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addSpawnEntry(biome, EntityClassification.CREATURE, MOOBLOOM, 30, 2, 4);
+            BiomeHelper.addSpawnEntry(biomeKey, EntityClassification.CREATURE, MOOBLOOM, 30, 2, 4);
         });
     }
 

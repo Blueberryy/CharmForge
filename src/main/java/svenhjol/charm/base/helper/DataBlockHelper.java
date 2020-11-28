@@ -5,7 +5,6 @@ import net.minecraft.state.DirectionProperty;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,22 +25,8 @@ public class DataBlockHelper {
     }
 
     public static ResourceLocation getLootTable(String data, ResourceLocation fallback) {
-        ResourceLocation lootTable = fallback;
-        String loot = getValue("loot", data, "");
-
-        if (!loot.isEmpty()) {
-            List<ResourceLocation> tables = LootHelper.getAllLootTables();
-
-            for (ResourceLocation res : tables) {
-                String[] s = res.getPath().split("/");
-                if (loot.contains(s[s.length - 1])) {
-                    lootTable = res;
-                    break;
-                }
-            }
-        }
-
-        return lootTable;
+        String loot = DataBlockHelper.getValue("loot", data, "");
+        return LootHelper.getLootTable(loot, fallback);
     }
 
     public static boolean getValue(String key, String name, boolean fallback) {

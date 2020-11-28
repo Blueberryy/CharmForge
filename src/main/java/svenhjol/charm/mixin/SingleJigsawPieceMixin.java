@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-import svenhjol.charm.base.helper.StructureHelper;
+import svenhjol.charm.base.handler.DecorationHandler;
 
 @Mixin(SingleJigsawPiece.class)
 public class SingleJigsawPieceMixin {
@@ -26,6 +26,6 @@ public class SingleJigsawPieceMixin {
         locals = LocalCapture.CAPTURE_FAILHARD
     )
     private void hookCreatePlacementData(Rotation blockRotation, MutableBoundingBox blockBox, boolean keepJigsaws, CallbackInfoReturnable<PlacementSettings> cir, PlacementSettings placement) {
-        StructureHelper.SINGLE_POOL_ELEMENT_PROCESSORS.forEach(placement::addProcessor);
+        DecorationHandler.SINGLE_POOL_ELEMENT_PROCESSORS.forEach(placement::addProcessor);
     }
 }

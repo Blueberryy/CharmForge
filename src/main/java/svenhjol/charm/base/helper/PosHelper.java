@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
@@ -13,11 +12,11 @@ import javax.annotation.Nullable;
 import java.util.Random;
 
 public class PosHelper {
-    public static BlockPos addRandomOffset(BlockPos pos, Random rand, int max) {
-        int n = rand.nextInt(max);
-        int e = rand.nextInt(max);
-        int s = rand.nextInt(max);
-        int w = rand.nextInt(max);
+    public static BlockPos addRandomOffset(BlockPos pos, Random rand, int min, int max) {
+        int n = rand.nextInt(max - min) + min;
+        int e = rand.nextInt(max - min) + min;
+        int s = rand.nextInt(max - min) + min;
+        int w = rand.nextInt(max - min) + min;
         pos = pos.north(rand.nextFloat() < 0.5F ? n : -n);
         pos = pos.east(rand.nextFloat() < 0.5F ? e : -e);
         pos = pos.south(rand.nextFloat() < 0.5F ? s : -s);

@@ -1,9 +1,17 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.InventoryScreen;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SPlayerPositionLookPacket;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.server.TicketType;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class PlayerHelper {
     /**
@@ -21,12 +29,29 @@ public class PlayerHelper {
         return true;
     }
 
-    public static void openInventory() {
-        Minecraft mc = Minecraft.getInstance();
+    public static void teleport(World world, BlockPos pos, PlayerEntity player) {
+        if (!world.isRemote) {
+            ServerWorld serverWorld = (ServerWorld) world;
 
-        if (mc.player == null)
-            return;
+            double x = pos.getX() + 0.5D;
+            double y = pos.getY() + 0.25D;
+            double z = pos.getZ() + 0.5D;
+            float yaw = player.rotationYaw;
+            float pitch = player.rotationPitch;
+            Set<SPlayerPositionLookPacket.Flags> flags = EnumSet.noneOf(SPlayerPositionLookPacket.Flags.class);
 
-        mc.displayGuiScreen(new InventoryScreen(mc.player));
+            ChunkPos chunkPos = new ChunkPos(new BlockPos(x, y, z));
+            serverWorld.getChunkProvider().registerTicket(TicketType.POST_TELEPORT, chunkPos, 1, player.getEntityId());
+            player.stopRiding();
+
+            if (player.isSleeping())
+                player.stopSleepInBed(true, true);
+
+            if (world == player.world) {
+                ((ServerPlayerEntity)player).connection.setPlayerLocation(x, y, z, yaw, pitch, flags);
+            } else {
+                ((ServerPlayerEntity)player).teleport(serverWorld, x, y, z, yaw, pitch);
+            }
+        }
     }
 }

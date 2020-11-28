@@ -55,7 +55,7 @@ public class BookcaseBlock extends CharmBlock {
                 player.openContainer(bookcase);
             }
         }
-        return ActionResultType.SUCCESS;
+        return ActionResultType.CONSUME;
     }
 
     @Override

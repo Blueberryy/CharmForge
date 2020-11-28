@@ -32,4 +32,22 @@ public class LootHelper {
             .filter(t -> t.getPath().contains(pattern))
             .collect(Collectors.toList());
     }
+
+    public static ResourceLocation getLootTable(String loot, ResourceLocation fallback) {
+        ResourceLocation lootTable = fallback;
+
+        if (!loot.isEmpty()) {
+            List<ResourceLocation> tables = getAllLootTables();
+
+            for (ResourceLocation res : tables) {
+                String[] s = res.getPath().split("/");
+                if (loot.contains(s[s.length - 1])) {
+                    lootTable = res;
+                    break;
+                }
+            }
+        }
+
+        return lootTable;
+    }
 }

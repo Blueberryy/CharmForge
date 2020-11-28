@@ -37,18 +37,15 @@ public class MoreVillageBiomes extends CharmModule {
         ));
 
         for (RegistryKey<Biome> biomeKey : plainsBiomes) {
-            Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_PLAINS);
+            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_PLAINS);
         }
 
         for (RegistryKey<Biome> biomeKey : taigaBiomes) {
-            Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_TAIGA);
+            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_TAIGA);
         }
 
         for (RegistryKey<Biome> biomeKey : snowyBiomes) {
-            Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addStructureFeature(biome, StructureFeatures.VILLAGE_SNOWY);
+            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_SNOWY);
         }
     }
 

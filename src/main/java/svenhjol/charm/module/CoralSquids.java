@@ -60,8 +60,7 @@ public class CoralSquids extends CharmModule {
         List<RegistryKey<Biome>> biomes = new ArrayList<>(Arrays.asList(Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN));
 
         biomes.forEach(biomeKey -> {
-            Biome biome = BiomeHelper.getBiomeFromBiomeKey(biomeKey);
-            BiomeHelper.addSpawnEntry(biome, EntityClassification.WATER_AMBIENT, CORAL_SQUID, spawnWeight, 5, 6);
+            BiomeHelper.addSpawnEntry(biomeKey, EntityClassification.WATER_AMBIENT, CORAL_SQUID, spawnWeight, 5, 6);
         });
     }
 }

@@ -3,12 +3,10 @@ package svenhjol.charm.base.helper;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
 import net.minecraft.world.gen.feature.jigsaw.LegacySingleJigsawPiece;
 import net.minecraft.world.gen.feature.template.ProcessorLists;
-import net.minecraft.world.gen.feature.template.StructureProcessor;
 import net.minecraft.world.gen.feature.template.StructureProcessorList;
 import svenhjol.charm.base.enums.ICharmEnum;
 import svenhjol.charm.mixin.accessor.JigsawPatternAccessor;
@@ -21,13 +19,7 @@ import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class StructureHelper {
-    public static List<StructureProcessor> SINGLE_POOL_ELEMENT_PROCESSORS = new ArrayList<>();
     public static Map<ResourceLocation, JigsawPattern> vanillaPools = new HashMap<>();
-
-    public static void addToBiome(List<String> biomeGroup, StructureFeature<?, ?> configuredFeature) {
-        biomeGroup.forEach(id -> WorldGenRegistries.BIOME.getOptional(new ResourceLocation(id))
-            .ifPresent(biome -> BiomeHelper.addStructureFeature(biome, configuredFeature)));
-    }
 
     public static JigsawPattern getVanillaPool(ResourceLocation id) {
         if (!vanillaPools.containsKey(id)) {

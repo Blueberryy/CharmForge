@@ -4,14 +4,19 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.loot.LootTables;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.gen.feature.template.StructureProcessor;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
 import svenhjol.charm.base.helper.LootHelper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static svenhjol.charm.base.helper.DecorationHelper.*;
 
 public class DecorationHandler {
+    public static List<StructureProcessor> SINGLE_POOL_ELEMENT_PROCESSORS = new ArrayList<>();
+
     private static boolean hasInit = false;
 
     public static void init() {
@@ -32,7 +37,10 @@ public class DecorationHandler {
             LootTables.CHESTS_DESERT_PYRAMID,
             LootTables.CHESTS_JUNGLE_TEMPLE,
             LootTables.CHESTS_SIMPLE_DUNGEON,
-            LootTables.CHESTS_STRONGHOLD_CORRIDOR
+            LootTables.CHESTS_STRONGHOLD_CORRIDOR,
+            LootTables.CHESTS_STRONGHOLD_CROSSING,
+            LootTables.CHESTS_SHIPWRECK_SUPPLY,
+            LootTables.CHESTS_SHIPWRECK_TREASURE
         );
 
         COMMON_LOOT_TABLES.addAll(Arrays.asList(

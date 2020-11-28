@@ -2,7 +2,7 @@ package svenhjol.charm.message;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
-import svenhjol.charm.base.helper.PlayerHelper;
+import svenhjol.charm.base.helper.ClientHelper;
 import svenhjol.charm.base.iface.ICharmMessage;
 
 import java.util.function.Supplier;
@@ -17,7 +17,7 @@ public class ClientOpenInventory implements ICharmMessage {
 
     public static class Handler {
         public static void handle(final ClientOpenInventory msg, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(PlayerHelper::openInventory);
+            ctx.get().enqueueWork(ClientHelper::openInventory);
             ctx.get().setPacketHandled(true);
         }
     }
