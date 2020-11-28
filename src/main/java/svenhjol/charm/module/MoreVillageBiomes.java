@@ -4,12 +4,13 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.merchant.villager.VillagerData;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
 import net.minecraft.entity.villager.VillagerType;
-import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.StructureFeatures;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -19,40 +20,41 @@ import svenhjol.charm.base.iface.Module;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Supplier;
 
-@Module(mod = Charm.MOD_ID, description = "Villages can spawn in swamps and jungles.", hasSubscriptions = true)
+@Module(mod = Charm.MOD_ID, hasSubscriptions = true, description = "Villages can spawn in swamps and jungles.")
 public class MoreVillageBiomes extends CharmModule {
+    private List<ResourceLocation> plainsBiomes = new ArrayList<>();
+    private List<ResourceLocation> taigaBiomes = new ArrayList<>();
+    private List<ResourceLocation> snowyBiomes = new ArrayList<>();
+
     @Override
     public void init() {
-        List<RegistryKey<Biome>> plainsBiomes = new ArrayList<>(Arrays.asList(
-            Biomes.JUNGLE, Biomes.BAMBOO_JUNGLE, Biomes.SWAMP
+        plainsBiomes = new ArrayList<>(Arrays.asList(
+            new ResourceLocation("minecraft:jungle"),
+            new ResourceLocation("minecraft:bamboo_jungle"),
+            new ResourceLocation("minecraft:swamp")
         ));
 
-        List<RegistryKey<Biome>> taigaBiomes = new ArrayList<>(Arrays.asList(
-            Biomes.SNOWY_TAIGA
+        taigaBiomes = new ArrayList<>(Arrays.asList(
+            new ResourceLocation("minecraft:snowy_taiga")
         ));
 
-        List<RegistryKey<Biome>> snowyBiomes = new ArrayList<>(Arrays.asList(
-            Biomes.ICE_SPIKES
+        snowyBiomes = new ArrayList<>(Arrays.asList(
+            new ResourceLocation("minecraft:ice_spikes")
         ));
-
-        for (RegistryKey<Biome> biomeKey : plainsBiomes) {
-            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_PLAINS);
-        }
-
-        for (RegistryKey<Biome> biomeKey : taigaBiomes) {
-            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_TAIGA);
-        }
-
-        for (RegistryKey<Biome> biomeKey : snowyBiomes) {
-            BiomeHelper.addStructureFeature(biomeKey, StructureFeatures.VILLAGE_SNOWY);
-        }
     }
 
     @SubscribeEvent
     public void onVillagerJoinWorld(EntityJoinWorldEvent event) {
         if (!event.isCanceled())
             changeVillagerSkin(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public void onBiomeLoading(BiomeLoadingEvent event) {
+        if (!event.isCanceled())
+            tryAddStructureToBiome(event);
     }
 
     private void changeVillagerSkin(Entity entity) {
@@ -72,6 +74,22 @@ public class MoreVillageBiomes extends CharmModule {
                 if (category.equals(Biome.Category.JUNGLE) || category.equals(Biome.Category.SWAMP))
                     villager.setVillagerData(data.withType(VillagerType.func_242371_a(BiomeHelper.getBiomeKeyAtPosition(world, villager.getPosition()))));
             }
+        }
+    }
+
+    private void tryAddStructureToBiome(BiomeLoadingEvent event) {
+        if (event.getName() == null)
+            return;
+
+        List<Supplier<StructureFeature<?, ?>>> structures = event.getGeneration().getStructures();
+
+        ResourceLocation biomeId = event.getName();
+        if (plainsBiomes.contains(biomeId)) {
+            structures.add(() -> StructureFeatures.VILLAGE_PLAINS);
+        } else if (taigaBiomes.contains(biomeId)) {
+            structures.add(() -> StructureFeatures.VILLAGE_TAIGA);
+        } else if (snowyBiomes.contains(biomeId)) {
+            structures.add(() -> StructureFeatures.VILLAGE_SNOWY);
         }
     }
 }
