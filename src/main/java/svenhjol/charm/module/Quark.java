@@ -14,11 +14,14 @@ public class Quark extends CharmModule {
 
     @Override
     public void init() {
+        boolean hasQuark = false;
+
         try {
             if (ModHelper.isLoaded("quark")) {
                 // if quark is not included via compileOnly in build.gradle, this should be commented out
                 compat = QuarkCompat.class.getDeclaredConstructor().newInstance();
                 Charm.LOG.info("Loaded Quark compatibility class");
+                hasQuark = true;
             } else {
                 useDummy();
             }
@@ -26,6 +29,13 @@ public class Quark extends CharmModule {
             Charm.LOG.error("Failed to load Quark compatibility class: " + e.getMessage());
             useDummy();
         }
+
+        if (!hasQuark)
+            return;
+
+        // player state location callback to check if player is inside a big dungeon
+        PlayerState.listeners.add((player, tag)
+            -> tag.putBoolean("ruin", compat.isInBigDungeon(player)));
     }
 
     private void useDummy() {
