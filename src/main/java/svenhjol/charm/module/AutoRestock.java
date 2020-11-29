@@ -66,7 +66,8 @@ public class AutoRestock extends CharmModule {
 
     private void findReplacement(ServerPlayerEntity player, Hand hand, StackData stackData) {
         player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.UP).ifPresent(inventory -> {
-            for (int i = 0; i < inventory.getSlots(); i++) {
+            //first 9 slots are the hotbar
+            for (int i = 9; i < inventory.getSlots(); i++) {
                 ItemStack possibleReplacement = inventory.extractItem(i, Integer.MAX_VALUE, true);
                 if (stackData.item == possibleReplacement.getItem() && Objects.equals(stackData.enchantments, possibleReplacement.getEnchantmentTagList())) {
                     player.setHeldItem(hand, possibleReplacement.copy());
