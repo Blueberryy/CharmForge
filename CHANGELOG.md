@@ -10,6 +10,7 @@
 * Fix refined obsidian walls not connecting
 * Fix glowballs converting blocks to water source blocks
 * Fix super fun post-release text problem with grindstone
+* Fix super fun post-release tinted enchantment loot derp
 * Reduce spawn weight and group size of Coral Squids
 * After much deliberation, we decided Coral Squids should no longer spawn uncontrollably and crash servers
 * Enchantments are now extracted by the grindstone (Credit to [martenschaefer](https://github.com/mschae23/grind-enchantments))
