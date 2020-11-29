@@ -19,7 +19,7 @@ public class Charm {
     public static PacketHandler PACKET_HANDLER = new PacketHandler();
 
     public Charm() {
-        ModuleHandler.registerForgeMod(MOD_ID, Arrays.asList(
+        ModuleHandler.INSTANCE.registerForgeMod(MOD_ID, Arrays.asList(
             Acquisition.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
@@ -99,6 +99,6 @@ public class Charm {
         CharmSounds.init();
         CharmTags.init();
 
-        ModuleHandler.init();
+        ModuleHandler.INSTANCE.init();
     }
 }

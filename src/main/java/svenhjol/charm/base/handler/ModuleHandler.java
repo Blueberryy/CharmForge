@@ -27,26 +27,29 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class ModuleHandler {
-    public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
-    public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
     private static final Map<String, ModContainer> FORGE_MOD_CONTAINERS = new ConcurrentHashMap<>();
+    private static final Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     private static List<Class<? extends CharmModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
+
+    public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
 
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
     public static final IEventBus FORGE_EVENT_BUS = MinecraftForge.EVENT_BUS;
 
-    private static boolean hasInit = false;
+    public static ModuleHandler INSTANCE = new ModuleHandler();
 
-    public static void init() {
+    private boolean hasInit = false;
+
+    public void init() {
         if (hasInit)
             return;
 
         // register forge events
         MOD_EVENT_BUS.register(RegistryHandler.class);
-        MOD_EVENT_BUS.addListener(ModuleHandler::onConstructMod);
-        MOD_EVENT_BUS.addListener(ModuleHandler::onCommonSetup);
-        MOD_EVENT_BUS.addListener(ModuleHandler::onModConfig);
-        FORGE_EVENT_BUS.addListener(ModuleHandler::onServerStarting);
+        MOD_EVENT_BUS.addListener(this::onConstructMod);
+        MOD_EVENT_BUS.addListener(this::onCommonSetup);
+        MOD_EVENT_BUS.addListener(this::onModConfig);
+        FORGE_EVENT_BUS.addListener(this::onServerStarting);
 
         // both-side initializers
         BiomeHandler.init();
@@ -55,12 +58,12 @@ public class ModuleHandler {
         hasInit = true;
     }
 
-    public static void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {
+    public void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {
         FORGE_MOD_CONTAINERS.put(modId, ModLoadingContext.get().getActiveContainer());
         AVAILABLE_MODULES.put(modId, modules);
     }
 
-    public static void onConstructMod(FMLConstructModEvent event) {
+    public void onConstructMod(FMLConstructModEvent event) {
         // create all charm-based modules
         instantiateModules();
 
@@ -71,13 +74,13 @@ public class ModuleHandler {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
-    public static void onModConfig(ModConfig.ModConfigEvent event) {
+    public void onModConfig(ModConfig.ModConfigEvent event) {
         ConfigHandler.refreshAllConfig();
 
         eachEnabledModule(module -> module.enabled = module.depends());
     }
 
-    public static void onCommonSetup(FMLCommonSetupEvent event) {
+    public void onCommonSetup(FMLCommonSetupEvent event) {
         ENABLED_MODULES = new ArrayList<>();
 
         eachEnabledModule(module -> {
@@ -90,7 +93,7 @@ public class ModuleHandler {
         });
     }
 
-    public static void onServerStarting(FMLServerStartingEvent event) {
+    public void onServerStarting(FMLServerStartingEvent event) {
         MinecraftServer server = event.getServer();
         DecorationHandler.init(); // load late so that tags are populated at this point
         eachEnabledModule(m -> m.loadWorld(server));
