@@ -25,6 +25,7 @@ public class Charm {
             AnvilImprovements.class,
             ArmorInvisibility.class,
             AutomaticRecipeUnlock.class,
+            AutoRestock.class,
             BatBuckets.class,
             BeaconsHealMobs.class,
             Beekeepers.class,
