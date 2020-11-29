@@ -22,7 +22,7 @@ import java.util.Map;
 public class ConfigHandler {
     private final static List<Runnable> refreshConfig = new ArrayList<>();
 
-    public void createConfig(Map<String, CharmModule> moduleMap) {
+    public void createConfig(String modId, Map<String, CharmModule> moduleMap) {
         List<CharmModule> modules = new ArrayList<>(moduleMap.values());
 
         // build config tree for modules
@@ -30,7 +30,9 @@ public class ConfigHandler {
 
         // register this mod's config
         ModContainer container = ModLoadingContext.get().getActiveContainer();
-        ModConfig config = new ModConfig(ModConfig.Type.COMMON, spec, container);
+
+        String filename = modId.equals(Charm.MOD_ID) ? "charm-common.toml" : "charm-" + modId + "-common.toml";
+        ModConfig config = new ModConfig(ModConfig.Type.COMMON, spec, container, filename);
         container.addConfig(config);
 
         // config is loaded too late to do vanilla overrides, parse it here

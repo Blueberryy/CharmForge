@@ -164,7 +164,7 @@ public class ModuleHandler {
             });
 
             // config for this module set
-            configHandler.createConfig(loaded);
+            configHandler.createConfig(mod, loaded);
 
             // add loaded modules
             loaded.forEach((moduleName, module) ->
