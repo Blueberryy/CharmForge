@@ -38,11 +38,11 @@ public class MobHelper {
     }
 
     public static boolean spawnMobNearPos(ServerWorld world, BlockPos pos, MobEntity mob, BiConsumer<MobEntity, BlockPos> onSpawn) {
-        int range = 4;
+        int range = 6;
         int tries = 8;
         Random random = world.rand;
         List<BlockPos> validPositions = new ArrayList<>();
-        int surface = world.getHeight(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ());
+        int surface = world.getHeight(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ());
 
         for (int y = surface; y < surface + range; y++) {
             for (int i = range; i > 1; --i) {
