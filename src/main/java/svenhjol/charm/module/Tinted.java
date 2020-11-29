@@ -99,7 +99,7 @@ public class Tinted extends CharmModule {
                     .acceptFunction(() -> new TintedEnchantmentLootFunction(new ILootCondition[0])))
                 .build();
 
-            event.getTable().addPool(pool);
+            event.getLootTableManager().getLootTableFromLocation(id).addPool(pool);
         }
     }
 }
