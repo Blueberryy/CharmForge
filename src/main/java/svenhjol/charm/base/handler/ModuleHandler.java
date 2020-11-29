@@ -55,8 +55,9 @@ public class ModuleHandler {
         hasInit = true;
     }
 
-    public static void registerForgeMod(String modId) {
+    public static void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {
         FORGE_MOD_CONTAINERS.put(modId, ModLoadingContext.get().getActiveContainer());
+        AVAILABLE_MODULES.put(modId, modules);
     }
 
     public static void onConstructMod(FMLConstructModEvent event) {

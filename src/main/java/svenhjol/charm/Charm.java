@@ -10,7 +10,6 @@ import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.PacketHandler;
 import svenhjol.charm.module.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 @Mod(Charm.MOD_ID)
@@ -20,7 +19,7 @@ public class Charm {
     public static PacketHandler PACKET_HANDLER = new PacketHandler();
 
     public Charm() {
-        ModuleHandler.AVAILABLE_MODULES.put(Charm.MOD_ID, new ArrayList<>(Arrays.asList(
+        ModuleHandler.registerForgeMod(MOD_ID, Arrays.asList(
             Acquisition.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
@@ -93,7 +92,7 @@ public class Charm {
             WanderingTraderImprovements.class,
             WitchesDropLuck.class,
             Woodcutters.class
-        )));
+        ));
 
         CharmMessages.init();
         CharmStructures.init();
