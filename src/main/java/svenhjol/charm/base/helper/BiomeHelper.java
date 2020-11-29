@@ -1,14 +1,11 @@
 package svenhjol.charm.base.helper;
 
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeManager;
-import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.server.ServerWorld;
 
 import java.util.ArrayList;
@@ -48,26 +45,5 @@ public class BiomeHelper {
 
     public static BlockPos locateBiome(Biome biome, ServerWorld world, BlockPos pos) {
         return world.func_241116_a_(biome, pos, 6400, 8);
-    }
-
-    public static void addStructureFeatureToBiomes(List<RegistryKey<Biome>> biomeKeys, StructureFeature<?, ?> configuredFeature) {
-        biomeKeys.forEach(biomeKey -> BiomeHelper.addStructureFeature(biomeKey, configuredFeature));
-    }
-
-    public static void addStructureFeature(RegistryKey<Biome> biome, StructureFeature<?, ?> structureFeature) {
-        // TODO: Forge Biome API
-//        BiomeGenerationSettings settings = biome.getGenerationSettings();
-//        checkGenerationSettingsMutable(settings);
-//        ((BiomeGenerationSettingsAccessor)settings).getStructures().add(() -> structureFeature);
-    }
-
-    public static void addSpawnEntry(RegistryKey<Biome> biome, EntityClassification group, EntityType<?> entity, int weight, int minGroupSize, int maxGroupSize) {
-        // TODO: Forge Biome API
-//        MobSpawnInfo settings = biome.getMobSpawnInfo();
-//        checkSpawnSettingsMutable(settings);
-//
-//        Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners = ((MobSpawnInfoAccessor) settings).getSpawners();
-//        spawners.get(group).add(new MobSpawnInfo.Spawners(entity, weight, minGroupSize, maxGroupSize));
-//        ((MobSpawnInfoAccessor)settings).setSpawners(spawners);
     }
 }

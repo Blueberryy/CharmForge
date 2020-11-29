@@ -6,15 +6,14 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
-import svenhjol.charm.base.helper.BiomeHelper;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Module(mod = Charm.MOD_ID, client = CoralSquidsClient.class, description = "Coral Squids spawn near coral in warm oceans.")
+@Module(mod = Charm.MOD_ID, client = CoralSquidsClient.class, hasSubscriptions = true, description = "Coral Squids spawn near coral in warm oceans.")
 public class CoralSquids extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "coral_squid");
     public static ResourceLocation EGG_ID = new ResourceLocation(Charm.MOD_ID, "coral_squid_spawn_egg");
@@ -40,6 +39,8 @@ public class CoralSquids extends CharmModule {
 
     @Config(name = "Spawn weight", description = "Chance of coral squids spawning in warm ocean biomes.")
     public static int spawnWeight = 50;
+
+    private List<ResourceLocation> biomes = new ArrayList<>();
 
     @Override
     public void register() {
@@ -57,10 +58,26 @@ public class CoralSquids extends CharmModule {
     public void init() {
         MobHelper.setEntityAttributes(CORAL_SQUID, CoralSquidEntity.createSquidAttributes().create());
 
-        List<RegistryKey<Biome>> biomes = new ArrayList<>(Arrays.asList(Biomes.WARM_OCEAN, Biomes.DEEP_WARM_OCEAN));
+        biomes = new ArrayList<>(Arrays.asList(
+            new ResourceLocation("minecraft:warm_ocean"),
+            new ResourceLocation("minecraft:deep_warn_ocean")
+        ));
+    }
 
-        biomes.forEach(biomeKey -> {
-            BiomeHelper.addSpawnEntry(biomeKey, EntityClassification.WATER_AMBIENT, CORAL_SQUID, spawnWeight, 5, 6);
-        });
+    @SubscribeEvent
+    public void on(BiomeLoadingEvent event) {
+        if (!event.isCanceled())
+            tryAddEntityToSpawn(event);
+    }
+
+    private void tryAddEntityToSpawn(BiomeLoadingEvent event) {
+        if (event.getName() == null)
+            return;
+
+        if (!biomes.contains(event.getName()))
+            return;
+
+        List<MobSpawnInfo.Spawners> spawner = event.getSpawns().getSpawner(EntityClassification.WATER_AMBIENT);
+        spawner.add(new MobSpawnInfo.Spawners(CORAL_SQUID, spawnWeight, 5, 6));
     }
 }

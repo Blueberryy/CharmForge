@@ -6,17 +6,15 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
-import svenhjol.charm.base.helper.BiomeHelper;
 import svenhjol.charm.base.helper.MobHelper;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.MoobloomsClient;
@@ -31,6 +29,8 @@ import java.util.List;
 public class Mooblooms extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "moobloom");
     public static EntityType<MoobloomEntity> MOOBLOOM;
+
+    private List<ResourceLocation> biomes;
 
     @Override
     public void register() {
@@ -47,11 +47,7 @@ public class Mooblooms extends CharmModule {
         MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.func_234188_eI_().create());
 
         // add the mooblooms to flower forest biomes
-        List<RegistryKey<Biome>> biomes = new ArrayList<>(Collections.singletonList(Biomes.FLOWER_FOREST));
-
-        biomes.forEach(biomeKey -> {
-            BiomeHelper.addSpawnEntry(biomeKey, EntityClassification.CREATURE, MOOBLOOM, 30, 2, 4);
-        });
+        biomes = new ArrayList<>(Collections.singletonList(new ResourceLocation("minecraft:flower_forest")));
     }
 
     @SubscribeEvent
@@ -60,11 +56,28 @@ public class Mooblooms extends CharmModule {
             tryAddGoalsToBee(event.getEntity());
     }
 
+    @SubscribeEvent
+    public void on(BiomeLoadingEvent event) {
+        if (!event.isCanceled())
+            tryAddEntityToSpawn(event);
+    }
+
     private void tryAddGoalsToBee(Entity entity) {
         if (entity instanceof BeeEntity) {
             BeeEntity bee = (BeeEntity)entity;
             if (MobHelper.getGoals(bee).stream().noneMatch(g -> g.getGoal() instanceof BeeMoveToMoobloomGoal))
                 MobHelper.getGoalSelector(bee).addGoal(4, new BeeMoveToMoobloomGoal(bee));
         }
+    }
+
+    private void tryAddEntityToSpawn(BiomeLoadingEvent event) {
+        if (event.getName() == null)
+            return;
+
+        if (!biomes.contains(event.getName()))
+            return;
+
+        List<MobSpawnInfo.Spawners> spawner = event.getSpawns().getSpawner(EntityClassification.CREATURE);
+        spawner.add(new MobSpawnInfo.Spawners(MOOBLOOM, 30, 5, 6));
     }
 }
