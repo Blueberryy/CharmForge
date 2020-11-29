@@ -4,10 +4,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.GrindstoneScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.module.ExtractEnchantments;
@@ -41,7 +41,7 @@ public class ExtractEnchantmentsClient extends CharmClientModule {
             int cost = ExtractEnchantments.getCost(enchanted.get());
 
             if (!ExtractEnchantments.hasEnoughXp(player, cost)) {
-                String string = new TranslationTextComponent("container.repair.cost", cost).toString();
+                String string = I18n.format("container.repair.cost", cost);
                 int color = 16736352;
                 int k = width - 8 - textRenderer.getStringWidth(string) - 2;
                 AbstractGui.fill(matrices, k - 2, 67, width - 8, 79, 1325400064);

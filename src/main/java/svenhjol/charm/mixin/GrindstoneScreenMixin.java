@@ -18,7 +18,7 @@ public abstract class GrindstoneScreenMixin<T extends GrindstoneContainer> exten
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrices, int mouseX, int mouseY) {
         GrindstoneScreen screen = (GrindstoneScreen)(Object)this;
-        ExtractEnchantmentsClient.updateGrindstoneCost(screen, this.playerInventory.player, matrices, this.font, this.width);
+        ExtractEnchantmentsClient.updateGrindstoneCost(screen, this.playerInventory.player, matrices, this.font, this.xSize);
         super.drawGuiContainerForegroundLayer(matrices, mouseX, mouseY);
     }
 }
