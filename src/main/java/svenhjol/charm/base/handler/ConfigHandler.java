@@ -2,7 +2,6 @@ package svenhjol.charm.base.handler;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import svenhjol.charm.Charm;
@@ -22,18 +21,14 @@ import java.util.Map;
 public class ConfigHandler {
     private final static List<Runnable> refreshConfig = new ArrayList<>();
 
-    public void createConfig(String modId, Map<String, CharmModule> moduleMap) {
+    public void createConfig(ModContainer forgeModContainer, Map<String, CharmModule> moduleMap) {
         List<CharmModule> modules = new ArrayList<>(moduleMap.values());
 
         // build config tree for modules
         ForgeConfigSpec spec = new ForgeConfigSpec.Builder().configure((b -> buildConfig(b, new ArrayList<>(modules)))).getRight();
 
-        // register this mod's config
-        ModContainer container = ModLoadingContext.get().getActiveContainer();
-
-        String filename = modId.equals(Charm.MOD_ID) ? "charm-common.toml" : "charm-" + modId + "-common.toml";
-        ModConfig config = new ModConfig(ModConfig.Type.COMMON, spec, container, filename);
-        container.addConfig(config);
+        ModConfig config = new ModConfig(ModConfig.Type.COMMON, spec, forgeModContainer);
+        forgeModContainer.addConfig(config);
 
         // config is loaded too late to do vanilla overrides, parse it here
         this.earlyConfigHack(config, modules);

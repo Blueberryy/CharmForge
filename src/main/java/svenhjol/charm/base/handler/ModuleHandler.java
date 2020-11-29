@@ -6,6 +6,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -27,6 +29,7 @@ import java.util.function.Consumer;
 public class ModuleHandler {
     public static Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
+    private static final Map<String, ModContainer> FORGE_MOD_CONTAINERS = new ConcurrentHashMap<>();
     private static List<Class<? extends CharmModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
 
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
@@ -50,6 +53,10 @@ public class ModuleHandler {
         CraftingHelper.register(new ModuleEnabledCondition.Serializer());
 
         hasInit = true;
+    }
+
+    public static void registerForgeMod(String modId) {
+        FORGE_MOD_CONTAINERS.put(modId, ModLoadingContext.get().getActiveContainer());
     }
 
     public static void onConstructMod(FMLConstructModEvent event) {
@@ -131,6 +138,10 @@ public class ModuleHandler {
         ConfigHandler configHandler = new ConfigHandler();
 
         AVAILABLE_MODULES.forEach((mod, modules) -> {
+            if (!FORGE_MOD_CONTAINERS.containsKey(mod))
+                throw new RuntimeException("You must register a charm-based forge mod using ModuleHandler.registerForgeMod.");
+
+            ModContainer modContainer = FORGE_MOD_CONTAINERS.get(mod);
             Map<String, CharmModule> loaded = new TreeMap<>();
 
             modules.forEach(clazz -> {
@@ -164,7 +175,7 @@ public class ModuleHandler {
             });
 
             // config for this module set
-            configHandler.createConfig(mod, loaded);
+            configHandler.createConfig(modContainer, loaded);
 
             // add loaded modules
             loaded.forEach((moduleName, module) ->
