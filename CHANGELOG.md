@@ -10,13 +10,14 @@
 * Fix refined obsidian walls not connecting
 * Fix glowballs converting blocks to water source blocks
 * Reduce spawn weight and group size of Coral Squids
+* After much deliberation, we decided Coral Squids should no longer spawn uncontrollably and crash servers
 * Enchantments are now extracted by the grindstone (Credit to [martenschaefer](https://github.com/mschae23/grind-enchantments))
 * Added Mooblooms
 * Added Snow storms
 * Added Raid horns
 * Added Acquisition enchantment
 * Added Tinted enchantment
-* REI woodcutter and kiln integration
+* JEI woodcutter and kiln integration
 
 ## 2.1.1
 * Fix Coral Squid hitboxes. #351, #361
