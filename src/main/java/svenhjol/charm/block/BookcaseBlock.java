@@ -103,6 +103,11 @@ public class BookcaseBlock extends CharmBlock {
         return state.get(SLOTS);
     }
 
+    @Override
+    public boolean hasTileEntity(BlockState state) {
+        return true;
+    }
+
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
