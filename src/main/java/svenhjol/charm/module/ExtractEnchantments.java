@@ -65,7 +65,7 @@ public class ExtractEnchantments extends CharmModule {
              * @return True if can take from output slot
              */
             public boolean canTakeStack(PlayerEntity player) {
-                if (!isEnabled())
+                if (!ExtractEnchantments.isEnabled())
                     return true;
 
                 List<ItemStack> stacks = getStacksFromInventory(inventory);
