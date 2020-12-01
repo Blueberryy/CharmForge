@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.3-hotfix1
+## 2.1.3-forge-hotfix1
 * Removed loot registration for Tinted enchantment
 
 ## 2.1.3
