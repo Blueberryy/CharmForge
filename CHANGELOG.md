@@ -1,9 +1,12 @@
 # Changelog
 
+## 2.1.3-hotfix1
+* Removed loot registration for Tinted enchantment
+
 ## 2.1.3
 * Added AutoRestock (F43nd1r)
 * Fix Bookcases not opening #382 (F43nd1r)
-* Fix revenge of extract enchantments crash
+* Fix revenge of extract enchantments crash #388
 
 ## 2.1.2
 * Fix keybinds opening inventories when typing in chat or other guis. #368
