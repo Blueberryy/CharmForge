@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.3-forge-hotfix2
+* Fix mod init load event
+* Fix overlapping craft and chest buttons. #387
+
 ## 2.1.3-forge-hotfix1
 * Fix mod init race condition
 * Fix loot table regression
