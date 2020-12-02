@@ -23,24 +23,19 @@ public class ClientHandler {
     private static boolean hasInit = false;
     private static List<Class<? extends CharmClientModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
 
-    public static void init() {
-        if (hasInit)
-            return;
-
+    public ClientHandler() {
         // register forge events
-        MOD_EVENT_BUS.addListener(ClientHandler::onClientSetup);
-        MOD_EVENT_BUS.addListener(ClientHandler::onTextureStitch);
+        MOD_EVENT_BUS.addListener(this::onClientSetup);
+        MOD_EVENT_BUS.addListener(this::onTextureStitch);
 
         // create all charm-based client modules
         instantiateModules();
 
         // early init, always run, use for registering things
         eachModule(CharmClientModule::register);
-
-        hasInit = true;
     }
 
-    private static void instantiateModules() {
+    private void instantiateModules() {
         ModuleHandler.LOADED_MODULES.forEach((modId, module) -> {
             CharmClientModule client;
 
@@ -65,7 +60,7 @@ public class ClientHandler {
         return LOADED_MODULES.getOrDefault(StringHelper.snakeToUpperCamel(moduleName), null);
     }
 
-    public static void onClientSetup(FMLClientSetupEvent event) {
+    public void onClientSetup(FMLClientSetupEvent event) {
         // iterate all client modules, subscribe to forge bus if annotated with hasSubscriptions
         eachEnabledModule(clientModule -> {
             if (clientModule.getModule().hasSubscriptions)
@@ -79,7 +74,7 @@ public class ClientHandler {
         ColoredGlintHandler.init(); // load late so that buffer builders are populated
     }
 
-    public static void onTextureStitch(TextureStitchEvent event) {
+    public void onTextureStitch(TextureStitchEvent event) {
         eachEnabledModule(module -> module.textureStitch(event));
     }
 

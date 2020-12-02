@@ -21,9 +21,9 @@ public class InventoryButtonClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
-        portableCraftingClient = (PortableCraftingClient)ClientHandler.getModule("charm:portable_crafting");
-        portableEnderChestClient = (PortableEnderChestClient)ClientHandler.getModule("charm:portable_ender_chest");
+    public void init() {
+        portableCraftingClient = (PortableCraftingClient) ClientHandler.getModule("portable_crafting");
+        portableEnderChestClient = (PortableEnderChestClient)ClientHandler.getModule("portable_ender_chest");
     }
 
     @SubscribeEvent

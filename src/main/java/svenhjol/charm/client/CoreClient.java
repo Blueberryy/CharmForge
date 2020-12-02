@@ -16,4 +16,9 @@ public class CoreClient extends CharmClientModule {
     public void register() {
         ModuleHandler.FORGE_EVENT_BUS.register(inventoryButtonClient);
     }
+
+    @Override
+    public void init() {
+        this.inventoryButtonClient.init();
+    }
 }

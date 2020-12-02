@@ -7,6 +7,6 @@ public class CharmClient {
     public static LogHandler LOG = new LogHandler("CharmClient");
 
     public CharmClient() {
-        ClientHandler.init();
+        new ClientHandler();
     }
 }
