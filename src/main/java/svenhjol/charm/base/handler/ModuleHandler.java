@@ -38,12 +38,7 @@ public class ModuleHandler {
 
     public static ModuleHandler INSTANCE = new ModuleHandler();
 
-    private boolean hasInit = false;
-
-    public void init() {
-        if (hasInit)
-            return;
-
+    private ModuleHandler() {
         // register forge events
         MOD_EVENT_BUS.register(RegistryHandler.class);
         MOD_EVENT_BUS.addListener(this::onConstructMod);
@@ -54,8 +49,6 @@ public class ModuleHandler {
         // both-side initializers
         BiomeHandler.init();
         CraftingHelper.register(new ModuleEnabledCondition.Serializer());
-
-        hasInit = true;
     }
 
     public void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {

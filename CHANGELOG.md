@@ -1,7 +1,8 @@
 # Changelog
 
 ## 2.1.3-forge-hotfix1
-* Removed loot registration for Tinted enchantment
+* Fix mod init race condition
+* Fix loot table regression
 
 ## 2.1.3
 * Added AutoRestock (F43nd1r)

@@ -98,7 +98,5 @@ public class Charm {
         CharmStructures.init();
         CharmSounds.init();
         CharmTags.init();
-
-        ModuleHandler.INSTANCE.init();
     }
 }
