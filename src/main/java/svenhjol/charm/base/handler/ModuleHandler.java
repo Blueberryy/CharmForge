@@ -10,7 +10,6 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.Charm;
@@ -30,6 +29,7 @@ public class ModuleHandler {
     private static final Map<String, ModContainer> FORGE_MOD_CONTAINERS = new ConcurrentHashMap<>();
     private static final Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     private static List<Class<? extends CharmModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
+    private static ConfigHandler configHandler;
 
     public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
 
@@ -41,30 +41,28 @@ public class ModuleHandler {
     private ModuleHandler() {
         // register forge events
         MOD_EVENT_BUS.register(RegistryHandler.class);
-        MOD_EVENT_BUS.addListener(this::onConstructMod);
         MOD_EVENT_BUS.addListener(this::onCommonSetup);
         MOD_EVENT_BUS.addListener(this::onModConfig);
         FORGE_EVENT_BUS.addListener(this::onServerStarting);
 
         // both-side initializers
+        configHandler = new ConfigHandler();
         BiomeHandler.init();
         CraftingHelper.register(new ModuleEnabledCondition.Serializer());
+
+        // run client things on the client thread
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
     public void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {
         FORGE_MOD_CONTAINERS.put(modId, ModLoadingContext.get().getActiveContainer());
         AVAILABLE_MODULES.put(modId, modules);
-    }
 
-    public void onConstructMod(FMLConstructModEvent event) {
         // create all charm-based modules
-        instantiateModules();
+        instantiateModules(modId);
 
         // early init, always run, use for registering things
         eachModule(CharmModule::register);
-
-        // run client things on the client thread
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
     public void onModConfig(ModConfig.ModConfigEvent event) {
@@ -131,54 +129,52 @@ public class ModuleHandler {
         }
     }
 
-    private static void instantiateModules() {
-        ConfigHandler configHandler = new ConfigHandler();
+    private static void instantiateModules(String modId) {
+        if (!AVAILABLE_MODULES.containsKey(modId))
+            throw new RuntimeException("Could not fetch modules for " + modId + ", giving up");
 
-        AVAILABLE_MODULES.forEach((mod, modules) -> {
-            if (!FORGE_MOD_CONTAINERS.containsKey(mod))
-                throw new RuntimeException("You must register a charm-based forge mod using ModuleHandler.registerForgeMod.");
+        if (!FORGE_MOD_CONTAINERS.containsKey(modId))
+            throw new RuntimeException("You must register a charm-based forge mod using ModuleHandler.registerForgeMod.");
 
-            ModContainer modContainer = FORGE_MOD_CONTAINERS.get(mod);
-            Map<String, CharmModule> loaded = new TreeMap<>();
+        ModContainer modContainer = FORGE_MOD_CONTAINERS.get(modId);
+        Map<String, CharmModule> loaded = new TreeMap<>();
 
-            modules.forEach(clazz -> {
-                try {
-                    CharmModule module = clazz.getDeclaredConstructor().newInstance();
-                    if (clazz.isAnnotationPresent(Module.class)) {
-                        Module annotation = clazz.getAnnotation(Module.class);
+        AVAILABLE_MODULES.get(modId).forEach(clazz -> {
+            try {
+                CharmModule module = clazz.getDeclaredConstructor().newInstance();
+                if (clazz.isAnnotationPresent(Module.class)) {
+                    Module annotation = clazz.getAnnotation(Module.class);
 
-                        // mod is now a required string
-                        if (annotation.mod().isEmpty())
-                            throw new Exception("mod name must be defined");
+                    // mod is now a required string
+                    if (annotation.mod().isEmpty())
+                        throw new Exception("mod name must be defined");
 
-                        module.mod = annotation.mod();
-                        module.alwaysEnabled = annotation.alwaysEnabled();
-                        module.enabledByDefault = annotation.enabledByDefault();
-                        module.hasSubscriptions = annotation.hasSubscriptions();
-                        module.enabled = module.enabledByDefault;
-                        module.description = annotation.description();
-                        module.client = annotation.client();
+                    module.mod = annotation.mod();
+                    module.alwaysEnabled = annotation.alwaysEnabled();
+                    module.enabledByDefault = annotation.enabledByDefault();
+                    module.hasSubscriptions = annotation.hasSubscriptions();
+                    module.enabled = module.enabledByDefault;
+                    module.description = annotation.description();
+                    module.client = annotation.client();
 
-                        String moduleName = module.getName();
-                        loaded.put(moduleName, module);
+                    String moduleName = module.getName();
+                    loaded.put(moduleName, module);
 
-                    } else {
-                        throw new RuntimeException("No module annotation for class " + clazz.toString());
-                    }
-
-                } catch (Exception e) {
-                    throw new RuntimeException("Could not initialize module class: " + clazz.toString(), e);
+                } else {
+                    throw new RuntimeException("No module annotation for class " + clazz.toString());
                 }
-            });
 
-            // config for this module set
-            configHandler.createConfig(modContainer, loaded);
-
-            // add loaded modules
-            loaded.forEach((moduleName, module) ->
-                LOADED_MODULES.put(moduleName, module));
-
+            } catch (Exception e) {
+                throw new RuntimeException("Could not initialize module class: " + clazz.toString(), e);
+            }
         });
+
+        // config for this module set
+        configHandler.createConfig(modContainer, loaded);
+
+        // add loaded modules
+        loaded.forEach((moduleName, module) ->
+            LOADED_MODULES.put(moduleName, module));
     }
 
     private static void eachModule(Consumer<CharmModule> consumer) {
