@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.module.Bookcases;
 import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import javax.annotation.Nullable;
@@ -85,7 +86,8 @@ public class BookcaseBlock extends CharmBlock {
 
     @Override
     public float getEnchantPowerBonus(BlockState state, IWorldReader world, BlockPos pos) {
-        return state.get(SLOTS) > 0 ? 1 : 0;
+        BookcaseBlock block = (BookcaseBlock)state.getBlock();
+        return Bookcases.BOOKCASE_BLOCKS.containsValue(block) ? 1 : 0;
     }
 
     @Override

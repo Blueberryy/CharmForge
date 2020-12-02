@@ -8,6 +8,7 @@ import net.minecraft.world.IWorldReader;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.block.CharmBlock;
 import svenhjol.charm.base.enums.IVariantMaterial;
+import svenhjol.charm.module.VariantBookshelves;
 
 public class VariantBookshelfBlock extends CharmBlock {
     public VariantBookshelfBlock(CharmModule module, IVariantMaterial type) {
@@ -26,6 +27,7 @@ public class VariantBookshelfBlock extends CharmBlock {
 
     @Override
     public float getEnchantPowerBonus(BlockState state, IWorldReader world, BlockPos pos) {
-        return 1;
+        VariantBookshelfBlock block = (VariantBookshelfBlock)state.getBlock();
+        return VariantBookshelves.BOOKSHELF_BLOCKS.containsValue(block) ? 1 : 0;
     }
 }
