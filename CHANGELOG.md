@@ -1,7 +1,7 @@
 # Changelog
 
-## 2.1.3-forge-hotfix2
-* Fix mod init load event
+## 2.1.4
+* Fix mod init load event #392, [Charmonium#8](https://github.com/svenhjol/Charmonium/issues/8)
 * Fix overlapping craft and chest buttons. #387
 
 ## 2.1.3-forge-hotfix1
