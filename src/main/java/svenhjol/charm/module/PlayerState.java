@@ -24,8 +24,6 @@ import java.util.function.BiConsumer;
 public class PlayerState extends CharmModule {
     public static List<BiConsumer<ServerPlayerEntity, CompoundNBT>> listeners = new ArrayList<>();
 
-    public static PlayerStateClient client;
-
     @Config(name = "Server state update interval", description = "Interval (in ticks) on which additional world state will be synchronised to the client.")
     public static int serverStateInverval = 120;
 
