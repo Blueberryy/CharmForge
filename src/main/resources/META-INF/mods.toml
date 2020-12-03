@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[34,)"
+loaderVersion="[35,)"
 issueTrackerURL="http://github.com/svenhjol/Charm/issues"
 displayURL="https://svenhjol.github.io/Charm/"
 license="All rights reserved" # Fucking hell, Forge. Way to break all the deps.
