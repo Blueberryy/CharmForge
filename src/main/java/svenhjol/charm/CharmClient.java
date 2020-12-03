@@ -7,6 +7,6 @@ public class CharmClient {
     public static LogHandler LOG = new LogHandler("CharmClient");
 
     public CharmClient() {
-        new ClientHandler();
+        ClientHandler.INSTANCE.registerForgeMod(Charm.MOD_ID);
     }
 }

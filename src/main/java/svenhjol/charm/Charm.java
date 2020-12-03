@@ -1,5 +1,7 @@
 package svenhjol.charm;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import svenhjol.charm.base.CharmMessages;
 import svenhjol.charm.base.CharmSounds;
@@ -98,5 +100,7 @@ public class Charm {
         CharmStructures.init();
         CharmSounds.init();
         CharmTags.init();
+
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 }

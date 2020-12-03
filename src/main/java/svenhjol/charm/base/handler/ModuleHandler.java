@@ -1,11 +1,9 @@
 package svenhjol.charm.base.handler;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.config.ModConfig;
@@ -13,7 +11,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.Charm;
-import svenhjol.charm.CharmClient;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StringHelper;
 import svenhjol.charm.base.iface.Module;
@@ -27,11 +24,11 @@ import java.util.function.Consumer;
 
 public class ModuleHandler {
     private static final Map<String, ModContainer> FORGE_MOD_CONTAINERS = new ConcurrentHashMap<>();
-    private static final Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
     private static List<Class<? extends CharmModule>> ENABLED_MODULES = new ArrayList<>(); // this is a cache of enabled classes
     private static ConfigHandler configHandler;
 
     public static Map<String, CharmModule> LOADED_MODULES = new ConcurrentHashMap<>();
+    public static final Map<String, List<Class<? extends CharmModule>>> AVAILABLE_MODULES = new HashMap<>();
 
     public static final IEventBus MOD_EVENT_BUS = FMLJavaModLoadingContext.get().getModEventBus();
     public static final IEventBus FORGE_EVENT_BUS = MinecraftForge.EVENT_BUS;
@@ -49,9 +46,6 @@ public class ModuleHandler {
         configHandler = new ConfigHandler();
         BiomeHandler.init();
         CraftingHelper.register(new ModuleEnabledCondition.Serializer());
-
-        // run client things on the client thread
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> CharmClient::new);
     }
 
     public void registerForgeMod(String modId, List<Class<? extends CharmModule>> modules) {
@@ -60,9 +54,6 @@ public class ModuleHandler {
 
         // create all charm-based modules
         instantiateModules(modId);
-
-        // early init, always run, use for registering things
-        eachModule(CharmModule::register);
     }
 
     public void onModConfig(ModConfig.ModConfigEvent event) {
@@ -172,9 +163,12 @@ public class ModuleHandler {
         // config for this module set
         configHandler.createConfig(modContainer, loaded);
 
-        // add loaded modules
-        loaded.forEach((moduleName, module) ->
-            LOADED_MODULES.put(moduleName, module));
+        // add and run register method for all loaded modules
+        loaded.forEach((moduleName, module) -> {
+            LOADED_MODULES.put(moduleName, module);
+            Charm.LOG.info("Loaded module " + moduleName);
+            module.register();
+        });
     }
 
     private static void eachModule(Consumer<CharmModule> consumer) {
