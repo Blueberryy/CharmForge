@@ -48,7 +48,10 @@ public class ClientUpdatePlayerState implements ICharmMessage {
 
     public static class Handler {
         public static void handle(final ClientUpdatePlayerState msg, Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> PlayerStateClient.INSTANCE.clientCallback(msg.data));
+            ctx.get().enqueueWork(() -> {
+                if (PlayerStateClient.INSTANCE != null)
+                    PlayerStateClient.INSTANCE.clientCallback(msg.data);
+            });
             ctx.get().setPacketHandled(true);
         }
     }
