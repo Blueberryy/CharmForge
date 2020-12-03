@@ -3,6 +3,7 @@
 ## 2.1.4
 * Fix mod init load event #392, [Charmonium#8](https://github.com/svenhjol/Charmonium/issues/8)
 * Fix overlapping craft and chest buttons. #387
+* Fix inventory button flicker when display Quark's backpack ui (F43nd1r)
 
 ## 2.1.3-forge-hotfix1
 * Fix mod init race condition
