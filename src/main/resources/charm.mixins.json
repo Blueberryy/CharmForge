@@ -52,7 +52,6 @@
     "accessor.ShulkerBoxTileEntityAccessor",
     "accessor.SlotAccessor",
     "accessor.StructurePieceAccessor",
-    "accessor.TickableSoundAccessor",
     "accessor.VillagerEntityAccessor"
   ],
   "client": [
@@ -72,7 +71,8 @@
     "accessor.RenderTypeAccessor",
     "accessor.RenderTypeBuffersMixin",
     "accessor.SoundEngineAccessor",
-    "accessor.SoundHandlerAccessor"
+    "accessor.SoundHandlerAccessor",
+    "accessor.TickableSoundAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
