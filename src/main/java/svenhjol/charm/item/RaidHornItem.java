@@ -23,6 +23,7 @@ import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.base.item.CharmItem;
 import svenhjol.charm.mixin.accessor.PatrolSpawnerAccessor;
 import svenhjol.charm.mixin.accessor.ServerWorldAccessor;
+import svenhjol.charm.module.RaidHorns;
 
 import java.util.List;
 import java.util.Random;
@@ -41,7 +42,7 @@ public class RaidHornItem extends CharmItem {
         ItemStack horn = user.getHeldItem(hand);
 
         if (!world.isRemote) {
-            world.playSound(null, user.getPosition(), CharmSounds.RAID_HORN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+            world.playSound(null, user.getPosition(), CharmSounds.RAID_HORN, SoundCategory.PLAYERS, (float)RaidHorns.volume, 1.0F);
             user.setActiveHand(hand);
         }
 
@@ -71,6 +72,9 @@ public class RaidHornItem extends CharmItem {
             if (user instanceof PlayerEntity)
                 trySpawnPillagers(serverWorld, (PlayerEntity)user);
         }
+
+        if (user instanceof PlayerEntity)
+            ((PlayerEntity)user).getCooldownTracker().setCooldown(this, 100);
 
         stack.damageItem(1, user, e -> e.sendBreakAnimation(EquipmentSlotType.MAINHAND));
     }

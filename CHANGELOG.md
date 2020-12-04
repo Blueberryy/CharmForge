@@ -1,5 +1,16 @@
 # Changelog
 
++## 2.1.5
++* Fix missing spruce bookshelf recipe
++* Fix acquisition enchantment not dropping XP from harvested blocks
++* Fix grindstone not showing the XP cost when the player has enough XP
++* Fix crates showing tooltip when empty
++* Fix overworld music sometimes playing when entering the nether
++* Reduce spawn weights of lumberjack and beekeeper village pieces
++* Raid Horns volume reduced by 25% and is configurable
++* Raid Horns have cooldown after use
++* Default amount of levels required to extract a treasure enchantment has been decreased from 15 to 10
+
 ## 2.1.4
 * Fix mod init load event #392, [Charmonium#8](https://github.com/svenhjol/Charmonium/issues/8)
 * Fix overlapping craft and chest buttons. #387

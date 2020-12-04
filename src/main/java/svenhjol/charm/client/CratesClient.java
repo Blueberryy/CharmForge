@@ -15,9 +15,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
@@ -31,6 +33,7 @@ import svenhjol.charm.tileentity.CrateTileEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class CratesClient extends CharmClientModule {
     public CratesClient(CharmModule module) {
@@ -68,17 +71,22 @@ public class CratesClient extends CharmClientModule {
             }
             TileEntity tile = TileEntity.readTileEntity(null, tag);
 
-            if (tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
-                List<ITextComponent> toolTipCopy = new ArrayList<>(lines);
+            if (tile != null) {
+                LazyOptional<IItemHandler> itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
+                itemHandler.ifPresent(items -> {
+                    if(IntStream.range(0, items.getSlots()).mapToObj(items::getStackInSlot).allMatch(ItemStack::isEmpty))
+                        return;
+                    List<ITextComponent> toolTipCopy = new ArrayList<>(lines);
 
-                for (int i = 1; i < toolTipCopy.size(); i++) {
-                    final ITextComponent t = toolTipCopy.get(i);
-                    final String s = t.getString();
+                    for (int i = 1; i < toolTipCopy.size(); i++) {
+                        final ITextComponent t = toolTipCopy.get(i);
+                        final String s = t.getString();
 
-                    // shamelessly lifted from Quark
-                    if (!s.startsWith("\u00a7") || s.startsWith("\u00a7o"))
-                        lines.remove(t);
-                }
+                        // shamelessly lifted from Quark
+                        if (!s.startsWith("\u00a7") || s.startsWith("\u00a7o"))
+                            lines.remove(t);
+                    }
+                });
             }
         }
     }

@@ -41,6 +41,8 @@ public class Acquisition extends CharmModule {
         List<ItemStack> dropped = Block.getDrops(state, world, pos, blockEntity, player, held);
         dropped.forEach(drop -> PlayerHelper.addOrDropStack(player, drop));
 
+        state.spawnAdditionalDrops(world, pos, held);
+
         return true;
     }
 }

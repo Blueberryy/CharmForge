@@ -17,11 +17,13 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
+import svenhjol.charm.CharmClient;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.DimensionHelper;
@@ -40,6 +42,7 @@ public class MusicImprovementsClient extends CharmClientModule {
     private static ISound currentMusic;
     private static ResourceLocation currentDim = null;
     private static int timeUntilNextMusic = 100;
+    private static MusicCondition lastCondition;
     private static final List<MusicCondition> musicConditions = new ArrayList<>();
     public static boolean isEnabled;
 
@@ -78,7 +81,7 @@ public class MusicImprovementsClient extends CharmClientModule {
         musicConditions.add(new MusicCondition(
             SoundEvents.MUSIC_CREATIVE, 1200, 3600, mc -> mc.player != null
                 && (!mc.player.isCreative() || !mc.player.isSpectator())
-                && DimensionHelper.isDimension(mc.player.world, new ResourceLocation("overworld"))
+                && DimensionHelper.isDimension(mc.player.world, World.OVERWORLD.getLocation())
                 && new Random().nextFloat() < 0.25F
         ));
     }
@@ -100,7 +103,7 @@ public class MusicImprovementsClient extends CharmClientModule {
             SoundHelper.getPlayingSounds().forEach((category, s) -> {
                 if (category == SoundCategory.RECORDS) {
                     musicToStop = sound;
-                    Charm.LOG.debug("Triggered background music while record playing");
+                    Charm.LOG.debug("[Music Improvements] Triggered background music while music disc playing");
                 }
             });
         }
@@ -121,25 +124,36 @@ public class MusicImprovementsClient extends CharmClientModule {
 
         if (mc.world == null) return false;
         MusicCondition ambient = getMusicCondition();
+        if (lastCondition == null)
+            lastCondition = getMusicCondition();
 
         if (currentMusic != null) {
-            if (!DimensionHelper.isDimension(mc.world, currentDim))
+            if (!DimensionHelper.isDimension(mc.world, currentDim)) {
+                CharmClient.LOG.debug("[Music Improvements] Stopping music as the dimension is no longer correct");
                 forceStop();
-
-            if (!mc.getSoundHandler().isPlaying(currentMusic)) {
                 currentMusic = null;
-                timeUntilNextMusic = Math.min(MathHelper.nextInt(new Random(), ambient.getMinDelay(), 3600), timeUntilNextMusic);
+            }
+
+            if (currentMusic != null && !mc.getSoundHandler().isPlaying(currentMusic)) {
+                CharmClient.LOG.debug("[Music Improvements] Music has finished, setting currentMusic to null");
+                timeUntilNextMusic = Math.min(MathHelper.nextInt(new Random(), lastCondition.getMinDelay(), 3600), timeUntilNextMusic);
+                currentMusic = null;
             }
         }
 
-        timeUntilNextMusic = Math.min(timeUntilNextMusic, ambient.getMaxDelay());
+        timeUntilNextMusic = Math.min(timeUntilNextMusic, lastCondition.getMaxDelay());
 
         if (currentMusic == null && timeUntilNextMusic-- <= 0) {
+            MusicCondition condition = getMusicCondition();
+            CharmClient.LOG.debug("[Music Improvements] Selected music condition with sound: " + condition.getSound().getName());
+            forceStop();
+
             currentDim = DimensionHelper.getDimension(mc.world);
-            currentMusic = SimpleSound.music(ambient.getSound());
+            currentMusic = SimpleSound.music(condition.getSound());
 
             if (currentMusic.getSound() != SoundHandler.MISSING_SOUND) {
                 mc.getSoundHandler().play(currentMusic);
+                lastCondition = condition;
                 timeUntilNextMusic = Integer.MAX_VALUE;
             }
         }
@@ -151,7 +165,8 @@ public class MusicImprovementsClient extends CharmClientModule {
         if (currentMusic != null) {
             Minecraft.getInstance().getSoundHandler().stop(currentMusic);
             currentMusic = null;
-            timeUntilNextMusic = 0;
+            timeUntilNextMusic = lastCondition != null ? new Random().nextInt(Math.min(lastCondition.getMinDelay(), 3600)) + 1200 : timeUntilNextMusic + 100;
+            CharmClient.LOG.debug("[Music Improvements] Stop was called, setting timeout to " + timeUntilNextMusic);
         }
         return true;
     }
