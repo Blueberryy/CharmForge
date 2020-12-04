@@ -71,22 +71,17 @@ public class CratesClient extends CharmClientModule {
             }
             TileEntity tile = TileEntity.readTileEntity(null, tag);
 
-            if (tile != null) {
-                LazyOptional<IItemHandler> itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY);
-                itemHandler.ifPresent(items -> {
-                    if(IntStream.range(0, items.getSlots()).mapToObj(items::getStackInSlot).allMatch(ItemStack::isEmpty))
-                        return;
-                    List<ITextComponent> toolTipCopy = new ArrayList<>(lines);
+            if (tile != null && tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).isPresent()) {
+                List<ITextComponent> toolTipCopy = new ArrayList<>(lines);
 
-                    for (int i = 1; i < toolTipCopy.size(); i++) {
-                        final ITextComponent t = toolTipCopy.get(i);
-                        final String s = t.getString();
+                for (int i = 1; i < toolTipCopy.size(); i++) {
+                    final ITextComponent t = toolTipCopy.get(i);
+                    final String s = t.getString();
 
-                        // shamelessly lifted from Quark
-                        if (!s.startsWith("\u00a7") || s.startsWith("\u00a7o"))
-                            lines.remove(t);
-                    }
-                });
+                    // shamelessly lifted from Quark
+                    if (!s.startsWith("\u00a7") || s.startsWith("\u00a7o"))
+                        lines.remove(t);
+                }
             }
         }
     }
@@ -113,6 +108,8 @@ public class CratesClient extends CharmClientModule {
 
         CrateTileEntity crate = (CrateTileEntity) tileEntity;
         NonNullList<ItemStack> items = crate.getItems();
+        if (items.stream().allMatch(ItemStack::isEmpty))
+            return false;
 
         int size = crate.getSizeInventory();
 
