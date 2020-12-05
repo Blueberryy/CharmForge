@@ -20,6 +20,11 @@ public class PlayerInteractionManagerMixin {
 
     @Shadow public ServerWorld world;
 
+    /**
+     * This differs from Fabric's implementation of the hook as Forge
+     * has additional code responsible for dropping XP directly
+     * after this mixin target.
+     */
     @Inject(
         method = "tryHarvestBlock",
         at = @At(
@@ -30,8 +35,7 @@ public class PlayerInteractionManagerMixin {
         cancellable = true
     )
     private void hookTryBreakBlockAfterBreak(BlockPos pos, CallbackInfoReturnable<Boolean> cir, BlockState state, int xp, TileEntity blockEntity) {
-        // this differs from fabric in that we just call the acquisition hook directly
-        if (Acquisition.tryOverrideBreakBlock(world, player, pos, state, blockEntity))
+        if (Acquisition.tryOverrideBreakBlock(world, player, pos, state, blockEntity, xp))
             cir.setReturnValue(false);
     }
 }
