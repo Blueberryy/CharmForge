@@ -26,7 +26,7 @@ public class Acquisition extends CharmModule {
         ACQUISITION = new AcquisitionEnchantment(this);
     }
 
-    public static boolean tryOverrideBreakBlock(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity blockEntity) {
+    public static boolean tryOverrideBreakBlock(ServerWorld world, PlayerEntity player, BlockPos pos, BlockState state, TileEntity blockEntity, int xp) {
         ItemStack held = player.getHeldItemMainhand();
 
         if (!EnchantmentsHelper.has(held, ACQUISITION))
@@ -40,6 +40,10 @@ public class Acquisition extends CharmModule {
 
         List<ItemStack> dropped = Block.getDrops(state, world, pos, blockEntity, player, held);
         dropped.forEach(drop -> PlayerHelper.addOrDropStack(player, drop));
+
+        // this is added by Forge and must be redeclared
+        if (xp > 0)
+            state.getBlock().dropXpOnBlockBreak(world, pos, xp);
 
         state.spawnAdditionalDrops(world, pos, held);
 
