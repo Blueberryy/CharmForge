@@ -44,7 +44,7 @@ public class ShulkerBoxTooltipsClient extends CharmClientModule {
         if (!stack.hasTag())
             return false;
 
-        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "TileEntityTag", true);
+        CompoundNBT tag = ItemNBTHelper.getCompound(stack, "BlockEntityTag", true);
 
         if (tag == null)
             return false;
