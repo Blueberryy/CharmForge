@@ -202,6 +202,13 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void bookshelf() {
             IVariantMaterial variantMaterial = DecorationHelper.getRandomVariantMaterial(fixedRandom);
 
+            String type = getValue("material", this.data, "");
+            if (!type.isEmpty()) {
+                IVariantMaterial material = DecorationHelper.getVariantMaterial(type);
+                if (material != null)
+                    variantMaterial = material;
+            }
+
             if (ModuleHandler.enabled("charm:bookcases") && withChance(BOOKCASE_CHANCE)) {
                 state = Bookcases.BOOKCASE_BLOCKS.get(variantMaterial).getDefaultState()
                     .with(BookcaseBlock.SLOTS, BookcaseTileEntity.SIZE); // make it have the "full" texture
@@ -242,6 +249,13 @@ public class DataBlockProcessor extends StructureProcessor {
             if (ModuleHandler.enabled("charm:variant_chests")) {
                 IVariantMaterial variantMaterial = DecorationHelper.getRandomVariantMaterial(random);
 
+                String type = getValue("material", this.data, "");
+                if (!type.isEmpty()) {
+                    IVariantMaterial material = DecorationHelper.getVariantMaterial(type);
+                    if (material != null)
+                        variantMaterial = material;
+                }
+
                 state = random.nextFloat() < 0.05F ?
                     VariantChests.TRAPPED_CHEST_BLOCKS.get(variantMaterial).getDefaultState() :
                     VariantChests.NORMAL_CHEST_BLOCKS.get(variantMaterial).getDefaultState();
@@ -257,7 +271,8 @@ public class DataBlockProcessor extends StructureProcessor {
             if (tileEntity == null)
                 return;
 
-            tileEntity.setLootTable(LootHelper.getLootTable(data, lootTable), random.nextLong());
+            String loot = getValue("loot", data, "");
+            tileEntity.setLootTable(LootHelper.getLootTable(loot, lootTable), random.nextLong());
             tag = new CompoundNBT();
             tileEntity.write(tag);
         }
@@ -421,7 +436,9 @@ public class DataBlockProcessor extends StructureProcessor {
                 return;
 
             ResourceLocation lootTable = DecorationHelper.getRandomLootTable(COMMON_LOOT_TABLES, random);
-            tileEntity.setLootTable(LootHelper.getLootTable(data, lootTable), random.nextLong());
+
+            String loot = getValue("loot", data, "");
+            tileEntity.setLootTable(LootHelper.getLootTable(loot, lootTable), random.nextLong());
             tag = new CompoundNBT();
             tileEntity.write(tag);
         }

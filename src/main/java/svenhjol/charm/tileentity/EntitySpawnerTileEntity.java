@@ -36,6 +36,8 @@ import svenhjol.charm.module.EntitySpawners;
 
 import java.util.*;
 
+import static svenhjol.charm.base.helper.DataBlockHelper.getValue;
+
 public class EntitySpawnerTileEntity extends TileEntity implements ITickableTileEntity {
     private final static String ENTITY = "entity";
     private final static String PERSIST = "persist";
@@ -189,7 +191,9 @@ public class EntitySpawnerTileEntity extends TileEntity implements ITickableTile
 
         if (type == EntityType.CHEST_MINECART) {
             minecart = new ChestMinecartEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-            ResourceLocation lootTable = LootHelper.getLootTable(this.meta, LootTables.CHESTS_ABANDONED_MINESHAFT);
+
+            String loot = getValue("loot", this.meta, "");
+            ResourceLocation lootTable = LootHelper.getLootTable(loot, LootTables.CHESTS_ABANDONED_MINESHAFT);
             ((ChestMinecartEntity)minecart).setLootTable(lootTable, world.rand.nextLong());
         } else if (type == EntityType.MINECART) {
             minecart = new MinecartEntity(world, pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);

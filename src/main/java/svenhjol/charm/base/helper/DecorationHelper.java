@@ -83,4 +83,13 @@ public class DecorationHelper {
     public static IVariantMaterial getRandomVariantMaterial(Random random) {
         return VARIANT_MATERIALS.get(random.nextInt(VARIANT_MATERIALS.size()));
     }
+
+    @Nullable
+    public static IVariantMaterial getVariantMaterial(String string) {
+        for (IVariantMaterial material : VARIANT_MATERIALS) {
+            if (material.getString().equals(string))
+                return material;
+        }
+        return null;
+    }
 }
