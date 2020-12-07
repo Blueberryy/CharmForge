@@ -2,6 +2,7 @@
 
 ## 2.1.6
 * Fix bowl stack lost when milking Mooblooms #403
+* [Forge] Fix ghost entity when using /give #395
 
 +## 2.1.5
 +* Fix missing spruce bookshelf recipe
