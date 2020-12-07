@@ -82,7 +82,6 @@ public class DataBlockProcessor extends StructureProcessor {
 
         public static float BLOCK_CHANCE = 0.8F;
         public static float BOOKCASE_CHANCE = 0.25F;
-        public static float BOOKCASE_LOOT_CHANCE = 0.1F;
         public static float CHEST_CHANCE = 0.66F;
         public static float DECORATION_CHANCE = 0.85F;
         public static float FLOWER_CHANCE = 0.8F;
@@ -93,6 +92,7 @@ public class DataBlockProcessor extends StructureProcessor {
         public static float MOB_CHANCE = 0.75F;
         public static float ORE_CHANCE = 0.75F;
         public static float RARE_ORE_CHANCE = 0.25F;
+        public static float RARE_BOOKCASE_CHANCE = 0.05F;
         public static float RARE_CHEST_CHANCE = 0.1F;
         public static float RUBBLE_CHANCE = 0.9F;
         public static float RUNESTONE_CHANCE = 0.75F;
@@ -213,15 +213,15 @@ public class DataBlockProcessor extends StructureProcessor {
                 state = Bookcases.BOOKCASE_BLOCKS.get(variantMaterial).getDefaultState()
                     .with(BookcaseBlock.SLOTS, BookcaseTileEntity.SIZE); // make it have the "full" texture
 
-                if (random.nextFloat() < BOOKCASE_LOOT_CHANCE) {
-                    BookcaseTileEntity tileEntity = Bookcases.TILE_ENTITY.create();
-                    if (tileEntity == null)
-                        return;
+                BookcaseTileEntity blockEntity = Bookcases.TILE_ENTITY.create();
+                if (blockEntity == null)
+                    return;
 
-                    tileEntity.setLootTable(DecorationHelper.getRandomLootTable(BOOKCASE_LOOT_TABLES, random), random.nextLong());
-                    this.tag = new CompoundNBT();
-                    tileEntity.write(this.tag);
-                }
+                ResourceLocation lootTable = DecorationHelper.getRandomLootTable(random.nextFloat() < RARE_BOOKCASE_CHANCE ? RARE_BOOKCASE_LOOT_TABLES : BOOKCASE_LOOT_TABLES, random);
+                blockEntity.setLootTable(lootTable, random.nextLong());
+
+                this.tag = new CompoundNBT();
+                blockEntity.write(this.tag);
             } else if (ModuleHandler.enabled("charm:variant_bookshelves") && variantMaterial != VanillaVariantMaterial.OAK) {
                 state = VariantBookshelves.BOOKSHELF_BLOCKS.get(variantMaterial).getDefaultState();
             } else {

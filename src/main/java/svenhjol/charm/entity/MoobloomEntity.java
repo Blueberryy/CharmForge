@@ -100,7 +100,8 @@ public class MoobloomEntity extends CowEntity implements IShearable {
                     playSound(SoundEvents.ENTITY_MOOSHROOM_MILK, 1.0F, 1.0F);
                 }
 
-                player.setHeldItem(hand, stew);
+                ItemStack out = DrinkHelper.fill(held, player, stew, false);
+                player.setHeldItem(hand, out);
                 this.dataManager.set(POLLINATED, false);
             }
 
