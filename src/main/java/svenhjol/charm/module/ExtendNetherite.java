@@ -1,8 +1,11 @@
 package svenhjol.charm.module;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
@@ -20,6 +23,9 @@ public class ExtendNetherite extends CharmModule {
     public static int extendBy = 300;
 
     public static List<Item> netheriteItems = new ArrayList<>();
+
+    private static ItemStack lastTossedStack = null;
+    private static long lastTossedTime = 0;
 
     @Override
     public void init() {
@@ -41,15 +47,41 @@ public class ExtendNetherite extends CharmModule {
     }
 
     @SubscribeEvent
+    public void onItemToss(ItemTossEvent event) {
+        // Forge fires this event when using /give.
+        // Capture the item and time it was given so that when it subsequently fires
+        // the ItemExpireEvent (don't ask) we can ignore it.
+        World world = event.getEntity().getEntityWorld();
+        if (!world.isRemote) {
+            lastTossedStack = event.getEntityItem().getItem();
+            lastTossedTime = world.getGameTime();
+        }
+    }
+
+    @SubscribeEvent
     public void onItemExpire(ItemExpireEvent event) {
         if (!event.isCanceled()) {
-            Item item = event.getEntityItem().getItem().getItem();
+            World world = event.getEntity().getEntityWorld();
 
-            if (netheriteItems.contains(item)) {
-                if (((ItemEntityAccessor)event.getEntityItem()).getAge() <= 6020) { // 6000 is default lifetime, add a little buffer just in case
-                    event.setExtraLife(extendBy * 20); // in ticks
-                    event.setCanceled(true);
-                }
+            if (world.isRemote)
+                return;
+
+            ItemStack stack = event.getEntityItem().getItem();
+            long gameTime = world.getGameTime();
+            long existedTicks = gameTime - lastTossedTime;
+
+            // Hack: if the item has existed for less than 5 ticks, don't add extra life to it. #395
+            if (ItemStack.areItemsEqual(stack, lastTossedStack) && existedTicks >= 0 && existedTicks < 5) {
+                lastTossedStack = null;
+                lastTossedTime = 0;
+                return;
+            }
+
+            int age = ((ItemEntityAccessor) event.getEntityItem()).getAge();
+
+            if (netheriteItems.contains(stack.getItem()) && age <= 6020) { // 6000 is default lifetime, add a little buffer just in case
+                event.setExtraLife(extendBy * 20); // in ticks
+                event.setCanceled(true);
             }
         }
     }
