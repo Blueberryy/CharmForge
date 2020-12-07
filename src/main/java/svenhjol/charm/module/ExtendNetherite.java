@@ -71,7 +71,7 @@ public class ExtendNetherite extends CharmModule {
             long existedTicks = gameTime - lastTossedTime;
 
             // Hack: if the item has existed for less than 5 ticks, don't add extra life to it. #395
-            if (ItemStack.areItemsEqual(stack, lastTossedStack) && existedTicks >= 0 && existedTicks < 5) {
+            if (lastTossedStack != null && ItemStack.areItemsEqual(stack, lastTossedStack) && existedTicks >= 0 && existedTicks < 5) {
                 lastTossedStack = null;
                 lastTossedTime = 0;
                 return;
