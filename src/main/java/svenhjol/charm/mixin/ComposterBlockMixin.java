@@ -4,7 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ComposterBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -15,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import svenhjol.charm.module.AutoRestock;
 
 @Mixin(ComposterBlock.class)
 public class ComposterBlockMixin {
@@ -26,6 +26,6 @@ public class ComposterBlockMixin {
     )
     public void hookOnBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit,
                                      CallbackInfoReturnable<ActionResultType> cir, int i, ItemStack itemstack, BlockState blockstate) {
-        player.addStat(Stats.ITEM_USED.get(itemstack.getItem()));
+        AutoRestock.addItemUsedStat(player, itemstack);
     }
 }

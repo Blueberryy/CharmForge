@@ -14,6 +14,7 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.items.CapabilityItemHandler;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Module;
 
 import java.util.EnumMap;
@@ -25,6 +26,11 @@ import java.util.WeakHashMap;
 public class AutoRestock extends CharmModule {
     //remember which items were in our hands and how often they were used
     private final Map<PlayerEntity, EnumMap<Hand, StackData>> handCache = new WeakHashMap<>();
+
+    public static void addItemUsedStat(PlayerEntity player, ItemStack stack) {
+        if (ModuleHandler.enabled(AutoRestock.class))
+            player.addStat(Stats.ITEM_USED.get(stack.getItem()));
+    }
 
     @SubscribeEvent
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
