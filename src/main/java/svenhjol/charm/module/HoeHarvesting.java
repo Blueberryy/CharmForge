@@ -11,6 +11,8 @@ import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -80,6 +82,7 @@ public class HoeHarvesting extends CharmModule {
 
             world.playEvent(2001, pos, Block.getStateId(newState));
             world.setBlockState(pos, newState);
+            world.playSound(null, pos, SoundEvents.BLOCK_CROP_BREAK, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
             // damage the hoe a bit
             held.damageItem(1, player, p -> p.swingArm(hand));
