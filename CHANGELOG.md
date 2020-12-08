@@ -3,6 +3,7 @@
 ## 2.1.6
 * Fix bowl stack lost when milking Mooblooms #403
 * [Forge] Fix ghost entity when using /give #395
+* AutoRestock now works properly when adding items to composter (F43nd1r)
 * Remove Wandering Trader signal fire restriction
 * Remove treasure enchantment cost on grindstone
 * Hoe harvesting fully grown crop now plays sound
