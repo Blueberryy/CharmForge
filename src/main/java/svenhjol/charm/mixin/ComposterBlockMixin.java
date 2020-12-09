@@ -25,7 +25,7 @@ public class ComposterBlockMixin {
             locals = LocalCapture.CAPTURE_FAILHARD
     )
     public void hookOnBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit,
-                                     CallbackInfoReturnable<ActionResultType> cir, int i, ItemStack itemstack, BlockState blockstate) {
+                                     CallbackInfoReturnable<ActionResultType> cir, int i, ItemStack itemstack) {
         AutoRestock.addItemUsedStat(player, itemstack);
     }
 }
