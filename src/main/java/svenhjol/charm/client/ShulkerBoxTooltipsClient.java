@@ -31,7 +31,7 @@ public class ShulkerBoxTooltipsClient extends CharmClientModule {
     }
 
     @SubscribeEvent
-    public void onRenderTooltip(RenderTooltipEvent event) {
+    public void onRenderTooltip(RenderTooltipEvent.PostBackground event) {
         handleRenderTooltip(event.getMatrixStack(), event.getStack(), event.getLines(), event.getX(), event.getY());
     }
 
