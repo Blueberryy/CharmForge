@@ -81,6 +81,7 @@ public class Charm {
             SnowStorms.class,
             StackableEnchantedBooks.class,
             StackablePotions.class,
+            StackableStews.class,
             StrayImprovements.class,
             TamedAnimalsNoDamage.class,
             Tinted.class,
