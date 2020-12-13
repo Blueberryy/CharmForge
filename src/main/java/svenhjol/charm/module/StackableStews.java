@@ -16,7 +16,7 @@ public class StackableStews extends CharmModule {
     @Config(name = "Stack size", description = "Maximum stew stack size.")
     public static int stackSize = 16;
 
-    @Config(name ="Enable suspicious stew",  description = "Also apply to suspicious stew.")
+    @Config(name = "Enable suspicious stew", description = "Also apply to suspicious stew.")
     public static boolean suspiciousStew = false;
 
     @Override
@@ -24,7 +24,7 @@ public class StackableStews extends CharmModule {
         ((ItemAccessor) Items.MUSHROOM_STEW).setMaxStackSize(stackSize);
         ((ItemAccessor) Items.RABBIT_STEW).setMaxStackSize(stackSize);
         ((ItemAccessor) Items.BEETROOT_SOUP).setMaxStackSize(stackSize);
-        if(suspiciousStew) {
+        if (suspiciousStew) {
             ((ItemAccessor) Items.SUSPICIOUS_STEW).setMaxStackSize(stackSize);
         }
     }
@@ -40,12 +40,8 @@ public class StackableStews extends CharmModule {
                     PlayerEntity player = (PlayerEntity) entity;
                     if (!player.abilities.isCreativeMode) {
                         player.addItemStackToInventory(event.getResultStack());
-                        if (itemStack.getCount() > 1) {
-                            itemStack.shrink(1);
-                            event.setResultStack(itemStack);
-                        } else {
-                            event.setResultStack(ItemStack.EMPTY);
-                        }
+                        itemStack.shrink(1);
+                        event.setResultStack(itemStack);
                     }
                 }
             }
