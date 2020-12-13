@@ -2,7 +2,8 @@
 
 ## 2.1.7
 * Added StackableStews (F43nd1r)
-* Fix shulker box tooltip duplication (F43nd1r) 
+* Fix shulker box tooltip duplication (F43nd1r)
+* Fix crates client not checking type of stack hovered
 
 ## 2.1.6
 * Fix bowl stack lost when milking Mooblooms #403
