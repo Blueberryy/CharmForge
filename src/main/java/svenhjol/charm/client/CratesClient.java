@@ -2,6 +2,7 @@ package svenhjol.charm.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -103,7 +104,7 @@ public class CratesClient extends CharmClientModule {
         }
         BlockItem blockItem = (BlockItem) stack.getItem();
         TileEntity tileEntity = TileEntity.readTileEntity(blockItem.getBlock().getDefaultState(), tag);
-        if (tileEntity == null)
+        if (!(tileEntity instanceof CrateTileEntity))
             return false;
 
         CrateTileEntity crate = (CrateTileEntity) tileEntity;
