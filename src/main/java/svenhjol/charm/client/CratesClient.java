@@ -94,6 +94,9 @@ public class CratesClient extends CharmClientModule {
         if (tag == null)
             return false;
 
+        if (ItemHelper.getBlockClass(stack) != CrateBlock.class)
+            return false;
+
         if (!tag.contains("id", 8)) {
             tag = tag.copy();
             tag.putString("id", "charm:crate");
