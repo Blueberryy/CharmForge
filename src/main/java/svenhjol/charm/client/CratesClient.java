@@ -87,9 +87,6 @@ public class CratesClient extends CharmClientModule {
     private boolean handleRenderTooltip(MatrixStack matrices, ItemStack stack, List<? extends ITextProperties> lines, int tx, int ty) {
         final Minecraft mc = Minecraft.getInstance();
 
-        if (ItemHelper.getBlockClass(stack) != CrateBlock.class)
-            return false;
-
         if (!stack.hasTag())
             return false;
 
