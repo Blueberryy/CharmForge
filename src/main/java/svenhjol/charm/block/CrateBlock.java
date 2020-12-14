@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class CrateBlock extends CharmBlock {
-    private static final String BLOCK_ENTITY_TAG = "TileEntityTag";
+    private static final String BLOCK_ENTITY_TAG = "BlockEntityTag";
     private static final ResourceLocation CONTENTS = new ResourceLocation("contents");
     private IVariantMaterial type;
 
