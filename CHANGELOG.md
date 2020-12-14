@@ -1,8 +1,16 @@
 # Changelog
 
+## 2.1.8
+* Fix itemgroups. #406
+* Fix render hover in incorrect place
+* Fix village jigsaw piece problems. #409
+* Shulkerbox no longer shows hover when empty
+* Remove bookshelf recipe in wrong place
+
 ## 2.1.7
 * Added StackableStews (F43nd1r)
-* Fix shulker box tooltip duplication (F43nd1r) 
+* Fix shulker box tooltip duplication (F43nd1r)
+* Fix crates client crash
 
 ## 2.1.6
 * Fix bowl stack lost when milking Mooblooms #403

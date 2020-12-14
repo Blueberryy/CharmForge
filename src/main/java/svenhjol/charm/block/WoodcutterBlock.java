@@ -48,6 +48,11 @@ public class WoodcutterBlock extends StonecutterBlock implements ICharmBlock {
     }
 
     @Override
+    public ItemGroup getItemGroup() {
+        return ItemGroup.DECORATIONS;
+    }
+
+    @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> list) {
         if (enabled())
             super.fillItemGroup(group, list);

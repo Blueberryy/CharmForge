@@ -6,6 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
@@ -42,6 +43,11 @@ public class KilnBlock extends AbstractFurnaceBlock implements ICharmBlock {
         if (tileentity instanceof KilnTileEntity) {
             player.openContainer((INamedContainerProvider)tileentity);
         }
+    }
+
+    @Override
+    public ItemGroup getItemGroup() {
+        return ItemGroup.DECORATIONS;
     }
 
     @Override
