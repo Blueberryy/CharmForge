@@ -21,7 +21,10 @@ import svenhjol.charm.container.AtlasContainer;
 import svenhjol.charm.module.Atlas;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AtlasInventory implements INamedContainerProvider, IInventory {
@@ -34,6 +37,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     private final ItemStack itemStack;
     private final ITextComponent name;
     private List<MapInfo> mapInfos = new ArrayList<>();
+    private MapInfo activeMap = null;
 
     public AtlasInventory(World world, ItemStack itemStack, ITextComponent name) {
         this.world = world;
@@ -50,61 +54,77 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         return items;
     }
 
+    private static boolean isOnMap(MapInfo info, int x, int z) {
+        return x >= info.x - info.scale && x < info.x + info.scale && z >= info.z - info.scale && z < info.z + info.scale;
+    }
+
     private void updateMapInfos() {
         if (!world.isRemote) {
-            mapInfos = items.stream().filter(stack -> stack.getItem() == Items.FILLED_MAP).map(stack -> {
-                int id = FilledMapItem.getMapId(stack);
-                MapData mapData = FilledMapItem.getMapData(stack, world);
-                if (mapData == null) {
-                    return null;
-                } else {
-                    return new MapInfo(mapData.xCenter, mapData.zCenter, 64 * (1 << mapData.scale), id);
-                }
-            }).filter(Objects::nonNull).sorted(Comparator.comparingInt(info -> info.scale)).collect(Collectors.toList());
+            mapInfos = items.stream()
+                    .filter(stack -> stack.getItem() == Items.FILLED_MAP)
+                    .map(this::getMapInfo)
+                    .filter(Objects::nonNull)
+                    .sorted(Comparator.comparingInt(info -> info.scale))
+                    .collect(Collectors.toList());
+            activeMap = null;
         }
     }
 
-    public void updateActiveMap(ServerPlayerEntity player) {
+    private MapInfo getMapInfo(ItemStack itemStack) {
+        MapData mapData = FilledMapItem.getMapData(itemStack, world);
+        return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, 64 * (1 << mapData.scale), FilledMapItem.getMapId(itemStack),
+                items.indexOf(itemStack)) : null;
+    }
+
+    @Nullable
+    public MapInfo updateActiveMap(ServerPlayerEntity player) {
         int x = (int) Math.floor(player.getPosX());
         int z = (int) Math.floor(player.getPosZ());
-        int activeMap = mapInfos.stream()
-                .filter(info -> x >= info.x - info.scale && x < info.x + info.scale && z >= info.z - info.scale && z < info.z + info.scale)
-                .findFirst().map(it -> it.id).orElse(-1);
-        if(activeMap == -1) {
+        MapInfo activeMap = null;
+        if (this.activeMap != null && isOnMap(this.activeMap, x, z)) {
+            activeMap = this.activeMap;
+        }
+        if (activeMap == null) {
+            activeMap = mapInfos.stream()
+                    .filter(info -> isOnMap(info, x, z))
+                    .findFirst().orElse(null);
+        }
+        if (activeMap == null) {
             activeMap = makeNewMap(player, x, z);
         }
-        ItemNBTHelper.setInt(itemStack, ACTIVE_MAP, activeMap);
+        ItemNBTHelper.setInt(itemStack, ACTIVE_MAP, activeMap != null ? activeMap.id : -1);
+        return activeMap;
     }
 
-    private int makeNewMap(ServerPlayerEntity player, int x, int z) {
+    private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
         int emptySlot = -1;
-        for(int i = 0; i < getSizeInventory(); ++i) {
+        for (int i = 0; i < getSizeInventory(); ++i) {
             ItemStack stack = getStackInSlot(i);
-            if(stack.isEmpty()) {
+            if (stack.isEmpty()) {
                 emptySlot = i;
                 break;
             }
         }
-        if(emptySlot != -1) {
+        if (emptySlot != -1) {
             for (int i = 0; i < getSizeInventory(); ++i) {
                 ItemStack stack = getStackInSlot(i);
                 if (!stack.isEmpty() && stack.getItem() == Items.MAP) {
-                    if(!player.isCreative()) {
+                    if (!player.isCreative()) {
                         decrStackSize(i, 1);
                     }
                     ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
                     setInventorySlotContents(emptySlot, map);
-                    return FilledMapItem.getMapId(map);
+                    return getMapInfo(map);
                 }
             }
         }
-        return -1;
+        return null;
     }
 
     @Nullable
     public MapData getActiveMap(ClientPlayerEntity player) {
         int activeId = ItemNBTHelper.getInt(itemStack, ACTIVE_MAP, -1);
-        if(activeId == -1) return null;
+        if (activeId == -1) return null;
         return player.world.getMapData(FilledMapItem.getMapName(activeId));
     }
 
@@ -183,17 +203,19 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         items.clear();
     }
 
-    private static class MapInfo {
+    public static class MapInfo {
         public final double x;
         public final double z;
         public final int scale;
         public final int id;
+        public final int slot;
 
-        private MapInfo(double x, double z, int scale, int id) {
+        private MapInfo(double x, double z, int scale, int id, int slot) {
             this.x = x;
             this.z = z;
             this.scale = scale;
             this.id = id;
+            this.slot = slot;
         }
     }
 }

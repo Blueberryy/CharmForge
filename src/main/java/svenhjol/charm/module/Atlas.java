@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.IPacket;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
@@ -30,12 +31,11 @@ import java.util.WeakHashMap;
 @Module(mod = Charm.MOD_ID, client = AtlasClient.class, description = "A map storage." /*TODO describe better*/, hasSubscriptions = true)
 public class Atlas extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "atlas");
-
+    // add items to this list to whitelist them in atlases
+    public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
     @Config(name = "Map Size", description = "The atlas will create maps of this size (0-4).")
     public static int mapSize = 2;
 
-    // add items to this list to whitelist them in atlases
-    public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;
     private static WeakHashMap<ItemStack, AtlasInventory> cache = new WeakHashMap<>();
@@ -67,16 +67,16 @@ public class Atlas extends CharmModule {
     public void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.START && event.side == LogicalSide.SERVER) {
             ServerPlayerEntity player = (ServerPlayerEntity) event.player;
-            for (int i = 0; i < player.inventory.getSizeInventory(); ++i) {
-                ItemStack atlasStack = player.inventory.getStackInSlot(i);
+            for (Hand hand : Hand.values()) {
+                ItemStack atlasStack = player.getHeldItem(hand);
                 if (atlasStack.getItem() == ATLAS_ITEM) {
                     AtlasInventory inventory = getInventory(player.world, atlasStack);
-                    inventory.updateActiveMap(player);
-                    for (int j = 0; j < inventory.getSizeInventory(); ++j) {
-                        ItemStack itemStack = inventory.getStackInSlot(j);
-                        if (itemStack.getItem().isComplex()) {
-                            itemStack.getItem().inventoryTick(itemStack, player.world, player, j, true);
-                            IPacket<?> ipacket = ((AbstractMapItem) itemStack.getItem()).getUpdatePacket(itemStack, player.world, player);
+                    AtlasInventory.MapInfo mapInfo = inventory.updateActiveMap(player);
+                    if (mapInfo != null) {
+                        ItemStack map = inventory.getStackInSlot(mapInfo.slot);
+                        if (map.getItem().isComplex()) {
+                            map.getItem().inventoryTick(map, player.world, player, mapInfo.slot, true);
+                            IPacket<?> ipacket = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
                             if (ipacket != null) {
                                 player.connection.sendPacket(ipacket);
                             }
