@@ -14,9 +14,12 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.container.AtlasContainer;
 import svenhjol.charm.module.Atlas;
 
@@ -114,6 +117,8 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
                     }
                     ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
                     setInventorySlotContents(emptySlot, map);
+                    world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
+                            SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
                     return getMapInfo(map);
                 }
             }
@@ -201,6 +206,18 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     @Override
     public void clear() {
         items.clear();
+    }
+
+    @Override
+    public void openInventory(PlayerEntity player) {
+        world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f,
+                player.world.rand.nextFloat() * 0.1F + 0.9F);
+    }
+
+    @Override
+    public void closeInventory(PlayerEntity player) {
+        world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f,
+                player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     public static class MapInfo {
