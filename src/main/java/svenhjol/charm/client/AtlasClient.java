@@ -13,8 +13,8 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.gui.AtlasScreen;
 import svenhjol.charm.base.helper.AtlasInventory;
+import svenhjol.charm.gui.SimpleCharmScreen;
 import svenhjol.charm.module.Atlas;
 import svenhjol.charm.render.AtlasRenderer;
 
@@ -28,7 +28,7 @@ public class AtlasClient extends CharmClientModule {
 
     @Override
     public void register() {
-        ScreenManager.registerFactory(Atlas.CONTAINER, AtlasScreen::new);
+        ScreenManager.registerFactory(Atlas.CONTAINER, SimpleCharmScreen.createFactory(2));
     }
 
     @SubscribeEvent
@@ -45,15 +45,15 @@ public class AtlasClient extends CharmClientModule {
     public void renderAtlas(MatrixStack matrixStack, IRenderTypeBuffer buffers, int light, Hand hand, float pitch, float equip, float swing, ItemStack stack) {
         Minecraft minecraft = Minecraft.getInstance();
         ClientWorld world = minecraft.world;
-        AtlasInventory inventory = Atlas.getInventory(world, stack);
         ClientPlayerEntity player = minecraft.player;
         if (player == null) return;
+        AtlasInventory inventory = Atlas.getInventory(world, stack);
 
         matrixStack.push(); // needed so that parent renderer isn't affect by what we do here
 
         // copypasta from renderMapFirstPersonSide
         float e = hand == Hand.MAIN_HAND ? 1.0F : -1.0F;
-        matrixStack.translate((double) (e * 0.125F), -0.125D, 0.0D);
+        matrixStack.translate(e * 0.125F, -0.125D, 0.0D);
 
         // render player arm
         if (!player.isInvisible()) {

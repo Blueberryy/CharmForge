@@ -38,10 +38,10 @@ public class Atlas extends CharmModule {
 
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;
-    private static WeakHashMap<ItemStack, AtlasInventory> cache = new WeakHashMap<>();
+    private static final WeakHashMap<ItemStack, AtlasInventory> cache = new WeakHashMap<>();
 
     public static boolean canAtlasInsertItem(ItemStack stack) {
-        return !ModuleHandler.enabled(Atlas.class) || VALID_ATLAS_ITEMS.contains(stack.getItem());
+        return VALID_ATLAS_ITEMS.contains(stack.getItem());
     }
 
     public static AtlasInventory getInventory(World world, ItemStack stack) {
