@@ -41,6 +41,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     private final ITextComponent name;
     private List<MapInfo> mapInfos = new ArrayList<>();
     private MapInfo activeMap = null;
+    private boolean isOpen = false;
 
     public AtlasInventory(World world, ItemStack itemStack, ITextComponent name) {
         this.world = world;
@@ -100,26 +101,28 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
-        int emptySlot = -1;
-        for (int i = 0; i < getSizeInventory(); ++i) {
-            ItemStack stack = getStackInSlot(i);
-            if (stack.isEmpty()) {
-                emptySlot = i;
-                break;
-            }
-        }
-        if (emptySlot != -1) {
+        if(!isOpen) {
+            int emptySlot = -1;
             for (int i = 0; i < getSizeInventory(); ++i) {
                 ItemStack stack = getStackInSlot(i);
-                if (!stack.isEmpty() && stack.getItem() == Items.MAP) {
-                    if (!player.isCreative()) {
-                        decrStackSize(i, 1);
+                if (stack.isEmpty()) {
+                    emptySlot = i;
+                    break;
+                }
+            }
+            if (emptySlot != -1) {
+                for (int i = 0; i < getSizeInventory(); ++i) {
+                    ItemStack stack = getStackInSlot(i);
+                    if (!stack.isEmpty() && stack.getItem() == Items.MAP) {
+                        if (!player.isCreative()) {
+                            decrStackSize(i, 1);
+                        }
+                        ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
+                        setInventorySlotContents(emptySlot, map);
+                        world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
+                                SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+                        return getMapInfo(map);
                     }
-                    ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
-                    setInventorySlotContents(emptySlot, map);
-                    world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
-                            SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
-                    return getMapInfo(map);
                 }
             }
         }
@@ -210,12 +213,14 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
 
     @Override
     public void openInventory(PlayerEntity player) {
+        isOpen = true;
         world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f,
                 player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
     @Override
     public void closeInventory(PlayerEntity player) {
+        isOpen = false;
         world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f,
                 player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
