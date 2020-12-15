@@ -16,6 +16,7 @@
     "HuskEntityMixin",
     "InventoryTransferHandlerMixin",
     "LivingEntityMixin",
+    "MapDataMixin",
     "MineshaftPiecesMixin",
     "PistonBlockMixin",
     "PlayerEntityMixin",

@@ -220,6 +220,10 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
                 player.world.rand.nextFloat() * 0.1F + 0.9F);
     }
 
+    public boolean hasItemStack(ItemStack stack) {
+        return items.stream().anyMatch(it -> !it.isEmpty() && it.isItemEqual(stack));
+    }
+
     public static class MapInfo {
         public final double x;
         public final double z;

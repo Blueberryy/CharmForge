@@ -1,5 +1,6 @@
 package svenhjol.charm.module;
 
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.AbstractMapItem;
@@ -33,15 +34,33 @@ public class Atlas extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "atlas");
     // add items to this list to whitelist them in atlases
     public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
+    private static final WeakHashMap<ItemStack, AtlasInventory> cache = new WeakHashMap<>();
+
     @Config(name = "Map Size", description = "The atlas will create maps of this size (0-4).")
     public static int mapSize = 2;
 
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;
-    private static final WeakHashMap<ItemStack, AtlasInventory> cache = new WeakHashMap<>();
 
     public static boolean canAtlasInsertItem(ItemStack stack) {
         return VALID_ATLAS_ITEMS.contains(stack.getItem());
+    }
+
+    public static boolean inventoryContainsMap(PlayerInventory inventory, ItemStack itemStack) {
+        if (inventory.hasItemStack(itemStack)) {
+            return true;
+        } else if (ModuleHandler.enabled(Atlas.class)) {
+            for (Hand hand : Hand.values()) {
+                ItemStack atlasStack = inventory.player.getHeldItem(hand);
+                if (atlasStack.getItem() == ATLAS_ITEM) {
+                    AtlasInventory inv = getInventory(inventory.player.world, atlasStack);
+                    if (inv.hasItemStack(itemStack)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public static AtlasInventory getInventory(World world, ItemStack stack) {
