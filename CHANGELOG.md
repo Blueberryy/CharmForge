@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.9
+* Added Atlas (F43nd1r)
+
 ## 2.1.8
 * Fix itemgroups. #406
 * Fix render hover in incorrect place
