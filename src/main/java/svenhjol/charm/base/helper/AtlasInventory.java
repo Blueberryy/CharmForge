@@ -101,29 +101,33 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
-        if(!isOpen) {
-            int emptySlot = -1;
-            for (int i = 0; i < getSizeInventory(); ++i) {
+        if (!isOpen) {
+            int from = -1;
+            int to = -1;
+            for (int i = 0; i < getSizeInventory() && (from == -1 || to == -1); ++i) {
                 ItemStack stack = getStackInSlot(i);
                 if (stack.isEmpty()) {
-                    emptySlot = i;
-                    break;
-                }
-            }
-            if (emptySlot != -1) {
-                for (int i = 0; i < getSizeInventory(); ++i) {
-                    ItemStack stack = getStackInSlot(i);
-                    if (!stack.isEmpty() && stack.getItem() == Items.MAP) {
-                        if (!player.isCreative()) {
-                            decrStackSize(i, 1);
-                        }
-                        ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
-                        setInventorySlotContents(emptySlot, map);
-                        world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
-                                SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
-                        return getMapInfo(map);
+                    if (to == -1) {
+                        to = i;
+                    }
+                } else if (stack.getItem() == Items.MAP) {
+                    if (from == -1) {
+                        from = i;
+                    }
+                    if (!player.isCreative() && to == -1 && stack.getCount() == 1) {
+                        to = i;
                     }
                 }
+            }
+            if (from != -1 && to != -1) {
+                if (!player.isCreative()) {
+                    decrStackSize(from, 1);
+                }
+                ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
+                setInventorySlotContents(to, map);
+                world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
+                        SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+                return getMapInfo(map);
             }
         }
         return null;
