@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class AtlasRenderer implements AutoCloseable {
-    public final RenderType ATLAS_BACKGROUND = RenderType.getText(new ResourceLocation("textures/map/map_background.png"));
+    public final RenderType ATLAS_BACKGROUND = RenderType.getText(new ResourceLocation("charm/textures/map/atlas_background.png"));
     public final TextureManager textureManager;
     public final Map<AtlasInventory, Instance> instances = new WeakHashMap<>();
 
