@@ -25,6 +25,7 @@ public class Charm {
             Acquisition.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
+            Atlas.class,
             AutomaticRecipeUnlock.class,
             AutoRestock.class,
             BatBuckets.class,

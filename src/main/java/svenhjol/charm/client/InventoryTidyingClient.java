@@ -15,8 +15,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.CharmResources;
-import svenhjol.charm.gui.BookcaseScreen;
-import svenhjol.charm.gui.CrateScreen;
+import svenhjol.charm.gui.SimpleCharmScreen;
 import svenhjol.charm.message.ServerSortInventory;
 
 import java.util.*;
@@ -50,8 +49,7 @@ public class InventoryTidyingClient extends CharmClientModule {
             ChestScreen.class, // yarn: GenericContainerScreen
             HopperScreen.class,
             ShulkerBoxScreen.class,
-            CrateScreen.class,
-            BookcaseScreen.class,
+            SimpleCharmScreen.class,
             DispenserScreen.class // yarn: Generic3x3ContainerScreen
         ));
 

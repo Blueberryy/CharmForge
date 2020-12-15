@@ -25,7 +25,7 @@ import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.block.CrateBlock;
-import svenhjol.charm.gui.CrateScreen;
+import svenhjol.charm.gui.SimpleCharmScreen;
 import svenhjol.charm.handler.TooltipInventoryHandler;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.tileentity.CrateTileEntity;
@@ -40,7 +40,7 @@ public class CratesClient extends CharmClientModule {
 
     @Override
     public void register() {
-        ScreenManager.registerFactory(Crates.CONTAINER, CrateScreen::new);
+        ScreenManager.registerFactory(Crates.CONTAINER, SimpleCharmScreen.createFactory(1));
     }
 
     @SubscribeEvent
