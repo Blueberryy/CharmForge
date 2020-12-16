@@ -23,6 +23,7 @@ import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -36,57 +37,67 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({"UnusedReturnValue", "unchecked", "rawtypes"})
 public class RegistryHandler {
-    private static final Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> REGISTRY = new HashMap<>();
+    private static final Map<String, Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>>> REGISTRY = new HashMap<>();
 
     @SubscribeEvent
     public static void onRegister(RegistryEvent.Register<?> event) {
+        String owner = getOwnerContext();
         IForgeRegistry registry = event.getRegistry();
 
-        if (REGISTRY.containsKey(registry)) {
-            REGISTRY.get(registry).forEach(supplier -> {
+        if (!REGISTRY.containsKey(owner)) {
+            Charm.LOG.warn("No registry owner, skipping registry event " + event.getName());
+            return;
+        }
+
+        Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> ownerRegistry = REGISTRY.get(owner);
+
+        if (ownerRegistry.containsKey(registry)) {
+            ownerRegistry.get(registry).forEach(supplier -> {
                 IForgeRegistryEntry<?> entry = supplier.get();
                 if (entry != null) {
-                    Charm.LOG.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName());
+                    Charm.LOG.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName() + " (context: " + owner + ")");
                     registry.register(entry);
                 }
             });
+        } else {
+            Charm.LOG.debug("Owner registry has no event data, skipping registry event " + event.getName());
         }
     }
 
-    public static Block block(ResourceLocation id, Block block) {
-        return register(ForgeRegistries.BLOCKS, id, block);
+    public static Block block(ResourceLocation resId, Block block) {
+        return register(ForgeRegistries.BLOCKS, resId, block);
     }
 
-    public static <T extends TileEntity> TileEntityType<T> tileEntity(ResourceLocation id, Supplier<T> supplier, Block... blocks) {
+    public static <T extends TileEntity> TileEntityType<T> tileEntity(ResourceLocation resId, Supplier<T> supplier, Block... blocks) {
         TileEntityType<T> build = TileEntityType.Builder.create(supplier, blocks).build(null);
-        register(ForgeRegistries.TILE_ENTITIES, id, build);
+        register(ForgeRegistries.TILE_ENTITIES, resId, build);
         return build;
     }
 
-    public static StructureFeature<?, ?> configuredFeature(ResourceLocation id, StructureFeature<?, ?> configuredFeature) {
-        WorldGenRegistries.register(WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE, id, configuredFeature);
+    public static StructureFeature<?, ?> configuredFeature(ResourceLocation resId, StructureFeature<?, ?> configuredFeature) {
+        WorldGenRegistries.register(WorldGenRegistries.CONFIGURED_STRUCTURE_FEATURE, resId, configuredFeature);
         return configuredFeature;
     }
 
-    public static <T extends Entity> EntityType<T> entity(ResourceLocation id, EntityType<T> entityType) {
-        register(ForgeRegistries.ENTITIES, id, entityType);
+    public static <T extends Entity> EntityType<T> entity(ResourceLocation resId, EntityType<T> entityType) {
+        register(ForgeRegistries.ENTITIES, resId, entityType);
         return entityType;
     }
 
-    public static Enchantment enchantment(ResourceLocation id, Enchantment enchantment) {
-        return register(ForgeRegistries.ENCHANTMENTS, id, enchantment);
+    public static Enchantment enchantment(ResourceLocation resId, Enchantment enchantment) {
+        return register(ForgeRegistries.ENCHANTMENTS, resId, enchantment);
     }
 
-    public static Item item(ResourceLocation id, Item item) {
-        return register(ForgeRegistries.ITEMS, id, item);
+    public static Item item(ResourceLocation resId, Item item) {
+        return register(ForgeRegistries.ITEMS, resId, item);
     }
 
-    public static LootFunctionType lootFunctionType(ResourceLocation id, LootFunctionType lootFunctionType) {
-        return Registry.register(Registry.LOOT_FUNCTION_TYPE, id, lootFunctionType);
+    public static LootFunctionType lootFunctionType(ResourceLocation resId, LootFunctionType lootFunctionType) {
+        return Registry.register(Registry.LOOT_FUNCTION_TYPE, resId, lootFunctionType);
     }
 
-    public static PointOfInterestType pointOfInterestType(ResourceLocation id, PointOfInterestType poit) {
-        return register(ForgeRegistries.POI_TYPES, id, poit);
+    public static PointOfInterestType pointOfInterestType(ResourceLocation resId, PointOfInterestType poit) {
+        return register(ForgeRegistries.POI_TYPES, resId, poit);
     }
 
     public static <T extends IRecipe<?>> IRecipeType<T> recipeType(String recipeId) {
@@ -98,33 +109,47 @@ public class RegistryHandler {
         return serializer;
     }
 
-    public static <T extends Container> ContainerType<T> container(ResourceLocation id, ContainerType.IFactory<T> factory) {
+    public static <T extends Container> ContainerType<T> container(ResourceLocation resId, ContainerType.IFactory<T> factory) {
         ContainerType<T> container = new ContainerType<>(factory);
-        register(ForgeRegistries.CONTAINERS, id, container);
+        register(ForgeRegistries.CONTAINERS, resId, container);
         return container;
     }
 
-    public static SoundEvent sound(ResourceLocation id, SoundEvent sound) {
-        return register(ForgeRegistries.SOUND_EVENTS, id, sound);
+    public static SoundEvent sound(ResourceLocation resId, SoundEvent sound) {
+        return register(ForgeRegistries.SOUND_EVENTS, resId, sound);
     }
 
-    public static IStructurePieceType structurePiece(ResourceLocation id, IStructurePieceType structurePieceType) {
-        return Registry.register(Registry.STRUCTURE_PIECE, id, structurePieceType);
+    public static IStructurePieceType structurePiece(ResourceLocation resId, IStructurePieceType structurePieceType) {
+        return Registry.register(Registry.STRUCTURE_PIECE, resId, structurePieceType);
     }
 
-    public static VillagerProfession villagerProfession(ResourceLocation id, VillagerProfession profession) {
-        return register(ForgeRegistries.PROFESSIONS, id, profession);
+    public static VillagerProfession villagerProfession(ResourceLocation resId, VillagerProfession profession) {
+        return register(ForgeRegistries.PROFESSIONS, resId, profession);
     }
 
     public static <T extends IForgeRegistryEntry<T>> void register(IForgeRegistry<T> type, Supplier<IForgeRegistryEntry<?>> supplier) {
-        REGISTRY.putIfAbsent(type, new ArrayList<>());
-        REGISTRY.get(type).add(supplier);
+        String modId = getOwnerContext();
+
+        REGISTRY.putIfAbsent(modId, new HashMap<>());
+        Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> modRegistry = REGISTRY.get(modId);
+
+        modRegistry.putIfAbsent(type, new ArrayList<>());
+        modRegistry.get(type).add(supplier);
     }
 
     public static <T extends IForgeRegistryEntry<T>> T register(IForgeRegistry<T> type, ResourceLocation id, T entry) {
+        String modId = getOwnerContext();
         entry.setRegistryName(id);
-        REGISTRY.putIfAbsent(type, new ArrayList<>());
-        REGISTRY.get(type).add(() -> entry);
+
+        REGISTRY.putIfAbsent(modId, new HashMap<>());
+        Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> modRegistry = REGISTRY.get(modId);
+
+        modRegistry.putIfAbsent(type, new ArrayList<>());
+        modRegistry.get(type).add(() -> entry);
         return entry;
+    }
+
+    private static String getOwnerContext() {
+        return ModLoadingContext.get().getActiveNamespace();
     }
 }
