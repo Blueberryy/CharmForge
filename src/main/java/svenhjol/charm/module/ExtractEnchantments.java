@@ -100,8 +100,14 @@ public class ExtractEnchantments extends CharmModule {
 
                     world.playEvent(1042, blockPos, 0);
                 });
-                inputs.setInventorySlotContents(0, ItemStack.EMPTY);
-                inputs.setInventorySlotContents(1, ItemStack.EMPTY);
+                ItemStack slot0 = inputs.getStackInSlot(0);
+                ItemStack slot1 = inputs.getStackInSlot(1);
+
+                slot0.shrink(1);
+                slot1.shrink(1);
+
+                inputs.setInventorySlotContents(0, slot0);
+                inputs.setInventorySlotContents(1, slot1);
                 return stack;
             }
 
