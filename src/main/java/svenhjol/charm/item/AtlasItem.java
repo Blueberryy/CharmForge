@@ -11,7 +11,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.helper.AtlasInventory;
+import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.base.item.CharmItem;
 import svenhjol.charm.module.Atlas;
 

@@ -1,4 +1,4 @@
-package svenhjol.charm.gui;
+package svenhjol.charm.base.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,10 +10,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import svenhjol.charm.base.CharmResources;
 
-public class SimpleCharmScreen<T extends Container> extends ContainerScreen<T> {
+public class CharmContainerScreen<T extends Container> extends ContainerScreen<T> {
     private final ResourceLocation texture;
 
-    public SimpleCharmScreen(int rows, T handler, PlayerInventory inventory, ITextComponent title) {
+    public CharmContainerScreen(int rows, T handler, PlayerInventory inventory, ITextComponent title) {
         super(handler, inventory, title);
         this.passEvents = true;
         this.xSize = 175;
@@ -30,8 +30,8 @@ public class SimpleCharmScreen<T extends Container> extends ContainerScreen<T> {
         }
     }
 
-    public static <T extends Container> ScreenManager.IScreenFactory<T, SimpleCharmScreen<T>> createFactory(int rows) {
-        return (handler, inventory, title) -> new SimpleCharmScreen<>(rows, handler, inventory, title);
+    public static <T extends Container> ScreenManager.IScreenFactory<T, CharmContainerScreen<T>> createFactory(int rows) {
+        return (handler, inventory, title) -> new CharmContainerScreen<>(rows, handler, inventory, title);
     }
 
     @Override

@@ -13,8 +13,8 @@ import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.helper.AtlasInventory;
-import svenhjol.charm.gui.SimpleCharmScreen;
+import svenhjol.charm.container.AtlasInventory;
+import svenhjol.charm.base.gui.CharmContainerScreen;
 import svenhjol.charm.module.Atlas;
 import svenhjol.charm.render.AtlasRenderer;
 
@@ -28,7 +28,7 @@ public class AtlasClient extends CharmClientModule {
 
     @Override
     public void register() {
-        ScreenManager.registerFactory(Atlas.CONTAINER, SimpleCharmScreen.createFactory(2));
+        ScreenManager.registerFactory(Atlas.CONTAINER, CharmContainerScreen.createFactory(2));
     }
 
     @SubscribeEvent

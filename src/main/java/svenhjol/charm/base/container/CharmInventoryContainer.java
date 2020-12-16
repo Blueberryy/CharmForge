@@ -1,18 +1,17 @@
-package svenhjol.charm.container;
+package svenhjol.charm.base.container;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import svenhjol.charm.base.screenhandler.CharmContainer;
 
 import java.util.function.Predicate;
 
-public class SimpleCharmContainer extends CharmContainer {
+public class CharmInventoryContainer extends CharmContainer {
 
-    public SimpleCharmContainer(int rows, Predicate<ItemStack> condition, ContainerType<? extends SimpleCharmContainer> type, int syncId,
-                                PlayerInventory player, IInventory inventory) {
+    public CharmInventoryContainer(int rows, Predicate<ItemStack> condition, ContainerType<? extends CharmInventoryContainer> type, int syncId,
+                                   PlayerInventory player, IInventory inventory) {
         super(type, syncId, player, inventory);
 
         // container's inventory slots

@@ -2,7 +2,6 @@ package svenhjol.charm.client;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -25,7 +24,7 @@ import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.helper.ItemHelper;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.block.CrateBlock;
-import svenhjol.charm.gui.SimpleCharmScreen;
+import svenhjol.charm.base.gui.CharmContainerScreen;
 import svenhjol.charm.handler.TooltipInventoryHandler;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.tileentity.CrateTileEntity;
@@ -40,7 +39,7 @@ public class CratesClient extends CharmClientModule {
 
     @Override
     public void register() {
-        ScreenManager.registerFactory(Crates.CONTAINER, SimpleCharmScreen.createFactory(1));
+        ScreenManager.registerFactory(Crates.CONTAINER, CharmContainerScreen.createFactory(1));
     }
 
     @SubscribeEvent

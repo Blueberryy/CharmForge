@@ -1,4 +1,4 @@
-package svenhjol.charm.base.helper;
+package svenhjol.charm.container;
 
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -20,7 +20,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmSounds;
-import svenhjol.charm.container.AtlasContainer;
+import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.module.Atlas;
 
 import javax.annotation.Nullable;

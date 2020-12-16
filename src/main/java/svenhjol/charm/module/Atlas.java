@@ -18,7 +18,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
-import svenhjol.charm.base.helper.AtlasInventory;
+import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.AtlasClient;

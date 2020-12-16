@@ -3,12 +3,11 @@ package svenhjol.charm.container;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Slot;
-import svenhjol.charm.base.screenhandler.CharmContainer;
+import svenhjol.charm.base.container.CharmInventoryContainer;
 import svenhjol.charm.module.Crates;
 import svenhjol.charm.tileentity.CrateTileEntity;
 
-public class CrateContainer extends SimpleCharmContainer {
+public class CrateContainer extends CharmInventoryContainer {
 
     public CrateContainer(int syncId, PlayerInventory player) {
         this(syncId, player, new Inventory(CrateTileEntity.SIZE));

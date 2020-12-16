@@ -1,4 +1,4 @@
-package svenhjol.charm.base.screenhandler;
+package svenhjol.charm.base.container;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;

@@ -16,7 +16,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.Charm;
-import svenhjol.charm.base.helper.AtlasInventory;
+import svenhjol.charm.container.AtlasInventory;
 
 import java.util.Map;
 import java.util.WeakHashMap;
