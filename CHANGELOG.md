@@ -2,6 +2,8 @@
 
 ## 2.1.9
 * Fix grindstone enchantment extraction consuming an entire book stack (ridjack)
+* Fix crash with latest Quark version
+* [Forge] Fix mod context issue not loading Charmonium properly (#414, others)
 * Added Atlas (F43nd1r)
 
 ## 2.1.8
