@@ -45,7 +45,7 @@ public class RegistryHandler {
         IForgeRegistry registry = event.getRegistry();
 
         if (!REGISTRY.containsKey(owner)) {
-            Charm.LOG.warn("No registry owner, skipping registry event " + event.getName());
+            Charm.LOG.debug("No registry owner, skipping registry event " + event.getName());
             return;
         }
 
