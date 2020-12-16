@@ -1,6 +1,7 @@
 # Changelog
 
 ## 2.1.9
+* Fix grindstone enchantment extraction consuming an entire book stack (ridjack)
 * Added Atlas (F43nd1r)
 
 ## 2.1.8
