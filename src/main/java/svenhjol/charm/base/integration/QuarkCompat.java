@@ -5,9 +5,9 @@ import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.helper.StringHelper;
-import vazkii.quark.base.module.Module;
 import vazkii.quark.base.module.ModuleLoader;
-import vazkii.quark.world.module.BigDungeonModule;
+import vazkii.quark.base.module.QuarkModule;
+import vazkii.quark.content.world.module.BigDungeonModule;
 
 /**
  * This won't function if quark is not compiled in build.gradle.
@@ -23,7 +23,7 @@ public class QuarkCompat implements IQuarkCompat {
             String packageName = moduleName.substring(0, dot);
             String className = moduleName.substring(dot);
             Class<?> clazz = Class.forName("vazkii.quark." + packageName + StringHelper.snakeToUpperCamel(className));
-            return ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends Module>) clazz);
+            return ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends QuarkModule>) clazz);
         } catch (Exception e) {
             Charm.LOG.debug("Failed to resolve Quark module class name");
             return false;
