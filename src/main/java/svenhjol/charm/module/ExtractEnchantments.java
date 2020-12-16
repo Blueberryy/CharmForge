@@ -100,6 +100,8 @@ public class ExtractEnchantments extends CharmModule {
 
                     world.playEvent(1042, blockPos, 0);
                 });
+
+                // ---- CHARM: SNIP ----
                 ItemStack slot0 = inputs.getStackInSlot(0);
                 ItemStack slot1 = inputs.getStackInSlot(1);
 
@@ -108,6 +110,8 @@ public class ExtractEnchantments extends CharmModule {
 
                 inputs.setInventorySlotContents(0, slot0);
                 inputs.setInventorySlotContents(1, slot1);
+                // ---- CHARM: SNIP ----
+
                 return stack;
             }
 
