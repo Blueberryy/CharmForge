@@ -43,10 +43,7 @@ public class VariantMobTexturesClient extends CharmClientModule {
     }
 
     @Override
-    public void register() {
-        if (!enabled)
-            return;
-
+    public void init() {
         if (VariantMobTextures.variantChickens && !ModHelper.isLoaded("quark") || VariantMobTextures.override)
             RenderingRegistry.registerEntityRenderingHandler(EntityType.CHICKEN, VariantMobRenderer.Chicken::new);
 
@@ -67,10 +64,7 @@ public class VariantMobTexturesClient extends CharmClientModule {
 
         if (VariantMobTextures.variantWolves)
             RenderingRegistry.registerEntityRenderingHandler(EntityType.WOLF, VariantMobRenderer.Wolf::new);
-    }
 
-    @Override
-    public void init() {
         // reset
         chickens = new ArrayList<>();
         cows = new ArrayList<>();
