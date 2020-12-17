@@ -37,7 +37,6 @@ public class ModuleHandler {
 
     private ModuleHandler() {
         // register forge events
-        MOD_EVENT_BUS.register(RegistryHandler.class);
         MOD_EVENT_BUS.addListener(this::onCommonSetup);
         MOD_EVENT_BUS.addListener(this::onModConfig);
         FORGE_EVENT_BUS.addListener(this::onServerStarting);
@@ -166,7 +165,7 @@ public class ModuleHandler {
         // add and run register method for all loaded modules
         loaded.forEach((moduleName, module) -> {
             LOADED_MODULES.put(moduleName, module);
-            Charm.LOG.info("Loaded module " + moduleName);
+            Charm.LOG.info("Loaded module " + moduleName + " (enabled: " + (module.enabled ? "yes" : "no") + ")");
             module.register();
         });
     }
