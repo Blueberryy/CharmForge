@@ -22,7 +22,7 @@ public class QuarkCompat implements IQuarkCompat {
             int dot = moduleName.lastIndexOf(".") + 1;
             String packageName = moduleName.substring(0, dot);
             String className = moduleName.substring(dot);
-            Class<?> clazz = Class.forName("vazkii.quark." + packageName + StringHelper.snakeToUpperCamel(className));
+            Class<?> clazz = Class.forName("vazkii.quark.content." + packageName + StringHelper.snakeToUpperCamel(className));
             return ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends QuarkModule>) clazz);
         } catch (Exception e) {
             Charm.LOG.debug("Failed to resolve Quark module class: " + moduleName);
