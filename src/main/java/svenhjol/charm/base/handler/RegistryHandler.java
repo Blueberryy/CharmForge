@@ -24,6 +24,7 @@ import net.minecraft.world.gen.feature.structure.IStructurePieceType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -35,33 +36,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
+
 @SuppressWarnings({"UnusedReturnValue", "unchecked", "rawtypes"})
+@Mod.EventBusSubscriber(bus = MOD)
 public class RegistryHandler {
     private static final Map<String, Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>>> REGISTRY = new HashMap<>();
 
     @SubscribeEvent
     public static void onRegister(RegistryEvent.Register<?> event) {
-        String owner = getOwnerContext();
         IForgeRegistry registry = event.getRegistry();
 
-        if (!REGISTRY.containsKey(owner)) {
-            Charm.LOG.debug("No registry owner, skipping registry event " + event.getName());
-            return;
-        }
-
-        Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>> ownerRegistry = REGISTRY.get(owner);
-
-        if (ownerRegistry.containsKey(registry)) {
-            ownerRegistry.get(registry).forEach(supplier -> {
-                IForgeRegistryEntry<?> entry = supplier.get();
-                if (entry != null) {
-                    Charm.LOG.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName() + " (context: " + owner + ")");
-                    registry.register(entry);
-                }
-            });
-        } else {
-            Charm.LOG.debug("Owner registry has no event data, skipping registry event " + event.getName());
-        }
+        REGISTRY.forEach((modId, registrations) -> {
+            if (registrations.containsKey(registry)) {
+                registrations.get(registry).forEach(supplier -> {
+                    IForgeRegistryEntry<?> entry = supplier.get();
+                    if (entry != null) {
+                        Charm.LOG.debug("Registering to " + registry.getRegistryName() + " - " + entry.getRegistryName());
+                        registry.register(entry);
+                    }
+                });
+            } else {
+                Charm.LOG.debug("Owner registry has no event data, skipping registry event " + event.getName());
+            }
+        });
     }
 
     public static Block block(ResourceLocation resId, Block block) {
