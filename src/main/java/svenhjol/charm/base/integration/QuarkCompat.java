@@ -25,7 +25,7 @@ public class QuarkCompat implements IQuarkCompat {
             Class<?> clazz = Class.forName("vazkii.quark." + packageName + StringHelper.snakeToUpperCamel(className));
             return ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends QuarkModule>) clazz);
         } catch (Exception e) {
-            Charm.LOG.debug("Failed to resolve Quark module class name");
+            Charm.LOG.debug("Failed to resolve Quark module class: " + moduleName);
             return false;
         }
     }
