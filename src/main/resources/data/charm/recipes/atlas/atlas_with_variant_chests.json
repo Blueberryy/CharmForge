@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:chest"
+      "tag": "charm:chests/normal"
     },
     {
       "item": "minecraft:book"
@@ -24,11 +24,8 @@
           "module": "charm:atlas"
         },
         {
-          "type": "forge:not",
-          "value": {
-            "type": "charm:module_enabled",
-            "module": "charm:variant_chests"
-          }
+          "type": "charm:module_enabled",
+          "module": "charm:variant_chests"
         },
         {
           "type": "forge:not",
