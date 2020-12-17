@@ -52,7 +52,7 @@ public class ConfigHandler {
                 module.getName() + " enabled", module.enabledByDefault
             );
 
-            refreshConfig.add(() -> module.enabled = val.get());
+            refreshConfig.add(() -> module.enabled = module.enabled && val.get());
         });
 
         modules.forEach(module -> {
