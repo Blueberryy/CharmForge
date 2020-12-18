@@ -59,6 +59,7 @@ public class Charm {
             InventoryTidying.class,
             Kilns.class,
             Lumberjacks.class,
+            MapTooltip.class,
             MineshaftImprovements.class,
             Mooblooms.class,
             MoreVillageBiomes.class,
