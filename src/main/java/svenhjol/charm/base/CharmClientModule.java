@@ -6,11 +6,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 public abstract class CharmClientModule {
     protected CharmModule module;
     public boolean hasSubscriptions;
-    public boolean enabled;
 
     public CharmClientModule(CharmModule module) {
         this.module = module;
-        this.enabled = module.enabled;
     }
 
     public CharmModule getModule() {
