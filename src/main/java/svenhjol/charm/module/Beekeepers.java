@@ -46,6 +46,7 @@ public class Beekeepers extends CharmModule {
         // HACK: set ticketCount so that villager can use it as job site
         ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setMaxFreeTickets(1);
 
+        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack"), 5);
         addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), 5);
         addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), 5);
         addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), 5);
