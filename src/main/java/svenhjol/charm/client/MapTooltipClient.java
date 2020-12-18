@@ -58,7 +58,7 @@ public class MapTooltipClient extends CharmClientModule {
         int light = 240;
 
         matrices.push();
-        matrices.translate(x, y, 0.0);
+        matrices.translate(x, y, 500.0);
         matrices.scale(0.5F, 0.5F, 1.0F);
         IRenderTypeBuffer.Impl bufferSource = mc.getRenderTypeBuffers().getBufferSource();
         final IVertexBuilder builder = bufferSource.getBuffer(MAP_BACKGROUND);
