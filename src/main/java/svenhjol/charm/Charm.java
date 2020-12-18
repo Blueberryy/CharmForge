@@ -62,6 +62,7 @@ public class Charm {
             MapTooltip.class,
             MineshaftImprovements.class,
             Mooblooms.class,
+            MorePortalFrames.class,
             MoreVillageBiomes.class,
             MusicImprovements.class,
             NetheriteNuggets.class,

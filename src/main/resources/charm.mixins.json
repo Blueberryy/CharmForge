@@ -21,6 +21,7 @@
     "PistonBlockMixin",
     "PlayerEntityMixin",
     "PlayerInteractionManagerMixin",
+    "PortalSizeMixin",
     "PotionItemMixin",
     "RecipeManagerMixin",
     "RepairContainerMixin",
