@@ -6,15 +6,19 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.text.*;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.base.gui.CharmContainerScreen;
+import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.module.Atlas;
 import svenhjol.charm.render.AtlasRenderer;
 
@@ -39,6 +43,23 @@ public class AtlasClient extends CharmClientModule {
                     event.getSwingProgress(), itemStack);
             event.setCanceled(true);
         }
+    }
+
+    @SubscribeEvent
+    public void onItemTooltip(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty() || stack.getItem() != Atlas.ATLAS_ITEM) return;
+
+        PlayerEntity player = event.getPlayer();
+        if (player == null) return;
+
+        AtlasInventory inventory = Atlas.getInventory(player.world, stack);
+        ItemStack map = inventory.getLastActiveMapItem();
+        if (map == null) return;
+
+        IFormattableTextComponent name = map.hasDisplayName() ? map.getDisplayName().deepCopy()
+                : map.getDisplayName().deepCopy().append(new StringTextComponent(" #" + FilledMapItem.getMapId(map)));
+        event.getToolTip().add(name.mergeStyle(TextFormatting.GRAY, TextFormatting.ITALIC));
     }
 
 

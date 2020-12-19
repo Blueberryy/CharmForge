@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class AtlasInventory implements INamedContainerProvider, IInventory {
     public static String CONTENTS = "contents";
@@ -138,6 +139,13 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         int activeId = ItemNBTHelper.getInt(itemStack, ACTIVE_MAP, -1);
         if (activeId == -1) return null;
         return player.world.getMapData(FilledMapItem.getMapName(activeId));
+    }
+
+    @Nullable
+    public ItemStack getLastActiveMapItem() {
+        int activeId = ItemNBTHelper.getInt(itemStack, ACTIVE_MAP, -1);
+        if (activeId == -1) return null;
+        return items.stream().filter(it -> FilledMapItem.getMapId(it) == activeId).findAny().orElse(null);
     }
 
     @Override
