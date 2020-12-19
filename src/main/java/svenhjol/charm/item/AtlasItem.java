@@ -29,7 +29,14 @@ public class AtlasItem extends CharmItem {
         if (worldIn.isRemote) {
             return ActionResult.resultFail(itemStack);
         }
-        playerIn.openContainer(Atlas.getInventory(worldIn, itemStack));
+        AtlasInventory inventory = Atlas.getInventory(worldIn, itemStack);
+        for(int i = 0; i < inventory.getSizeInventory(); ++i) {
+            ItemStack item = inventory.getStackInSlot(i);
+            if(item.getItem() == Items.FILLED_MAP) {
+                Atlas.sendMapToClient((ServerPlayerEntity) playerIn, item, i);
+            }
+        }
+        playerIn.openContainer(inventory);
         return ActionResult.resultConsume(itemStack);
     }
 

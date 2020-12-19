@@ -93,15 +93,19 @@ public class Atlas extends CharmModule {
                     AtlasInventory.MapInfo mapInfo = inventory.updateActiveMap(player);
                     if (mapInfo != null) {
                         ItemStack map = inventory.getStackInSlot(mapInfo.slot);
-                        if (map.getItem().isComplex()) {
-                            map.getItem().inventoryTick(map, player.world, player, mapInfo.slot, true);
-                            IPacket<?> ipacket = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
-                            if (ipacket != null) {
-                                player.connection.sendPacket(ipacket);
-                            }
-                        }
+                        sendMapToClient(player, map, mapInfo.slot);
                     }
                 }
+            }
+        }
+    }
+
+    public static void sendMapToClient(ServerPlayerEntity player, ItemStack map, int slot) {
+        if (map.getItem().isComplex()) {
+            map.getItem().inventoryTick(map, player.world, player, slot, true);
+            IPacket<?> packet = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
+            if (packet != null) {
+                player.connection.sendPacket(packet);
             }
         }
     }
