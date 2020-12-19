@@ -1,5 +1,6 @@
 package svenhjol.charm.mixin;
 
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -45,6 +46,18 @@ public abstract class RepairContainerMixin extends AbstractRepairContainer {
     )
     private boolean hookUpdateResultTooExpensive(PlayerAbilities abilities) {
         return AnvilImprovements.allowTooExpensive() || abilities.isCreativeMode;
+    }
+
+    @Redirect(
+        method = "updateRepairOutput",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I",
+            ordinal = 1
+        )
+    )
+    private int hookUpdateResultAllowHigherLevel(Enchantment enchantment) {
+        return AnvilImprovements.getEnchantmentMaxLevel(enchantment, this.field_234643_d_.getStackInSlot(1));
     }
 
     @Inject(
