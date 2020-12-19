@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.1.10
+* Fix exploit with books on grindstone
+* Fix crates losing their content on world save/load
+* Fix Quark overrides not working properly (F43nd1r)
+* Remove wither rose from custom village flower builds
+* Dynamic data for custom village builds
+* Added More Portal Frames
+* Added Map Tooltips with atlas support (F43nd1r)
+
 ## 2.1.9
 * Fix grindstone enchantment extraction consuming an entire book stack (ridjack)
 * Fix crash and compat issues with latest Quark version #424
