@@ -105,13 +105,17 @@ public class ExtractEnchantments extends CharmModule {
                 ItemStack slot0 = inputs.getStackInSlot(0);
                 ItemStack slot1 = inputs.getStackInSlot(1);
 
-                slot0.shrink(1);
-                slot1.shrink(1);
+                if (slot0.getCount() > 1) {
+                    slot0.shrink(1);
+                } else if (slot1.getCount() > 1) {
+                    slot1.shrink(1);
+                }
 
-                output.setInventorySlotContents(0, ItemStack.EMPTY);
+                if (slot0.getCount() <= 1)
+                    inputs.setInventorySlotContents(0, ItemStack.EMPTY);
 
-                inputs.setInventorySlotContents(0, slot0);
-                inputs.setInventorySlotContents(1, slot1);
+                if (slot1.getCount() <= 1)
+                    inputs.setInventorySlotContents(1, ItemStack.EMPTY);
                 // ---- CHARM: SNIP ----
 
                 return stack;
