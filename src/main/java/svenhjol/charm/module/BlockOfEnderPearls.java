@@ -56,7 +56,7 @@ public class BlockOfEnderPearls extends CharmModule {
     }
 
     public static boolean tryChorusTeleport(LivingEntity entity, ItemStack stack) {
-        if (!ModuleHandler.enabled("charm:block_of_ender_pearls") || !chorusTeleport)
+        if (!ModuleHandler.enabled(BlockOfEnderPearls.class) || !chorusTeleport)
             return false;
 
         if (!(entity instanceof PlayerEntity))

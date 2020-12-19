@@ -11,6 +11,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.ICharmEnum;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.module.VariantMobTextures;
 import svenhjol.charm.render.VariantMobRenderer;
@@ -44,13 +45,14 @@ public class VariantMobTexturesClient extends CharmClientModule {
 
     @Override
     public void init() {
-        if (VariantMobTextures.variantChickens && !ModHelper.isLoaded("quark") || VariantMobTextures.override)
+        boolean overrideQuark = !ModuleHandler.enabled("quark:client.module.variant_animal_textures_module") || VariantMobTextures.override;
+        if (VariantMobTextures.variantChickens && overrideQuark)
             RenderingRegistry.registerEntityRenderingHandler(EntityType.CHICKEN, VariantMobRenderer.Chicken::new);
 
-        if (VariantMobTextures.variantCows && !ModHelper.isLoaded("quark") || VariantMobTextures.override)
+        if (VariantMobTextures.variantCows && overrideQuark)
             RenderingRegistry.registerEntityRenderingHandler(EntityType.COW, VariantMobRenderer.Cow::new);
 
-        if (VariantMobTextures.variantPigs && !ModHelper.isLoaded("quark") || VariantMobTextures.override)
+        if (VariantMobTextures.variantPigs && overrideQuark)
             RenderingRegistry.registerEntityRenderingHandler(EntityType.PIG, VariantMobRenderer.Pig::new);
 
         if (VariantMobTextures.variantSheep)

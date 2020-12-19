@@ -11,7 +11,7 @@ import svenhjol.charm.base.iface.Module;
 @Module(mod = Charm.MOD_ID, description = "Chickens randomly drop feathers.")
 public class ChickensDropFeathers extends CharmModule {
     public static void tryDropFeather(ChickenEntity chicken) {
-        if (!ModuleHandler.enabled("charm:chickens_drop_feathers"))
+        if (!ModuleHandler.enabled(ChickensDropFeathers.class))
             return;
 
         if (chicken.isAlive()

@@ -37,7 +37,7 @@ public class HuskImprovements extends CharmModule {
     }
 
     public static boolean canSpawn() {
-        return ModuleHandler.enabled("charm:husk_improvements") && spawnAnywhere;
+        return ModuleHandler.enabled(HuskImprovements.class) && spawnAnywhere;
     }
 
     private void tryDrop(Entity entity, DamageSource source, int lootingLevel) {

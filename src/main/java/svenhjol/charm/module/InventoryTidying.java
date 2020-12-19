@@ -6,6 +6,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -24,7 +25,7 @@ public class InventoryTidying extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:management.module.inventory_sorting_module") || override;
     }
 
     @Override

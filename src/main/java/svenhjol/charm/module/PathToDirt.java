@@ -14,6 +14,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -25,7 +26,7 @@ public class PathToDirt extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:tweaks.module.dirt_to_path_module") || override;
     }
 
     @SubscribeEvent

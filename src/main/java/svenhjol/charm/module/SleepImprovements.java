@@ -10,6 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -31,7 +32,7 @@ public class SleepImprovements extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:tweaks.module.improved_sleeping_module") || override;
     }
 
     @SubscribeEvent

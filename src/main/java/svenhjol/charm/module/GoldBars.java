@@ -2,6 +2,7 @@ package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -22,6 +23,6 @@ public class GoldBars extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:building.module.gold_bars_module") || override;
     }
 }

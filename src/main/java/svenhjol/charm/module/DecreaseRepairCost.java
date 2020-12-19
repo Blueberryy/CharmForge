@@ -20,7 +20,7 @@ public class DecreaseRepairCost extends CharmModule {
     @Override
     public void init() {
         // if anvil improvements are not enabled, then set the xpCost to 1.
-        if (!ModuleHandler.enabled("charm:anvil_improvements") && xpCost < 1)
+        if (!ModuleHandler.enabled(AnvilImprovements.class) && xpCost < 1)
             xpCost = 1;
     }
 

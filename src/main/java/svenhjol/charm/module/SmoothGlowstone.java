@@ -23,7 +23,7 @@ public class SmoothGlowstone extends CharmModule {
     public List<ResourceLocation> getRecipesToRemove() {
         List<ResourceLocation> remove = new ArrayList<>();
 
-        if (!ModuleHandler.enabled("charm:kilns"))
+        if (!ModuleHandler.enabled(Kilns.class))
             remove.add(new ResourceLocation(Charm.MOD_ID, "smooth_glowstone/smooth_glowstone_from_firing"));
 
         return remove;

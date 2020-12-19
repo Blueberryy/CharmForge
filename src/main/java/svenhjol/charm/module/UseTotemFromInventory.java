@@ -15,7 +15,7 @@ public class UseTotemFromInventory extends CharmModule {
     public static ItemStack tryFromInventory(LivingEntity entity, Hand hand) {
         ItemStack totem = new ItemStack(Items.TOTEM_OF_UNDYING);
 
-        if (ModuleHandler.enabled("charm:use_totem_from_inventory") && entity instanceof PlayerEntity) {
+        if (ModuleHandler.enabled(UseTotemFromInventory.class) && entity instanceof PlayerEntity) {
             PlayerEntity player = (PlayerEntity)entity;
 
             if (player.inventory.hasItemStack(totem)) {

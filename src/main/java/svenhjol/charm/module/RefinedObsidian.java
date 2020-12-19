@@ -32,7 +32,7 @@ public class RefinedObsidian extends CharmModule {
     public List<ResourceLocation> getRecipesToRemove() {
         List<ResourceLocation> remove = new ArrayList<>();
 
-        if (!ModuleHandler.enabled("charm:kilns"))
+        if (!ModuleHandler.enabled(Kilns.class))
             remove.add(new ResourceLocation(Charm.MOD_ID, "refined_obsidian/refined_obsidian_from_firing"));
 
         return remove;

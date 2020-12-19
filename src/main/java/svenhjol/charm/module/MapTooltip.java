@@ -2,6 +2,7 @@ package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
@@ -14,6 +15,6 @@ public class MapTooltip extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:client.module.improved_tooltips_module") || override;
     }
 }

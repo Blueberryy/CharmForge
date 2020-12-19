@@ -17,7 +17,7 @@ import java.util.List;
 @Module(mod = Charm.MOD_ID, description = "Passive and friendly mobs will heal themselves within range of a beacon with the regeneration effect.")
 public class BeaconsHealMobs extends CharmModule {
     public static void healInBeaconRange(World world, int levels, BlockPos pos, Effect primaryEffect, Effect secondaryEffect) {
-        if (!ModuleHandler.enabled("charm:beacons_heal_mobs"))
+        if (!ModuleHandler.enabled(BeaconsHealMobs.class))
             return;
 
         if (!world.isRemote) {

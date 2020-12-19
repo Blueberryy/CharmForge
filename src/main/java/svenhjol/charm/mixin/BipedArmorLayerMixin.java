@@ -23,7 +23,7 @@ public class BipedArmorLayerMixin<T extends LivingEntity, M extends BipedModel<T
         cancellable = true
     )
     private void hookRenderArmor(MatrixStack matrices, IRenderTypeBuffer vertexConsumers, T livingEntity, EquipmentSlotType equipmentSlot, int i, A bipedEntityModel, CallbackInfo ci) {
-        if (ModuleHandler.enabled("charm:armor_invisibility")) {
+        if (ModuleHandler.enabled(ArmorInvisibility.class)) {
             ItemStack stack = livingEntity.getItemStackFromSlot(equipmentSlot);
             if (ArmorInvisibility.shouldArmorBeInvisible(livingEntity, stack))
                 ci.cancel();

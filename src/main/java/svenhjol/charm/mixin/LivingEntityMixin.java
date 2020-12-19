@@ -45,7 +45,7 @@ public abstract class LivingEntityMixin extends Entity {
         cancellable = true
     )
     private void hookArmorCover(CallbackInfoReturnable<Float> cir) {
-        if (ModuleHandler.enabled("charm:armor_invisibility")) {
+        if (ModuleHandler.enabled(ArmorInvisibility.class)) {
             LivingEntity entity = (LivingEntity) (Object) this;
             Iterable<ItemStack> armorItems = this.getArmorInventoryList();
 

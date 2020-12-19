@@ -83,7 +83,7 @@ public class WanderingTraderImprovements extends CharmModule {
     }
 
     public static boolean shouldSpawnFrequently() {
-        return ModuleHandler.enabled("charm:wandering_trader_improvements") && frequentSpawn;
+        return ModuleHandler.enabled(WanderingTraderImprovements.class) && frequentSpawn;
     }
 
     public static class StructureMapForEmeraldsTrade implements VillagerTrades.ITrade {

@@ -19,16 +19,16 @@ public class AnvilImprovements extends CharmModule {
     public static boolean strongerAnvils = true;
 
     public static boolean allowTooExpensive() {
-        return ModuleHandler.enabled("charm:anvil_improvements") && AnvilImprovements.removeTooExpensive;
+        return ModuleHandler.enabled(AnvilImprovements.class) && AnvilImprovements.removeTooExpensive;
     }
 
     public static boolean allowTakeWithoutXp(PlayerEntity player, IntReferenceHolder levelCost) {
-        return ModuleHandler.enabled("charm:anvil_improvements")
+        return ModuleHandler.enabled(AnvilImprovements.class)
             && (player.abilities.isCreativeMode || ((player.experienceLevel >= levelCost.get()) && levelCost.get() > -1));
     }
 
     public static boolean tryDamageAnvil() {
-        return ModuleHandler.enabled("charm:anvil_improvements")
+        return ModuleHandler.enabled(AnvilImprovements.class)
             && AnvilImprovements.strongerAnvils
             && new Random().nextFloat() < 0.5F;
     }

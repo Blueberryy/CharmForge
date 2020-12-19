@@ -14,7 +14,7 @@ public class CampfiresNoDamage extends CharmModule {
     public static boolean soulCampfiresDamage = true;
 
     public static boolean bypassDamage(BlockState state) {
-        if (!ModuleHandler.enabled("charm:campfires_no_damage"))
+        if (!ModuleHandler.enabled(CampfiresNoDamage.class))
             return false;
 
         if (state.getBlock() == Blocks.SOUL_CAMPFIRE && soulCampfiresDamage)

@@ -73,7 +73,7 @@ public abstract class RepairContainerMixin extends AbstractRepairContainer {
         )
     )
     private void anvilUpdateHook(IInventory inv, int index, ItemStack stack) {
-        if (ModuleHandler.enabled("charm:stackable_enchanted_books"))
+        if (ModuleHandler.enabled(StackableEnchantedBooks.class))
             stack = StackableEnchantedBooks.getReducedStack(inv.getStackInSlot(index));
 
         inv.setInventorySlotContents(index, stack);

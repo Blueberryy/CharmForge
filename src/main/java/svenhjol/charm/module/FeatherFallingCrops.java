@@ -22,7 +22,7 @@ public class FeatherFallingCrops extends CharmModule {
     }
 
     public boolean landedOnFarmlandBlock(Entity entity) {
-        return ModuleHandler.enabled("charm:feather_falling_crops")
+        return ModuleHandler.enabled(FeatherFallingCrops.class)
             && entity instanceof LivingEntity
             && EnchantmentsHelper.hasFeatherFalling((LivingEntity)entity);
     }

@@ -21,7 +21,7 @@ public class AutomaticRecipeUnlock extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:tweaks.module.automatic_recipe_unlock_module") || override;
     }
 
     @SubscribeEvent
@@ -30,7 +30,7 @@ public class AutomaticRecipeUnlock extends CharmModule {
     }
 
     public static void unlockRecipes(PlayerEntity player) {
-        if (!ModuleHandler.enabled("charm:automatic_recipe_unlock"))
+        if (!ModuleHandler.enabled(AutomaticRecipeUnlock.class))
             return;
 
         if (player != null) {

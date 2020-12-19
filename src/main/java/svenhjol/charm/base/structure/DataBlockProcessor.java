@@ -209,7 +209,7 @@ public class DataBlockProcessor extends StructureProcessor {
                     variantMaterial = material;
             }
 
-            if (ModuleHandler.enabled("charm:bookcases") && withChance(BOOKCASE_CHANCE)) {
+            if (ModuleHandler.enabled(Bookcases.class) && withChance(BOOKCASE_CHANCE)) {
                 state = Bookcases.BOOKCASE_BLOCKS.get(variantMaterial).getDefaultState()
                     .with(BookcaseBlock.SLOTS, BookcaseTileEntity.SIZE); // make it have the "full" texture
 
@@ -222,7 +222,7 @@ public class DataBlockProcessor extends StructureProcessor {
 
                 this.tag = new CompoundNBT();
                 blockEntity.write(this.tag);
-            } else if (ModuleHandler.enabled("charm:variant_bookshelves") && variantMaterial != VanillaVariantMaterial.OAK) {
+            } else if (ModuleHandler.enabled(VariantBookshelves.class) && variantMaterial != VanillaVariantMaterial.OAK) {
                 state = VariantBookshelves.BOOKSHELF_BLOCKS.get(variantMaterial).getDefaultState();
             } else {
                 state = Blocks.BOOKSHELF.getDefaultState();
@@ -246,7 +246,7 @@ public class DataBlockProcessor extends StructureProcessor {
         protected void chest() {
             if (!withChance(CHEST_CHANCE)) return;
 
-            if (ModuleHandler.enabled("charm:variant_chests")) {
+            if (ModuleHandler.enabled(VariantChests.class)) {
                 IVariantMaterial variantMaterial = DecorationHelper.getRandomVariantMaterial(random);
 
                 String type = getValue("material", this.data, "");
@@ -319,7 +319,7 @@ public class DataBlockProcessor extends StructureProcessor {
             if (!withChance(LANTERN_CHANCE)) return;
             state = Blocks.LANTERN.getDefaultState();
 
-            if (ModuleHandler.enabled("charm:gold_lanterns") && random.nextFloat() < LANTERN_GOLD_CHANCE)
+            if (ModuleHandler.enabled(GoldLanterns.class) && random.nextFloat() < LANTERN_GOLD_CHANCE)
                 state = GoldLanterns.GOLD_LANTERN.getDefaultState();
 
             if (data.contains("hanging"))
@@ -415,13 +415,13 @@ public class DataBlockProcessor extends StructureProcessor {
             LockableLootTileEntity tileEntity;
             IVariantMaterial woodType = DecorationHelper.getRandomVariantMaterial(random);
 
-            if (random.nextFloat() < 0.5F && ModuleHandler.enabled("charm:crates")) {
+            if (random.nextFloat() < 0.5F && ModuleHandler.enabled(Crates.class)) {
                 // get a crate
                 state = Crates.CRATE_BLOCKS.get(woodType).getDefaultState();
                 tileEntity = Crates.TILE_ENTITY.create();
             } else {
                 // get a barrel
-                if (ModuleHandler.enabled("charm:variant_barrels")) {
+                if (ModuleHandler.enabled(VariantBarrels.class)) {
                     // get variant barrel
                     state = VariantBarrels.BARREL_BLOCKS.get(woodType).getDefaultState();
                 } else {

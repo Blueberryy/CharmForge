@@ -167,7 +167,7 @@ public class MineshaftImprovements extends CharmModule {
             }
         }
 
-        if (generateCrates && ModuleHandler.enabled("charm:crates") && rand.nextFloat() < crateChance) {
+        if (generateCrates && ModuleHandler.enabled(Crates.class) && rand.nextFloat() < crateChance) {
             if (rand.nextFloat() < 0.9F) {
                 int r = rand.nextInt(3) + 12;
                 int y = ((StructurePieceAccessor)piece).invokeGetYWithOffset(0);

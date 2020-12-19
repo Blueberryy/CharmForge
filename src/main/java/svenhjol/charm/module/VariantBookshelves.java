@@ -5,6 +5,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.enums.IVariantMaterial;
 import svenhjol.charm.base.enums.VanillaVariantMaterial;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.helper.OverrideHandler;
 import svenhjol.charm.base.iface.Config;
@@ -30,7 +31,7 @@ public class VariantBookshelves extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:building.module.variant_bookshelves_module") || override;
     }
 
     @Override

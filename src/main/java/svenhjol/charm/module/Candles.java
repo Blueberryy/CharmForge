@@ -2,6 +2,7 @@ package svenhjol.charm.module;
 
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.helper.DecorationHelper;
 import svenhjol.charm.base.helper.ModHelper;
 import svenhjol.charm.base.iface.Config;
@@ -31,7 +32,7 @@ public class Candles extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModHelper.isLoaded("quark") || override;
+        return !ModuleHandler.enabled("quark:building.module.tallow_and_candles_module") || override;
     }
 
     @Override

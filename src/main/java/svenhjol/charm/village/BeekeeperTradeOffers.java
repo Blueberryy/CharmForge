@@ -68,7 +68,7 @@ public class BeekeeperTradeOffers {
         public MerchantOffer getOffer(Entity entity, Random random) {
             setInput(Items.EMERALD, 3);
 
-            if (ModuleHandler.enabled("charm:candles")) {
+            if (ModuleHandler.enabled(Candles.class)) {
                 setOutput(Candles.BEESWAX, 1);
             } else {
                 setOutput(Items.HONEYCOMB, 1);

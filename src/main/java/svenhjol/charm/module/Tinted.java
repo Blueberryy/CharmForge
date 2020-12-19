@@ -32,7 +32,7 @@ public class Tinted extends CharmModule {
 
     @Override
     public void init() {
-        if (!ModuleHandler.enabled("charm:anvil_improvements") && xpCost < 1)
+        if (!ModuleHandler.enabled(AnvilImprovements.class) && xpCost < 1)
             xpCost = 1;
     }
 
