@@ -21,13 +21,6 @@ import svenhjol.charm.base.iface.Module;
 
 @Module(mod = Charm.MOD_ID, description = "Right-clicking on a grass path block with a hoe turns it back into dirt.", hasSubscriptions = true)
 public class PathToDirt extends CharmModule {
-    @Config(name = "Override", description = "This module is automatically disabled if Quark is present. Set true to force enable.")
-    public static boolean override = false;
-
-    @Override
-    public boolean depends() {
-        return !ModuleHandler.enabled("quark:tweaks.module.dirt_to_path_module") || override;
-    }
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
