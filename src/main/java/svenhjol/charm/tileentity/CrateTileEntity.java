@@ -34,6 +34,7 @@ public class CrateTileEntity extends LockableLootTileEntity implements ICapabili
 
     @Override
     public void read(BlockState state, CompoundNBT tag) {
+        super.read(state, tag);
         this.items = NonNullList.withSize(SIZE, ItemStack.EMPTY);
         if (!this.checkLootAndRead(tag))
             ItemStackHelper.loadAllItems(tag, this.items);
