@@ -13,7 +13,7 @@ public class Quark extends CharmModule {
     public static IQuarkCompat compat;
 
     @Override
-    public void init() {
+    public void register() {
         boolean hasQuark = false;
 
         try {
