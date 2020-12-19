@@ -108,6 +108,8 @@ public class ExtractEnchantments extends CharmModule {
                 slot0.shrink(1);
                 slot1.shrink(1);
 
+                output.setInventorySlotContents(0, ItemStack.EMPTY);
+
                 inputs.setInventorySlotContents(0, slot0);
                 inputs.setInventorySlotContents(1, slot1);
                 // ---- CHARM: SNIP ----
