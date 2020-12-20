@@ -20,10 +20,10 @@ import svenhjol.charm.base.CharmModule;
 
 import java.util.List;
 
-public class MapTooltipClient extends CharmClientModule {
+public class MapTooltipsClient extends CharmClientModule {
     private static final RenderType MAP_BACKGROUND = RenderType.getText(new ResourceLocation("textures/map/map_background.png"));
 
-    public MapTooltipClient(CharmModule module) {
+    public MapTooltipsClient(CharmModule module) {
         super(module);
     }
 
