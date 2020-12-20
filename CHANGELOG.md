@@ -4,7 +4,9 @@
 * Fix exploit with books on grindstone
 * Fix crates losing their content on world save/load
 * Fix Quark overrides not working properly (F43nd1r)
+* Fix village builds not spawning villages (Coranthes)
 * Remove wither rose from custom village flower builds
+* Atlas recipe has been changed
 * Dynamic data for custom village builds
 * Added More Portal Frames
 * Added Map Tooltips with atlas support (F43nd1r)
