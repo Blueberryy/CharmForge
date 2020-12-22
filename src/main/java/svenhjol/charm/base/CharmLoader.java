@@ -79,11 +79,13 @@ public class CharmLoader {
     }
 
     public void onModConfig(ModConfig.ModConfigEvent event) {
-        // run dependency check on each module
-        eachModule(ModuleHandler.INSTANCE::depends);
+
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
+        // run dependency check on each module
+        eachModule(ModuleHandler.INSTANCE::depends);
+
         // post init, only enabled modules are run
         eachEnabledModule(ModuleHandler.INSTANCE::init);
     }
