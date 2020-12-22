@@ -22,7 +22,7 @@ public class MobSoundCulling extends CharmModule {
     );
 
     @Config(name = "Custom mob sound delay", description = "This delay applies to all mobs in the custom mob types list. As a guide, sheep and cows are 120 in vanilla.")
-    public static int customDelay = 800;
+    public static int customDelay = 400;
 
     public static int getMinAmbientSoundDelay(MobEntity entity) {
         ResourceLocation id = ForgeRegistries.ENTITIES.getKey(entity.getType());
