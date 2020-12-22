@@ -27,7 +27,7 @@ public class AtlasItem extends CharmItem {
     public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getHeldItem(hand);
         if (world.isRemote) {
-            return ActionResult.resultFail(itemStack);
+            return ActionResult.resultConsume(itemStack);
         }
         if (hand == Hand.OFF_HAND && !Atlas.offHandOpen) {
             return ActionResult.resultPass(itemStack);
