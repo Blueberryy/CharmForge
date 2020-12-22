@@ -1,5 +1,9 @@
 # Changelog for Charm 1.12
 
+## 1.4.1
+* Fix spectres from showing subtitles when they despawn #196 (Sokyran)
+* Fix setting random textures config to false not disabling random textures #289 (Sokyran)
+
 ## 1.4.0
 * Changing dimension keeps player attributes
 
@@ -9,7 +13,7 @@
 * Added FutureMC flowers/sweet berries to the list of compostable items
 * Added FutureMC blocks for world decoration when Charm equivalents are missing
 
-## 1.3.7
+## 1.3.7 
 * Villages with random scattered crops are now rare by default.  For existing configs, change "Village Decorations: Crops outside" value from 0.8 to 0.1.
 * Spectres no longer curse your items by default (they just apply weakness).  For existing configs, "Spectre: Apply curse" to false.  If you want curses, leave as true.
 * Duplication bug: Inventories remain open when crates, barrels or bookshelf chests are broken by another player. Fixes #178
