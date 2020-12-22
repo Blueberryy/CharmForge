@@ -1,12 +1,12 @@
 package svenhjol.charm;
 
-import svenhjol.charm.base.handler.ClientHandler;
+import svenhjol.charm.base.CharmClientLoader;
 import svenhjol.charm.base.handler.LogHandler;
 
 public class CharmClient {
     public static LogHandler LOG = new LogHandler("CharmClient");
 
     public CharmClient() {
-        ClientHandler.INSTANCE.registerForgeMod(Charm.MOD_ID);
+        new CharmClientLoader(Charm.MOD_ID);
     }
 }

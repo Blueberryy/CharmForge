@@ -2,7 +2,7 @@ package svenhjol.charm.client;
 
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.base.handler.ModuleHandler;
+import svenhjol.charm.base.handler.ClientHandler;
 
 public class CoreClient extends CharmClientModule {
     public final InventoryButtonClient inventoryButtonClient;
@@ -14,7 +14,7 @@ public class CoreClient extends CharmClientModule {
 
     @Override
     public void register() {
-        ModuleHandler.FORGE_EVENT_BUS.register(inventoryButtonClient);
+        ClientHandler.FORGE_EVENT_BUS.register(inventoryButtonClient);
     }
 
     @Override

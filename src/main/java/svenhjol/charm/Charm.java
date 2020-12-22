@@ -3,12 +3,8 @@ package svenhjol.charm;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import svenhjol.charm.base.CharmMessages;
-import svenhjol.charm.base.CharmSounds;
-import svenhjol.charm.base.CharmStructures;
-import svenhjol.charm.base.CharmTags;
+import svenhjol.charm.base.*;
 import svenhjol.charm.base.handler.LogHandler;
-import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.PacketHandler;
 import svenhjol.charm.module.*;
 
@@ -21,7 +17,7 @@ public class Charm {
     public static PacketHandler PACKET_HANDLER = new PacketHandler();
 
     public Charm() {
-        ModuleHandler.INSTANCE.registerForgeMod(MOD_ID, Arrays.asList(
+        new CharmLoader(MOD_ID, Arrays.asList(
             Acquisition.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
