@@ -11,8 +11,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.base.item.CharmItem;
+import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.module.Atlas;
 
 public class AtlasItem extends CharmItem {
@@ -24,19 +24,22 @@ public class AtlasItem extends CharmItem {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity playerIn, Hand handIn) {
-        ItemStack itemStack = playerIn.getHeldItem(handIn);
-        if (worldIn.isRemote) {
+    public ActionResult<ItemStack> onItemRightClick(World world, PlayerEntity player, Hand hand) {
+        ItemStack itemStack = player.getHeldItem(hand);
+        if (world.isRemote) {
             return ActionResult.resultFail(itemStack);
         }
-        AtlasInventory inventory = Atlas.getInventory(worldIn, itemStack);
-        for(int i = 0; i < inventory.getSizeInventory(); ++i) {
+        if (hand == Hand.OFF_HAND && !Atlas.offHandOpen) {
+            return ActionResult.resultPass(itemStack);
+        }
+        AtlasInventory inventory = Atlas.getInventory(world, itemStack);
+        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
             ItemStack item = inventory.getStackInSlot(i);
-            if(item.getItem() == Items.FILLED_MAP) {
-                Atlas.sendMapToClient((ServerPlayerEntity) playerIn, item, i);
+            if (item.getItem() == Items.FILLED_MAP) {
+                Atlas.sendMapToClient((ServerPlayerEntity) player, item, i);
             }
         }
-        playerIn.openContainer(inventory);
+        player.openContainer(inventory);
         return ActionResult.resultConsume(itemStack);
     }
 

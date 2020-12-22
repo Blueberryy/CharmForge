@@ -18,11 +18,11 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.handler.RegistryHandler;
-import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.AtlasClient;
 import svenhjol.charm.container.AtlasContainer;
+import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.item.AtlasItem;
 
 import java.util.ArrayList;
@@ -38,6 +38,9 @@ public class Atlas extends CharmModule {
 
     @Config(name = "Map Size", description = "The atlas will create maps of this size (0-4).")
     public static int mapSize = 2;
+
+    @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand")
+    public static boolean offHandOpen = false;
 
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;
@@ -72,6 +75,16 @@ public class Atlas extends CharmModule {
         return inventory;
     }
 
+    public static void sendMapToClient(ServerPlayerEntity player, ItemStack map, int slot) {
+        if (map.getItem().isComplex()) {
+            map.getItem().inventoryTick(map, player.world, player, slot, true);
+            IPacket<?> packet = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
+            if (packet != null) {
+                player.connection.sendPacket(packet);
+            }
+        }
+    }
+
     @Override
     public void register() {
         ATLAS_ITEM = new AtlasItem(this);
@@ -96,16 +109,6 @@ public class Atlas extends CharmModule {
                         sendMapToClient(player, map, mapInfo.slot);
                     }
                 }
-            }
-        }
-    }
-
-    public static void sendMapToClient(ServerPlayerEntity player, ItemStack map, int slot) {
-        if (map.getItem().isComplex()) {
-            map.getItem().inventoryTick(map, player.world, player, slot, true);
-            IPacket<?> packet = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
-            if (packet != null) {
-                player.connection.sendPacket(packet);
             }
         }
     }
