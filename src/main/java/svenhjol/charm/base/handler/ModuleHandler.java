@@ -57,11 +57,10 @@ public class ModuleHandler {
 
     public void onModConfig(ModConfig.ModConfigEvent event) {
         ConfigHandler.refreshAllConfig();
-
-        eachEnabledModule(module -> module.enabled = module.enabled && module.depends());
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
+        eachEnabledModule(module -> module.enabled = module.enabled && module.depends());
         ENABLED_MODULES = new ArrayList<>();
 
         eachEnabledModule(module -> {
