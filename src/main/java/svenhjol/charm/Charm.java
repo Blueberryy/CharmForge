@@ -61,6 +61,7 @@ public class Charm {
             Lumberjacks.class,
             MapTooltips.class,
             MineshaftImprovements.class,
+            MobSoundCulling.class,
             Mooblooms.class,
             MorePortalFrames.class,
             MoreVillageBiomes.class,

@@ -19,6 +19,7 @@
     "LivingEntityMixin",
     "MapDataMixin",
     "MineshaftPiecesMixin",
+    "MobEntityMixin",
     "PistonBlockMixin",
     "PlayerEntityMixin",
     "PlayerInteractionManagerMixin",
