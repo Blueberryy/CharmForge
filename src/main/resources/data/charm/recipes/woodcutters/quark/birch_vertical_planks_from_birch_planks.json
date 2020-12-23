@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:woodcutting",
+  "ingredient": {
+    "item": "minecraft:birch_planks"
+  },
+  "result": "quark:vertical_birch_planks",
+  "count": 1,
+  "conditions": [
+    {
+      "type": "forge:and",
+      "values": [
+        {
+          "type": "charm:module_enabled",
+          "module": "quark:building.module.vertical_slabs_module"
+        },
+        {
+          "type": "charm:module_enabled",
+          "module": "charm:woodcutters"
+        }
+      ]
+    }
+  ]
+}

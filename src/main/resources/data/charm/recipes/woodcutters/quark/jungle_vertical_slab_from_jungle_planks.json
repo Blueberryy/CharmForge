@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:woodcutting",
+  "ingredient": {
+    "item": "minecraft:jungle_planks"
+  },
+  "result": "quark:jungle_vertical_slab",
+  "count": 2,
+  "conditions": [
+    {
+      "type": "forge:and",
+      "values": [
+        {
+          "type": "charm:module_enabled",
+          "module": "quark:building.module.vertical_slabs_module"
+        },
+        {
+          "type": "charm:module_enabled",
+          "module": "charm:woodcutters"
+        }
+      ]
+    }
+  ]
+}

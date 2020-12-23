@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:woodcutting",
+  "ingredient": {
+    "item": "minecraft:warped_planks"
+  },
+  "result": "quark:vertical_warped_planks",
+  "count": 1,
+  "conditions": [
+    {
+      "type": "forge:and",
+      "values": [
+        {
+          "type": "charm:module_enabled",
+          "module": "quark:building.module.vertical_slabs_module"
+        },
+        {
+          "type": "charm:module_enabled",
+          "module": "charm:woodcutters"
+        }
+      ]
+    }
+  ]
+}
