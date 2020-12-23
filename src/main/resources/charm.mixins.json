@@ -5,6 +5,7 @@
   "refmap": "charm.mixins.refmap.json",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AnimalEntityMixin",
     "AnvilBlockMixin",
     "BarrelTileEntityMixin",
     "BeaconTileEntityMixin",
