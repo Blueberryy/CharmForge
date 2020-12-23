@@ -10,6 +10,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
@@ -53,6 +54,9 @@ public class HoeHarvesting extends CharmModule {
         if (!event.isCanceled()) {
             boolean result = tryHarvest(event.getPlayer(), event.getWorld(), event.getHand(), event.getPos());
             event.setCanceled(result);
+            if(result) {
+                event.setCancellationResult(event.getWorld().isRemote ? ActionResultType.SUCCESS : ActionResultType.CONSUME);
+            }
         }
     }
 
