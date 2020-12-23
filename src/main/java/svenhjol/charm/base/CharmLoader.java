@@ -8,6 +8,8 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.base.integration.QuarkCompat;
+import svenhjol.charm.module.Quark;
 
 import java.util.List;
 import java.util.Map;
@@ -83,6 +85,8 @@ public class CharmLoader {
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
+        // TODO: remove when https://github.com/Vazkii/Quark/pull/2754 is resolved
+        Quark.compat.forceQuarkConfigLoad();
         // run dependency check on each module
         eachModule(ModuleHandler.INSTANCE::depends);
 

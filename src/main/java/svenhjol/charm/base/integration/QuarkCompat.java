@@ -5,6 +5,7 @@ import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.helper.StringHelper;
+import vazkii.quark.base.Quark;
 import vazkii.quark.base.module.ModuleLoader;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.content.world.module.BigDungeonModule;
@@ -36,5 +37,10 @@ public class QuarkCompat implements IQuarkCompat {
             return PosHelper.isInsideStructure((ServerWorld)player.world, player.getPosition(), BigDungeonModule.STRUCTURE);
         }
         return false;
+    }
+
+    @Override
+    public void forceQuarkConfigLoad() {
+        Quark.proxy.handleQuarkConfigChange();
     }
 }
