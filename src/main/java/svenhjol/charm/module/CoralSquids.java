@@ -60,12 +60,12 @@ public class CoralSquids extends CharmModule {
 
         // create a bucket item
         CORAL_SQUID_BUCKET = new CoralSquidBucketItem(this);
+
+        MobHelper.setEntityAttributes(CORAL_SQUID, CoralSquidEntity.createSquidAttributes().create());
     }
 
     @Override
     public void init() {
-        MobHelper.setEntityAttributes(CORAL_SQUID, CoralSquidEntity.createSquidAttributes().create());
-
         biomes = new ArrayList<>(Arrays.asList(
             new ResourceLocation("minecraft:warm_ocean"),
             new ResourceLocation("minecraft:deep_warn_ocean")

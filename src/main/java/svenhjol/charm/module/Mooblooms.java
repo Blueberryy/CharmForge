@@ -40,12 +40,11 @@ public class Mooblooms extends CharmModule {
             .build(ID.getPath()));
 
         EntitySpawnPlacementRegistry.register(MOOBLOOM, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoobloomEntity::canSpawn);
+        MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.func_234188_eI_().create());
     }
 
     @Override
     public void init() {
-        MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.func_234188_eI_().create());
-
         // add the mooblooms to flower forest biomes
         biomes = new ArrayList<>(Collections.singletonList(new ResourceLocation("minecraft:flower_forest")));
     }
