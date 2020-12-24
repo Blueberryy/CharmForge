@@ -12,6 +12,7 @@ import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
@@ -43,9 +44,12 @@ public class Mooblooms extends CharmModule {
     }
 
     @Override
-    public void init() {
+    public void onCommonSetup(FMLCommonSetupEvent event) {
         MobHelper.setEntityAttributes(MOOBLOOM, CowEntity.func_234188_eI_().create());
+    }
 
+    @Override
+    public void init() {
         // add the mooblooms to flower forest biomes
         biomes = new ArrayList<>(Collections.singletonList(new ResourceLocation("minecraft:flower_forest")));
     }

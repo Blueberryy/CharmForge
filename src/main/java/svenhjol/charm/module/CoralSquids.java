@@ -11,6 +11,7 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.RegistryHandler;
@@ -63,9 +64,12 @@ public class CoralSquids extends CharmModule {
     }
 
     @Override
-    public void init() {
+    public void onCommonSetup(FMLCommonSetupEvent event) {
         MobHelper.setEntityAttributes(CORAL_SQUID, CoralSquidEntity.createSquidAttributes().create());
+    }
 
+    @Override
+    public void init() {
         biomes = new ArrayList<>(Arrays.asList(
             new ResourceLocation("minecraft:warm_ocean"),
             new ResourceLocation("minecraft:deep_warn_ocean")
