@@ -2,6 +2,7 @@ package svenhjol.charm.base;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,5 +38,9 @@ public abstract class CharmModule {
 
     public void loadWorld(MinecraftServer server) {
         // run on server on world load, only executed if module enabled
+    }
+
+    public void onCommonSetup(FMLCommonSetupEvent event) {
+        // run on both sides, even if module disabled
     }
 }
