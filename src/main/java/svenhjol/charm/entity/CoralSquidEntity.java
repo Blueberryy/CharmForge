@@ -1,6 +1,7 @@
 package svenhjol.charm.entity;
 
 import com.google.common.collect.Maps;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.AbstractCoralPlantBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -9,8 +10,10 @@ import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
@@ -30,6 +33,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.helper.ItemNBTHelper;
+import svenhjol.charm.base.helper.PlayerHelper;
+import svenhjol.charm.item.CoralSquidBucketItem;
 import svenhjol.charm.module.CoralSquids;
 
 import javax.annotation.Nullable;
@@ -42,8 +48,11 @@ import java.util.Random;
  */
 public class CoralSquidEntity extends WaterMobEntity {
     public static final String CORAL_SQUID_TYPE_TAG = "CoralSquidType";
+    public static final String CORAL_SQUID_FROM_BUCKET_TAG = "FromBucket";
 
+    private static final DataParameter<Boolean> FROM_BUCKET;
     private static final DataParameter<Integer> CORAL_SQUID_TYPE;
+
     public static final Map<Integer, ResourceLocation> TEXTURES;
     public static final Map<Integer, Item> DROPS;
 
@@ -122,18 +131,21 @@ public class CoralSquidEntity extends WaterMobEntity {
     protected void registerData() {
         super.registerData();
         this.dataManager.register(CORAL_SQUID_TYPE, 1);
+        this.dataManager.register(FROM_BUCKET, false);
     }
 
     @Override
     public void writeAdditional(CompoundNBT tag) {
         super.writeAdditional(tag);
         tag.putInt(CORAL_SQUID_TYPE_TAG, this.getCoralSquidType());
+        tag.putBoolean(CORAL_SQUID_FROM_BUCKET_TAG, this.isFromBucket());
     }
 
     @Override
     public void readAdditional(CompoundNBT tag) {
         super.readAdditional(tag);
         this.setCoralSquidType(tag.getInt(CORAL_SQUID_TYPE_TAG));
+        this.setFromBucket(tag.getBoolean(CORAL_SQUID_FROM_BUCKET_TAG));
     }
 
     protected void registerGoals() {
@@ -278,6 +290,51 @@ public class CoralSquidEntity extends WaterMobEntity {
         return this.swimX != 0.0F || this.swimY != 0.0F || this.swimZ != 0.0F;
     }
 
+
+    @Override
+    protected ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
+        // copypasta from FishEntity
+        ItemStack held = player.getHeldItem(hand);
+        if (held.getItem() == Items.WATER_BUCKET && this.isAlive()) {
+            this.playSound(SoundEvents.ITEM_BUCKET_FILL_FISH, 1.0F, 1.0F);
+            held.shrink(1);
+
+            ItemStack coralSquidBucket = new ItemStack(CoralSquids.CORAL_SQUID_BUCKET);
+            ItemNBTHelper.setCompound(coralSquidBucket, CoralSquidBucketItem.STORED_CORAL_SQUID, this.serializeNBT());
+
+            if (this.hasCustomName())
+                coralSquidBucket.setDisplayName(this.getCustomName());
+
+            if (!this.world.isRemote)
+                CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayerEntity)player, coralSquidBucket);
+
+            PlayerHelper.addOrDropStack(player, coralSquidBucket);
+
+            this.remove();
+            return ActionResultType.func_233537_a_(this.world.isRemote);
+        } else {
+            return super.func_230254_b_(player, hand);
+        }
+    }
+
+    private boolean isFromBucket() {
+        return this.dataManager.get(FROM_BUCKET);
+    }
+
+    public void setFromBucket(boolean fromBucket) {
+        this.dataManager.set(FROM_BUCKET, fromBucket);
+    }
+
+    @Override
+    public boolean preventDespawn() {
+        return super.preventDespawn() || this.isFromBucket();
+    }
+
+    @Override
+    public boolean canDespawn(double distanceSquared) {
+        return !this.isFromBucket() && !this.hasCustomName();
+    }
+
     class FleeGoal extends Goal {
         private int timer;
 
@@ -360,6 +417,8 @@ public class CoralSquidEntity extends WaterMobEntity {
 
     static {
         CORAL_SQUID_TYPE = EntityDataManager.createKey(CoralSquidEntity.class, DataSerializers.VARINT);
+        FROM_BUCKET = EntityDataManager.createKey(CoralSquidEntity.class, DataSerializers.BOOLEAN);
+
         TEXTURES = Util.make(Maps.newHashMap(), map -> {
             map.put(0, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/tube.png"));
             map.put(1, new ResourceLocation(Charm.MOD_ID, "textures/entity/coral_squid/brain.png"));

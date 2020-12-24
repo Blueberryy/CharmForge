@@ -19,6 +19,7 @@ import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.client.CoralSquidsClient;
 import svenhjol.charm.entity.CoralSquidEntity;
+import svenhjol.charm.item.CoralSquidBucketItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,7 @@ public class CoralSquids extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "coral_squid");
     public static ResourceLocation EGG_ID = new ResourceLocation(Charm.MOD_ID, "coral_squid_spawn_egg");
 
+    public static CoralSquidBucketItem CORAL_SQUID_BUCKET;
     public static EntityType<CoralSquidEntity> CORAL_SQUID;
     public static Item SPAWN_EGG;
 
@@ -44,14 +46,20 @@ public class CoralSquids extends CharmModule {
 
     @Override
     public void register() {
+        // register to MC registry
         CORAL_SQUID = RegistryHandler.entity(ID, EntityType.Builder.create(CoralSquidEntity::new, EntityClassification.WATER_AMBIENT)
             .size(0.54F, 0.54F)
             .trackingRange(8)
             .build(ID.getPath()));
 
+        // create a spawn egg for the squid
         SPAWN_EGG = RegistryHandler.item(EGG_ID, new SpawnEggItem(CORAL_SQUID, 0x0000FF, 0xFF00FF, (new Item.Properties()).group(ItemGroup.MISC)));
 
+        // register the entity attributes
         EntitySpawnPlacementRegistry.register(CORAL_SQUID, EntitySpawnPlacementRegistry.PlacementType.IN_WATER, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, CoralSquidEntity::canSpawn);
+
+        // create a bucket item
+        CORAL_SQUID_BUCKET = new CoralSquidBucketItem(this);
     }
 
     @Override
