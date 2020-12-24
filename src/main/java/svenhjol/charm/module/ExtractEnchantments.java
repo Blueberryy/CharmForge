@@ -76,28 +76,26 @@ public class ExtractEnchantments extends CharmModule {
             }
 
             public ItemStack onTake(PlayerEntity player, ItemStack stack) {
+                ItemStack out = tryGetEnchantedBook(inputs, player);
+
                 context.consume((world, blockPos) -> {
-                    // ---- CHARM: SNIP ----
-                    if (stack.getItem() instanceof EnchantedBookItem) {
+                    if (out != null && out.getItem() instanceof EnchantedBookItem) {
 
                         if (!player.abilities.isCreativeMode) {
-                            int cost = getCost(stack);
+                            int cost = getCost(out);
                             player.addExperienceLevel(-cost);
                         }
 
-                        world.playEvent(1042, blockPos, 0);
-                        return;
+                    } else {
+                        /** vanilla */
+                        int i = this.getExperience(world);
+
+                        while (i > 0) {
+                            int j = ExperienceOrbEntity.getXPSplit(i);
+                            i -= j;
+                            world.addEntity(new ExperienceOrbEntity(world, (double) blockPos.getX(), (double) blockPos.getY() + 0.5D, (double) blockPos.getZ() + 0.5D, j));
+                        }
                     }
-                    // ---- CHARM: SNIP ----
-
-                    int i = this.getExperience(world);
-
-                    while(i > 0) {
-                        int j = ExperienceOrbEntity.getXPSplit(i);
-                        i -= j;
-                        world.addEntity(new ExperienceOrbEntity(world, (double)blockPos.getX(), (double)blockPos.getY() + 0.5D, (double)blockPos.getZ() + 0.5D, j));
-                    }
-
                     world.playEvent(1042, blockPos, 0);
                 });
 
@@ -121,7 +119,7 @@ public class ExtractEnchantments extends CharmModule {
                 return stack;
             }
 
-            /** vanilla **/
+            /** vanilla */
             private int getExperience(World world) {
                 int ix = 0;
                 int i = ix + this.getExperience(inputs.getStackInSlot(0));
@@ -134,7 +132,7 @@ public class ExtractEnchantments extends CharmModule {
                 }
             }
 
-            /** vanilla **/
+            /** vanilla */
             private int getExperience(ItemStack stack) {
                 int i = 0;
                 Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
@@ -158,23 +156,32 @@ public class ExtractEnchantments extends CharmModule {
         if (!isEnabled())
             return false;
 
+        ItemStack out = tryGetEnchantedBook(inputs, player);
+        if (out == null)
+            return false;
+
+        output.setInventorySlotContents(0, out);
+        return true;
+    }
+
+    @Nullable
+    private static ItemStack tryGetEnchantedBook(IInventory inputs, @Nullable PlayerEntity player) {
         List<ItemStack> stacks = getStacksFromInventory(inputs);
         if (!shouldExtract(stacks))
-            return false;
+            return null;
 
         Optional<ItemStack> enchanted = getEnchantedItemFromStacks(stacks);
         if (!enchanted.isPresent())
-            return false;
+            return null;
 
         ItemStack in = enchanted.get();
         if (player != null && !hasEnoughXp(player, getCost(in)))
-            return false;
+            return null;
 
         ItemStack out = new ItemStack(Items.ENCHANTED_BOOK);
         Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(in);
         enchantments.forEach((e, level) -> EnchantedBookItem.addEnchantment(out, new EnchantmentData(e, level)));
-        output.setInventorySlotContents(0, out);
-        return true;
+        return out;
     }
 
     private static boolean isEnabled() {
