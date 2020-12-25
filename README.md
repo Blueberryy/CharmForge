@@ -1,6 +1,6 @@
 # Charm
 
-Charm 2.0 for Fabric 1.16.3
+Charm 2.0 for Forge 1.16.4
 
 Todo: moar readme
 
