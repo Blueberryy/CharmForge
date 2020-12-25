@@ -9,7 +9,7 @@ assignees: ''
 
 Read me first!
 1. Is your issue about the Fabric version of Charm? Please report your issue here: https://github.com/svenhjol/Charm/issues
-2. We don't support OptiFabric! Please check that the problem still occurs if you remove OptiFabric from your mods.
+2. We don't support Optifine! Please check that the problem still occurs if you remove Optifine from your mods.
 3. Don't use the bug report to suggest new features or behavior.
 
 Versions
