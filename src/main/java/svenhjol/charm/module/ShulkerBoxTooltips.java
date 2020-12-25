@@ -15,6 +15,6 @@ public class ShulkerBoxTooltips extends CharmModule {
 
     @Override
     public boolean depends() {
-        return !ModuleHandler.enabled("quark:client.module.shulker_box_tooltips") || override;
+        return !ModuleHandler.enabled("quark:client.module.improved_tooltips_module") || override;
     }
 }
