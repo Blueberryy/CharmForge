@@ -63,7 +63,7 @@ public class ClientHandler {
 
     @Nullable
     public static CharmClientModule getModule(String moduleName) {
-        return LOADED_MODULES.getOrDefault(StringHelper.snakeToUpperCamel(moduleName), null);
+        return LOADED_MODULES.getOrDefault(StringHelper.snakeToUpperCamel(moduleName + "_client"), null);
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
