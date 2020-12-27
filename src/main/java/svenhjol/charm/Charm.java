@@ -46,6 +46,7 @@ public class Charm {
             EntitySpawners.class,
             ExtendNetherite.class,
             ExtractEnchantments.class,
+            ExtraRecipes.class,
             FeatherFallingCrops.class,
             Glowballs.class,
             GoldBars.class,
