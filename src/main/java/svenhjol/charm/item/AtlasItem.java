@@ -10,6 +10,7 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.fml.network.NetworkHooks;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.item.CharmItem;
 import svenhjol.charm.container.AtlasInventory;
@@ -39,7 +40,7 @@ public class AtlasItem extends CharmItem {
                 Atlas.sendMapToClient((ServerPlayerEntity) player, item, i);
             }
         }
-        player.openContainer(inventory);
+        NetworkHooks.openGui((ServerPlayerEntity) player, inventory, inventory::writeTo);
         return ActionResult.resultConsume(itemStack);
     }
 

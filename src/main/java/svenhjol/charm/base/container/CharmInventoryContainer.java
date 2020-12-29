@@ -34,17 +34,4 @@ public class CharmInventoryContainer extends CharmContainer {
         }
     }
 
-    private static class ConditionalSlot extends Slot {
-        private final Predicate<ItemStack> condition;
-
-        public ConditionalSlot(Predicate<ItemStack> condition, IInventory inventoryIn, int index, int xPosition, int yPosition) {
-            super(inventoryIn, index, xPosition, yPosition);
-            this.condition = condition;
-        }
-
-        @Override
-        public boolean isItemValid(ItemStack stack) {
-            return condition.test(stack);
-        }
-    }
 }

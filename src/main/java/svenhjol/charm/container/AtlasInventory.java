@@ -9,9 +9,11 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.FilledMapItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
@@ -24,10 +26,7 @@ import svenhjol.charm.base.helper.ItemNBTHelper;
 import svenhjol.charm.module.Atlas;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,16 +39,21 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     private final World world;
     private final ItemStack itemStack;
     private final ITextComponent name;
-    private List<MapInfo> mapInfos = new ArrayList<>();
+    private NonNullList<MapInfo> mapInfos;
     private MapInfo activeMap = null;
     private boolean isOpen = false;
 
-    public AtlasInventory(World world, ItemStack itemStack, ITextComponent name) {
+    public AtlasInventory(World world, ItemStack itemStack) {
+        this(world, itemStack, NonNullList.create());
+        updateMapInfos();
+    }
+
+    public AtlasInventory(World world, ItemStack itemStack, NonNullList<MapInfo> mapInfos) {
         this.world = world;
         this.itemStack = itemStack;
-        this.name = name;
+        this.name = itemStack.getDisplayName();
         this.items = getInventory(itemStack);
-        updateMapInfos();
+        this.mapInfos = mapInfos;
     }
 
     private static NonNullList<ItemStack> getInventory(ItemStack itemStack) {
@@ -60,7 +64,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private static boolean isOnMap(MapInfo info, int x, int z) {
-        return x >= info.x - info.scale && x < info.x + info.scale && z >= info.z - info.scale && z < info.z + info.scale;
+        return x >= info.x - info.radius && x < info.x + info.radius && z >= info.z - info.radius && z < info.z + info.radius;
     }
 
     private void updateMapInfos() {
@@ -70,15 +74,14 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
                     .map(this::getMapInfo)
                     .filter(Objects::nonNull)
                     .sorted(Comparator.comparingInt(info -> info.scale))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toCollection(NonNullList::create));
             activeMap = null;
         }
     }
 
     private MapInfo getMapInfo(ItemStack itemStack) {
         MapData mapData = FilledMapItem.getMapData(itemStack, world);
-        return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, 64 * (1 << mapData.scale), FilledMapItem.getMapId(itemStack),
-                items.indexOf(itemStack)) : null;
+        return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, mapData.scale, FilledMapItem.getMapId(itemStack), items.indexOf(itemStack)) : null;
     }
 
     @Nullable
@@ -90,9 +93,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
             activeMap = this.activeMap;
         }
         if (activeMap == null) {
-            activeMap = mapInfos.stream()
-                    .filter(info -> isOnMap(info, x, z))
-                    .findFirst().orElse(null);
+            activeMap = mapInfos.stream().filter(info -> isOnMap(info, x, z)).findFirst().orElse(null);
         }
         if (activeMap == null) {
             activeMap = makeNewMap(player, x, z);
@@ -126,8 +127,8 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
                 }
                 ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) Atlas.mapSize, true, true);
                 setInventorySlotContents(to, map);
-                world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT,
-                        SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+                world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, 0.5f,
+                        player.world.rand.nextFloat() * 0.1F + 0.9F);
                 return getMapInfo(map);
             }
         }
@@ -167,8 +168,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     @Override
     public boolean isEmpty() {
         for (ItemStack stack : this.items) {
-            if (!stack.isEmpty())
-                return false;
+            if (!stack.isEmpty()) return false;
         }
         return true;
     }
@@ -241,19 +241,56 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         return items.stream().anyMatch(it -> !it.isEmpty() && it.isItemEqual(stack));
     }
 
+    public ItemStack getAtlasItem() {
+        return itemStack;
+    }
+
+    public NonNullList<MapInfo> getMapInfos() {
+        return mapInfos;
+    }
+
+    public void writeTo(PacketBuffer buffer) {
+        buffer.writeItemStack(itemStack);
+        buffer.writeInt(mapInfos.size());
+        mapInfos.forEach(it -> it.writeTo(buffer));
+    }
+
+    public static AtlasInventory readFrom(World world, PacketBuffer buffer) {
+        ItemStack itemStack = buffer.readItemStack();
+        NonNullList<MapInfo> mapInfos = NonNullList.create();
+        for(int i = buffer.readInt(); i > 0; --i) {
+            mapInfos.add(MapInfo.readFrom(buffer));
+        }
+        return new AtlasInventory(world, itemStack, mapInfos);
+    }
+
     public static class MapInfo {
-        public final double x;
-        public final double z;
+        public final int x;
+        public final int z;
         public final int scale;
         public final int id;
         public final int slot;
+        public final int radius;
 
-        private MapInfo(double x, double z, int scale, int id, int slot) {
+        private MapInfo(int x, int z, int scale, int id, int slot) {
             this.x = x;
             this.z = z;
             this.scale = scale;
             this.id = id;
             this.slot = slot;
+            this.radius = 64 * (1 << scale);
+        }
+
+        public void writeTo(PacketBuffer buffer) {
+            buffer.writeInt(x);
+            buffer.writeInt(z);
+            buffer.writeInt(scale);
+            buffer.writeInt(id);
+            buffer.writeInt(slot);
+        }
+
+        public static MapInfo readFrom(PacketBuffer buffer) {
+            return new MapInfo(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
         }
     }
 }

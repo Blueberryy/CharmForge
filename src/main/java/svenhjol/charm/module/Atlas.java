@@ -1,5 +1,6 @@
 package svenhjol.charm.module;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.ContainerType;
@@ -14,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.network.IContainerFactory;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -24,6 +26,7 @@ import svenhjol.charm.client.AtlasClient;
 import svenhjol.charm.container.AtlasContainer;
 import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.item.AtlasItem;
+import svenhjol.charm.message.ServerTransferStackFromAtlas;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +72,7 @@ public class Atlas extends CharmModule {
     public static AtlasInventory getInventory(World world, ItemStack stack) {
         AtlasInventory inventory = cache.get(stack);
         if (inventory == null) {
-            inventory = new AtlasInventory(world, stack, stack.getDisplayName());
+            inventory = new AtlasInventory(world, stack);
             cache.put(stack, inventory);
         }
         return inventory;
@@ -85,6 +88,11 @@ public class Atlas extends CharmModule {
         }
     }
 
+    public static void serverCallback(PlayerEntity player, ServerTransferStackFromAtlas msg) {
+        AtlasInventory inventory = Atlas.getInventory(player.world, player.inventory.getStackInSlot(msg.atlasSlot));
+        player.addItemStackToInventory(inventory.removeStackFromSlot(msg.mapSlot));
+    }
+
     @Override
     public void register() {
         ATLAS_ITEM = new AtlasItem(this);
@@ -92,7 +100,7 @@ public class Atlas extends CharmModule {
         VALID_ATLAS_ITEMS.add(Items.MAP);
         VALID_ATLAS_ITEMS.add(Items.FILLED_MAP);
 
-        CONTAINER = RegistryHandler.container(ID, AtlasContainer::new);
+        CONTAINER = RegistryHandler.container(ID, (IContainerFactory<AtlasContainer>) AtlasContainer::fromNetwork);
     }
 
     @SubscribeEvent
