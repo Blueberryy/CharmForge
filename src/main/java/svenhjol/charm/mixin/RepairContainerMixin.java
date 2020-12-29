@@ -1,6 +1,7 @@
 package svenhjol.charm.mixin;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,6 +24,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.module.AnvilImprovements;
 import svenhjol.charm.module.StackableEnchantedBooks;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Mixin(RepairContainer.class)
 public abstract class RepairContainerMixin extends AbstractRepairContainer {
@@ -48,16 +52,47 @@ public abstract class RepairContainerMixin extends AbstractRepairContainer {
         return AnvilImprovements.allowTooExpensive() || abilities.isCreativeMode;
     }
 
+//    @Redirect(
+//        method = "updateRepairOutput",
+//        at = @At(
+//            value = "INVOKE",
+//            target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I",
+//            ordinal = 1
+//        )
+//    )
+//    private int hookUpdateResultAllowHigherLevel(Enchantment enchantment) {
+//        return AnvilImprovements.getEnchantmentMaxLevel(enchantment, this.field_234643_d_.getStackInSlot(1));
+//    }
+
+
     @Redirect(
         method = "updateRepairOutput",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I",
-            ordinal = 1
+            target = "Lnet/minecraft/enchantment/EnchantmentHelper;setEnchantments(Ljava/util/Map;Lnet/minecraft/item/ItemStack;)V"
         )
     )
-    private int hookUpdateResultAllowHigherLevel(Enchantment enchantment) {
-        return AnvilImprovements.getEnchantmentMaxLevel(enchantment, this.field_234643_d_.getStackInSlot(1));
+    private void hookUpdateResultAllowHigherLevel2(Map<Enchantment, Integer> enchantments, ItemStack stack) {
+        ItemStack inputStack = this.field_234643_d_.getStackInSlot(1);
+
+        Map<Enchantment, Integer> reset = new HashMap<>();
+
+        // TODO: check it's an enchanted book
+
+        Map<Enchantment, Integer> bookEnchants = EnchantmentHelper.getEnchantments(inputStack);
+
+        bookEnchants.forEach((e, l) -> {
+            if (l > e.getMaxLevel()) {
+                reset.put(e, l);
+            }
+        });
+
+        reset.forEach((e, l) -> {
+            if (enchantments.containsKey(e))
+                enchantments.put(e, l);
+        });
+
+        EnchantmentHelper.setEnchantments(reset, stack);
     }
 
     @Inject(
