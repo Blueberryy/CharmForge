@@ -52,19 +52,6 @@ public abstract class RepairContainerMixin extends AbstractRepairContainer {
         return AnvilImprovements.allowTooExpensive() || abilities.isCreativeMode;
     }
 
-//    @Redirect(
-//        method = "updateRepairOutput",
-//        at = @At(
-//            value = "INVOKE",
-//            target = "Lnet/minecraft/enchantment/Enchantment;getMaxLevel()I",
-//            ordinal = 1
-//        )
-//    )
-//    private int hookUpdateResultAllowHigherLevel(Enchantment enchantment) {
-//        return AnvilImprovements.getEnchantmentMaxLevel(enchantment, this.field_234643_d_.getStackInSlot(1));
-//    }
-
-
     @Redirect(
         method = "updateRepairOutput",
         at = @At(
@@ -72,27 +59,14 @@ public abstract class RepairContainerMixin extends AbstractRepairContainer {
             target = "Lnet/minecraft/enchantment/EnchantmentHelper;setEnchantments(Ljava/util/Map;Lnet/minecraft/item/ItemStack;)V"
         )
     )
-    private void hookUpdateResultAllowHigherLevel2(Map<Enchantment, Integer> enchantments, ItemStack stack) {
+    private void hookUpdateResultAllowHigherLevel(Map<Enchantment, Integer> enchantments, ItemStack outputStack) {
+        if (!ModuleHandler.enabled(AnvilImprovements.class) || !AnvilImprovements.higherEnchantmentLevels) {
+            EnchantmentHelper.setEnchantments(enchantments, outputStack); // vanilla behavior
+            return;
+        }
+
         ItemStack inputStack = this.field_234643_d_.getStackInSlot(1);
-
-        Map<Enchantment, Integer> reset = new HashMap<>();
-
-        // TODO: check it's an enchanted book
-
-        Map<Enchantment, Integer> bookEnchants = EnchantmentHelper.getEnchantments(inputStack);
-
-        bookEnchants.forEach((e, l) -> {
-            if (l > e.getMaxLevel()) {
-                reset.put(e, l);
-            }
-        });
-
-        reset.forEach((e, l) -> {
-            if (enchantments.containsKey(e))
-                enchantments.put(e, l);
-        });
-
-        EnchantmentHelper.setEnchantments(reset, stack);
+        AnvilImprovements.setEnchantmentsAllowHighLevel(enchantments, inputStack, outputStack);
     }
 
     @Inject(
