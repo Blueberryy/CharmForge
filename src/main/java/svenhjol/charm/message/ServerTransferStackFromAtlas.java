@@ -5,7 +5,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import svenhjol.charm.base.iface.ICharmMessage;
 import svenhjol.charm.module.Atlas;
-import svenhjol.charm.module.InventoryTidying;
 
 import java.util.function.Supplier;
 
