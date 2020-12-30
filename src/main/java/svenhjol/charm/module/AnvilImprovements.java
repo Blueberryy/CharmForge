@@ -7,6 +7,10 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.IntReferenceHolder;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
@@ -14,6 +18,7 @@ import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -27,6 +32,9 @@ public class AnvilImprovements extends CharmModule {
 
     @Config(name = "Allow higher enchantment levels", description = "If true, an enchanted book with a level higher than the maximum enchantment level may be applied to an item.")
     public static boolean higherEnchantmentLevels = true;
+
+    @Config(name = "Show item repair cost", description = "If true, items show their repair cost in their tooltip when looking at the anvil screen.")
+    public static boolean showRepairCost = true;
 
     public static boolean allowTooExpensive() {
         return ModuleHandler.enabled(AnvilImprovements.class) && AnvilImprovements.removeTooExpensive;
@@ -63,5 +71,15 @@ public class AnvilImprovements extends CharmModule {
         return ModuleHandler.enabled(AnvilImprovements.class)
             && AnvilImprovements.strongerAnvils
             && new Random().nextFloat() < 0.5F;
+    }
+
+    public static List<ITextComponent> addRepairCostToTooltip(ItemStack stack, List<ITextComponent> tooltip) {
+        int repairCost = stack.getRepairCost();
+        if (repairCost > 0) {
+            tooltip.add(StringTextComponent.EMPTY); // a new line
+            tooltip.add(new TranslationTextComponent("item.charm.repair_cost", repairCost).mergeStyle(TextFormatting.GRAY));
+        }
+
+        return tooltip;
     }
 }
