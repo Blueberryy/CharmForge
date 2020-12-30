@@ -125,6 +125,7 @@
   "item.charm.populated_beehive": "Honey Farm Starter Pack",
   "item.charm.raid_horn": "Raid Horn",
   "item.charm.suspicious_brew": "Suspicious Brew",
+  "item.charm.repair_cost": "Repair Cost: %s",
   "key.charm.openCraftingTable": "Open Portable Crafting Table",
   "key.charm.openEnderChest": "Open Portable Ender Chest",
   "structure.charm.desert_pyramid": "Desert Pyramid",
