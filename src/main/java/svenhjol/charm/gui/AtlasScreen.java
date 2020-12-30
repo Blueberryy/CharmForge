@@ -98,7 +98,8 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             return false;
         }
 
-        default void close(){}
+        default void close() {
+        }
     }
 
     private class WorldMap implements MapGui {
@@ -176,6 +177,9 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                             Charm.PACKET_HANDLER.sendToServer(
                                     new ServerTransferStackFromAtlas(playerInventory.getSlotFor(container.getAtlasInventory().getAtlasItem()), mapInfo.slot));
                             mapInfos.remove(x, y);
+                            if(mapInfos.size() == 1) {
+                                changeGui(getSingleMap(mapInfos.values().iterator().next()));
+                            }
                         } else {
                             changeGui(getSingleMap(mapInfo));
                         }
@@ -266,6 +270,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 buttons.get(1).active = mapInfos.contains(mapX, mapY - 1);
                 buttons.get(2).active = mapInfos.contains(mapX + 1, mapY);
                 buttons.get(3).active = mapInfos.contains(mapX, mapY + 1);
+                buttons.get(4).active = mapInfos.size() > 1;
             } else {
                 buttons.forEach(it -> it.active = false);
             }
@@ -279,10 +284,16 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             int center = (size - buttonSize) / 2;
             //distance of buttons from map
             int dist = 3;
-            buttons.add(new CharmImageButton(x - buttonSize - dist, y + center, buttonSize, buttonSize, 80, 0, 10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(-1, 0)));
-            buttons.add(new CharmImageButton(x + center, y - buttonSize - dist, buttonSize, buttonSize, 50, 0, 10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, -1)));
-            buttons.add(new CharmImageButton(x + size + dist, y + center, buttonSize, buttonSize, 70, 0, 10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(1, 0)));
-            buttons.add(new CharmImageButton(x + center, y + size + dist, buttonSize, buttonSize, 60, 0, 10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, 1)));
+            buttons.add(new CharmImageButton(x - buttonSize - dist, y + center, buttonSize, buttonSize, 80, 0,
+                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(-1, 0)));
+            buttons.add(new CharmImageButton(x + center, y - buttonSize - dist, buttonSize, buttonSize, 50, 0,
+                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, -1)));
+            buttons.add(new CharmImageButton(x + size + dist, y + center, buttonSize, buttonSize, 70, 0,
+                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(1, 0)));
+            buttons.add(new CharmImageButton(x + center, y + size + dist, buttonSize, buttonSize, 60, 0,
+                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, 1)));
+            buttons.add(new CharmImageButton(guiLeft + xSize - 19, guiTop + 3, 16, 16, 90, 0,
+                    17, 34, CharmResources.INVENTORY_BUTTONS, click -> changeGui(getWorldMap())));
             children.addAll(buttons);
         }
 
