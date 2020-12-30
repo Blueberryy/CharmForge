@@ -19,6 +19,7 @@ public class Charm {
     public Charm() {
         new CharmLoader(MOD_ID, Arrays.asList(
             Acquisition.class,
+            AerialAffinity.class,
             AnvilImprovements.class,
             ArmorInvisibility.class,
             Atlas.class,
@@ -45,6 +46,7 @@ public class Charm {
             EntitySpawners.class,
             ExtendNetherite.class,
             ExtractEnchantments.class,
+            ExtraRecipes.class,
             FeatherFallingCrops.class,
             Glowballs.class,
             GoldBars.class,

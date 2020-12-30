@@ -58,9 +58,7 @@ public class VariantChestBlock extends ChestBlock implements ICharmBlock, IVaria
     @Nullable
     @Override
     public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        VariantChestTileEntity chest = new VariantChestTileEntity();
-        chest.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.getString() + "_chest"));
-        return chest;
+        return new VariantChestTileEntity();
     }
 
     @Override

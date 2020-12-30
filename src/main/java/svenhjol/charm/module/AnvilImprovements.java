@@ -3,15 +3,22 @@ package svenhjol.charm.module;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.IntReferenceHolder;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -26,6 +33,9 @@ public class AnvilImprovements extends CharmModule {
     @Config(name = "Allow higher enchantment levels", description = "If true, an enchanted book with a level higher than the maximum enchantment level may be applied to an item.")
     public static boolean higherEnchantmentLevels = true;
 
+    @Config(name = "Show item repair cost", description = "If true, items show their repair cost in their tooltip when looking at the anvil screen.")
+    public static boolean showRepairCost = true;
+
     public static boolean allowTooExpensive() {
         return ModuleHandler.enabled(AnvilImprovements.class) && AnvilImprovements.removeTooExpensive;
     }
@@ -35,25 +45,41 @@ public class AnvilImprovements extends CharmModule {
             && (player.abilities.isCreativeMode || ((player.experienceLevel >= levelCost.get()) && levelCost.get() > -1));
     }
 
-    public static int getEnchantmentMaxLevel(Enchantment enchantment, ItemStack stack) {
-        if (ModuleHandler.enabled("charm:anvil_improvements")
-            && higherEnchantmentLevels
-            && stack.getItem() == Items.ENCHANTED_BOOK
-        ) {
-            Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(stack);
-            if (map.containsKey(enchantment)) {
-                int level = map.get(enchantment);
-                if (level > enchantment.getMaxLevel())
-                    return level;
-            }
+    public static void setEnchantmentsAllowHighLevel(Map<Enchantment, Integer> enchantments, ItemStack book, ItemStack output) {
+        if (book.isEmpty() || output.isEmpty())
+            return;
+
+        if (ModuleHandler.enabled(AnvilImprovements.class) && book.getItem() instanceof EnchantedBookItem) {
+            Map<Enchantment, Integer> reset = new HashMap<>();
+            Map<Enchantment, Integer> bookEnchants = EnchantmentHelper.getEnchantments(book);
+
+            bookEnchants.forEach((e, l) -> {
+                if (l > e.getMaxLevel())
+                    reset.put(e, l);
+            });
+
+            reset.forEach((e, l) -> {
+                if (enchantments.containsKey(e))
+                    enchantments.put(e, l);
+            });
         }
 
-        return enchantment.getMaxLevel();
+        EnchantmentHelper.setEnchantments(enchantments, output);
     }
 
     public static boolean tryDamageAnvil() {
         return ModuleHandler.enabled(AnvilImprovements.class)
             && AnvilImprovements.strongerAnvils
             && new Random().nextFloat() < 0.5F;
+    }
+
+    public static List<ITextComponent> addRepairCostToTooltip(ItemStack stack, List<ITextComponent> tooltip) {
+        int repairCost = stack.getRepairCost();
+        if (repairCost > 0) {
+            tooltip.add(StringTextComponent.EMPTY); // a new line
+            tooltip.add(new TranslationTextComponent("item.charm.repair_cost", repairCost).mergeStyle(TextFormatting.GRAY));
+        }
+
+        return tooltip;
     }
 }

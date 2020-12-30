@@ -6,7 +6,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmLoader;
@@ -40,7 +40,7 @@ public class ModuleHandler {
         // register forge events
         MOD_EVENT_BUS.addListener(this::onCommonSetup);
         MOD_EVENT_BUS.addListener(this::onModConfig);
-        FORGE_EVENT_BUS.addListener(this::onServerStarting);
+        FORGE_EVENT_BUS.addListener(this::onServerAboutToStart);
 
         CONFIG_HANDLER = new ConfigHandler();
         BiomeHandler.init();
@@ -111,7 +111,7 @@ public class ModuleHandler {
 
     }
 
-    public void onServerStarting(FMLServerStartingEvent event) {
+    public void onServerAboutToStart(FMLServerAboutToStartEvent event) {
         DecorationHandler.init(); // load late so that tags are populated at this point
     }
 

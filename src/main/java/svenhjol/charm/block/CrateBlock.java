@@ -51,9 +51,7 @@ public class CrateBlock extends CharmBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        CrateTileEntity crate = new CrateTileEntity();
-        crate.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.getString() + "_crate"));
-        return crate;
+        return new CrateTileEntity();
     }
 
     @Override

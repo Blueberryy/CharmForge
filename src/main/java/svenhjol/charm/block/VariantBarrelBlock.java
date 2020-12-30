@@ -57,8 +57,6 @@ public class VariantBarrelBlock extends BarrelBlock implements ICharmBlock {
     @Nullable
     @Override
     public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        BarrelTileEntity barrel = BarrelTileEntityAccessor.invokeConstructor(VariantBarrels.BLOCK_ENTITY);
-        barrel.setCustomName(new TranslationTextComponent("block." + module.mod + "." + type.getString() + "_barrel"));
-        return barrel;
+        return BarrelTileEntityAccessor.invokeConstructor(VariantBarrels.BLOCK_ENTITY);
     }
 }
