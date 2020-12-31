@@ -50,8 +50,7 @@ public class CoralSquids extends CharmModule {
         // register to MC registry
         CORAL_SQUID = RegistryHandler.entity(ID, EntityType.Builder.create(CoralSquidEntity::new, EntityClassification.WATER_AMBIENT)
             .size(0.54F, 0.54F)
-            .trackingRange(8)
-            .build(ID.getPath()));
+            .trackingRange(8));
 
         // create a spawn egg for the squid
         SPAWN_EGG = RegistryHandler.item(EGG_ID, new SpawnEggItem(CORAL_SQUID, 0x0000FF, 0xFF00FF, (new Item.Properties()).group(ItemGroup.MISC)));

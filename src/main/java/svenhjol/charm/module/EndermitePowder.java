@@ -37,12 +37,10 @@ public class EndermitePowder extends CharmModule {
         ENDERMITE_POWDER = new EndermitePowderItem(this);
 
         // setup and register the entity
-        // TODO "No data fixer registered for endermite_powder"
         ENTITY = RegistryHandler.entity(ID, EntityType.Builder.<EndermitePowderEntity>create(EndermitePowderEntity::new, EntityClassification.MISC)
             .trackingRange(80)
             .setUpdateInterval(10)
-            .size(2.0F, 2.0F)
-            .build(ID.getPath()));
+            .size(2.0F, 2.0F));
     }
 
     @SubscribeEvent

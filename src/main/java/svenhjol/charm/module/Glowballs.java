@@ -34,8 +34,7 @@ public class Glowballs extends CharmModule {
         GLOWBALL = RegistryHandler.entity(ID, EntityType.Builder.<GlowballEntity>create(GlowballEntity::new, EntityClassification.MISC)
             .trackingRange(4)
             .setUpdateInterval(10)
-            .size(0.25F, 0.25F)
-            .build(ID.getPath()));
+            .size(0.25F, 0.25F));
 
         DispenserBlock.registerDispenseBehavior(GLOWBALL_ITEM, new ProjectileDispenseBehavior() {
             protected ProjectileEntity getProjectileEntity(World world, IPosition position, ItemStack stack) {
