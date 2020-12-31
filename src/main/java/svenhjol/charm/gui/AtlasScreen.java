@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.FilledMapItem;
@@ -41,6 +42,11 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         this.ySize = 171;
         Table<Integer, Integer, AtlasInventory.MapInfo> mapInfos = screenContainer.getAtlasInventory().getMapInfos();
         mapGui = mapInfos.size() > 1 ? getWorldMap() : getSingleMap(mapInfos.isEmpty() ? null : mapInfos.values().iterator().next());
+    }
+
+    private static boolean isShiftClick() {
+        return InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 340) ||
+                InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 344);
     }
 
     private WorldMap getWorldMap() {
@@ -172,12 +178,11 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                     int y = (int) (normY * maxMapDistance) + minY;
                     AtlasInventory.MapInfo mapInfo = mapInfos.get(x, y);
                     if (mapInfo != null) {
-                        Charm.LOG.debug("Clicked on map #" + mapInfo.id);
                         if (isShiftClick()) {
                             Charm.PACKET_HANDLER.sendToServer(
-                                    new ServerTransferStackFromAtlas(playerInventory.getSlotFor(container.getAtlasInventory().getAtlasItem()), mapInfo.slot));
+                                    new ServerTransferStackFromAtlas(playerInventory.getSlotFor(container.getAtlasInventory().getAtlasItem()), mapInfo.slot, ServerTransferStackFromAtlas.MODE_SHIFT));
                             mapInfos.remove(x, y);
-                            if(mapInfos.size() == 1) {
+                            if (mapInfos.size() == 1) {
                                 changeGui(getSingleMap(mapInfos.values().iterator().next()));
                             }
                         } else {
@@ -188,11 +193,6 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 }
             }
             return false;
-        }
-
-        private boolean isShiftClick() {
-            return InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 340) ||
-                    InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 344);
         }
 
         private double normalizeForMapArea(double base, double val) {
@@ -242,7 +242,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             matrices.push();
             matrices.translate(x, y, 0);
             matrices.scale(baseScale, baseScale, 1);
-            IRenderTypeBuffer.Impl bufferSource = mc.getRenderTypeBuffers().getBufferSource();
+            IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
             final IVertexBuilder background = bufferSource.getBuffer(MAP_BACKGROUND);
             Matrix4f matrix4f = matrices.getLast().getMatrix();
             background.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
@@ -255,6 +255,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, world.getMapData(FilledMapItem.getMapName(mapInfo.id)), false, light);
                 matrices.pop();
             }
+            bufferSource.finish();
             matrices.pop();
             drawButtons(matrices, mouseX, mouseY, partialTicks);
         }
@@ -262,18 +263,18 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         private void drawButtons(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
             if (buttons.isEmpty()) setupButtons();
             AtlasInventory inventory = container.getAtlasInventory();
+            Table<Integer, Integer, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
             if (mapInfo != null) {
                 int mapX = inventory.convertCoordinateToIndex(mapInfo.x);
                 int mapY = inventory.convertCoordinateToIndex(mapInfo.z);
-                Table<Integer, Integer, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
                 buttons.get(0).active = mapInfos.contains(mapX - 1, mapY);
                 buttons.get(1).active = mapInfos.contains(mapX, mapY - 1);
                 buttons.get(2).active = mapInfos.contains(mapX + 1, mapY);
                 buttons.get(3).active = mapInfos.contains(mapX, mapY + 1);
-                buttons.get(4).active = mapInfos.size() > 1;
             } else {
                 buttons.forEach(it -> it.active = false);
             }
+            buttons.get(4).active = mapInfo == null && !mapInfos.isEmpty() || mapInfos.size() > 1;
             buttons.forEach(it -> it.render(matrices, mouseX, mouseY, partialTicks));
         }
 
@@ -305,6 +306,27 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             if (mapInfo != null) {
                 changeGui(getSingleMap(mapInfo));
             }
+        }
+
+        @Override
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (button == 0 && guiLeft + left <= mouseX && mouseX < guiLeft + left + size && guiTop + top <= mouseY && mouseY < guiTop + top + size) {
+                if (mapInfo != null) {
+                    AtlasInventory inventory = container.getAtlasInventory();
+                    if (isShiftClick()) {
+                        Charm.PACKET_HANDLER.sendToServer(
+                                new ServerTransferStackFromAtlas(playerInventory.getSlotFor(container.getAtlasInventory().getAtlasItem()), mapInfo.slot, ServerTransferStackFromAtlas.MODE_SHIFT));
+                    } else {
+                        Charm.PACKET_HANDLER.sendToServer(
+                                new ServerTransferStackFromAtlas(playerInventory.getSlotFor(container.getAtlasInventory().getAtlasItem()), mapInfo.slot, ServerTransferStackFromAtlas.MODE_NORMAL));
+                        playerInventory.setItemStack(inventory.removeStackFromSlot(mapInfo.slot));
+                    }
+                    inventory.getMapInfos().remove(inventory.convertCoordinateToIndex(mapInfo.x), inventory.convertCoordinateToIndex(mapInfo.z));
+                    changeGui(getSingleMap(null));
+                    return true;
+                }
+            }
+            return false;
         }
 
         @Override

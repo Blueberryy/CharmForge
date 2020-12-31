@@ -13,21 +13,26 @@ import java.util.function.Supplier;
  * @since 29.12.2020
  */
 public class ServerTransferStackFromAtlas implements ICharmMessage {
+    public static final int MODE_NORMAL = 0;
+    public static final int MODE_SHIFT = 1;
     public final int atlasSlot;
     public final int mapSlot;
+    public final int mode;
 
-    public ServerTransferStackFromAtlas(int atlasSlot, int mapSlot) {
+    public ServerTransferStackFromAtlas(int atlasSlot, int mapSlot, int mode) {
         this.atlasSlot = atlasSlot;
         this.mapSlot = mapSlot;
+        this.mode = mode;
     }
 
     public static void encode(ServerTransferStackFromAtlas msg, PacketBuffer buf) {
-        buf.writeInt(msg.atlasSlot);
+        buf.writeVarInt(msg.atlasSlot);
         buf.writeInt(msg.mapSlot);
+        buf.writeVarInt(msg.mode);
     }
 
     public static ServerTransferStackFromAtlas decode(PacketBuffer buf) {
-        return new ServerTransferStackFromAtlas(buf.readInt(), buf.readInt());
+        return new ServerTransferStackFromAtlas(buf.readVarInt(), buf.readInt(), buf.readVarInt());
     }
 
     public static class Handler {

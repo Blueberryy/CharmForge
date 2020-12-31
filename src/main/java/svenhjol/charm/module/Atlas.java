@@ -90,7 +90,15 @@ public class Atlas extends CharmModule {
 
     public static void serverCallback(PlayerEntity player, ServerTransferStackFromAtlas msg) {
         AtlasInventory inventory = Atlas.getInventory(player.world, player.inventory.getStackInSlot(msg.atlasSlot));
-        player.addItemStackToInventory(inventory.removeStackFromSlot(msg.mapSlot));
+        ItemStack itemStack = inventory.removeStackFromSlot(msg.mapSlot);
+        switch (msg.mode) {
+            case ServerTransferStackFromAtlas.MODE_NORMAL:
+                player.inventory.setItemStack(itemStack);
+                break;
+            case ServerTransferStackFromAtlas.MODE_SHIFT:
+                player.addItemStackToInventory(itemStack);
+                break;
+        }
     }
 
     @Override
