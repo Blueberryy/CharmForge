@@ -1,8 +1,12 @@
 package svenhjol.charm.module;
 
+import net.minecraft.client.gui.screen.inventory.CartographyTableScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.CraftResultInventory;
+import net.minecraft.inventory.container.CartographyContainer;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.*;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
@@ -122,6 +126,44 @@ public class Atlas extends CharmModule {
         throw new IllegalStateException("No atlas in any hand, can't open!");
     }
 
+    public static void setupAtlasUpscale(PlayerInventory playerInventory, CartographyContainer container) {
+        if (ModuleHandler.enabled(Atlas.class)) {
+            Slot oldSlot = container.inventorySlots.get(0);
+            container.inventorySlots.set(0, new Slot(oldSlot.inventory, oldSlot.getSlotIndex(), oldSlot.xPos, oldSlot.yPos) {
+                @Override
+                public boolean isItemValid(ItemStack stack) {
+                    return oldSlot.isItemValid(stack) || stack.getItem() == ATLAS_ITEM && getInventory(playerInventory.player.world, stack).getMapInfos().isEmpty();
+                }
+            });
+        }
+    }
+
+    public static boolean makeAtlasUpscaleOutput(ItemStack topStack, ItemStack bottomStack, ItemStack outputStack, World world,
+                                                 CraftResultInventory craftResultInventory, CartographyContainer cartographyContainer) {
+        if (ModuleHandler.enabled(Atlas.class) && topStack.getItem() == Atlas.ATLAS_ITEM) {
+            AtlasInventory inventory = Atlas.getInventory(world, topStack);
+            ItemStack output;
+            if (inventory.getMapInfos().isEmpty() && bottomStack.getItem() == Items.MAP && inventory.getScale() < 4) {
+                output = topStack.copy();
+                ItemNBTHelper.getNBT(output).putUniqueId(AtlasInventory.ID, UUID.randomUUID());
+                ItemNBTHelper.setInt(output, AtlasInventory.SCALE, inventory.getScale() + 1);
+            } else {
+                output = ItemStack.EMPTY;
+            }
+            if (!ItemStack.areItemStacksEqual(output, outputStack)) {
+                craftResultInventory.setInventorySlotContents(2, output);
+                cartographyContainer.detectAndSendChanges();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean shouldDrawAtlasCopy(CartographyTableScreen screen) {
+        return ModuleHandler.enabled(Atlas.class) && screen.getContainer().getSlot(0).getStack().getItem() == ATLAS_ITEM
+                && screen.getContainer().getSlot(1).getStack().getItem() == Items.MAP;
+    }
+
     @Override
     public void register() {
         ATLAS_ITEM = new AtlasItem(this);
@@ -129,7 +171,7 @@ public class Atlas extends CharmModule {
         VALID_ATLAS_ITEMS.add(Items.MAP);
         VALID_ATLAS_ITEMS.add(Items.FILLED_MAP);
 
-        CONTAINER = RegistryHandler.container(ID, (syncId, playerInventory)-> new AtlasContainer(syncId, playerInventory, findAtlas(playerInventory)));
+        CONTAINER = RegistryHandler.container(ID, (syncId, playerInventory) -> new AtlasContainer(syncId, playerInventory, findAtlas(playerInventory)));
     }
 
     @SubscribeEvent

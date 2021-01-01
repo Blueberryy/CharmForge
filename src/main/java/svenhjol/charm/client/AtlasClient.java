@@ -54,6 +54,7 @@ public class AtlasClient extends CharmClientModule {
         if (player == null) return;
 
         AtlasInventory inventory = Atlas.getInventory(player.world, stack);
+        event.getToolTip().add(new StringTextComponent("Scale " + inventory.getScale()).mergeStyle(TextFormatting.GRAY));
         ItemStack map = inventory.getLastActiveMapItem();
         if (map == null) return;
 
