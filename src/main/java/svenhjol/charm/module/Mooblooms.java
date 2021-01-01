@@ -37,8 +37,7 @@ public class Mooblooms extends CharmModule {
     public void register() {
         MOOBLOOM = RegistryHandler.entity(ID, EntityType.Builder.create(MoobloomEntity::new, EntityClassification.CREATURE)
             .size(0.9F, 1.4F)
-            .trackingRange(10)
-            .build(ID.getPath()));
+            .trackingRange(10));
 
         EntitySpawnPlacementRegistry.register(MOOBLOOM, EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoobloomEntity::canSpawn);
     }

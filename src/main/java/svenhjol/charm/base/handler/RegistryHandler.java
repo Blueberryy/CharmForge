@@ -42,6 +42,7 @@ import static net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus.MOD;
 @Mod.EventBusSubscriber(bus = MOD)
 public class RegistryHandler {
     private static final Map<String, Map<IForgeRegistry<?>, List<Supplier<IForgeRegistryEntry<?>>>>> REGISTRY = new HashMap<>();
+    public static List<String> SUPPRESS_DATA_FIXER_ERROR = new ArrayList<>();
 
     @SubscribeEvent
     public static void onRegister(RegistryEvent.Register<?> event) {
@@ -77,7 +78,9 @@ public class RegistryHandler {
         return configuredFeature;
     }
 
-    public static <T extends Entity> EntityType<T> entity(ResourceLocation resId, EntityType<T> entityType) {
+    public static <T extends Entity> EntityType<T> entity(ResourceLocation resId, EntityType.Builder<T> build) {
+        SUPPRESS_DATA_FIXER_ERROR.add(resId.toString());
+        EntityType<T> entityType = build.build(resId.toString());
         register(ForgeRegistries.ENTITIES, resId, entityType);
         return entityType;
     }
