@@ -93,5 +93,8 @@ public class AtlasClient extends CharmClientModule {
         matrixStack.pop(); // close
     }
 
+    public static void updateInventory(ItemStack atlas) {
+        Atlas.getInventory(Minecraft.getInstance().world, atlas).reload(atlas);
+    }
 }
 

@@ -12,31 +12,35 @@ import java.util.function.Supplier;
  * @author Lukas
  * @since 29.12.2020
  */
-public class ServerTransferStackFromAtlas implements ICharmMessage {
-    public static final int MODE_NORMAL = 0;
-    public static final int MODE_SHIFT = 1;
+public class ServerAtlasTransfer implements ICharmMessage {
+    public enum MoveMode {
+        TO_HAND, TO_INVENTORY, FROM_HAND, FROM_INVENTORY
+    }
     public final int atlasSlot;
-    public final int mapSlot;
-    public final int mode;
+    public final int mapX;
+    public final int mapZ;
+    public final MoveMode mode;
 
-    public ServerTransferStackFromAtlas(int atlasSlot, int mapSlot, int mode) {
+    public ServerAtlasTransfer(int atlasSlot, int mapX, int mapZ, MoveMode mode) {
         this.atlasSlot = atlasSlot;
-        this.mapSlot = mapSlot;
+        this.mapX = mapX;
+        this.mapZ = mapZ;
         this.mode = mode;
     }
 
-    public static void encode(ServerTransferStackFromAtlas msg, PacketBuffer buf) {
+    public static void encode(ServerAtlasTransfer msg, PacketBuffer buf) {
         buf.writeVarInt(msg.atlasSlot);
-        buf.writeInt(msg.mapSlot);
-        buf.writeVarInt(msg.mode);
+        buf.writeInt(msg.mapX);
+        buf.writeInt(msg.mapZ);
+        buf.writeEnumValue(msg.mode);
     }
 
-    public static ServerTransferStackFromAtlas decode(PacketBuffer buf) {
-        return new ServerTransferStackFromAtlas(buf.readVarInt(), buf.readInt(), buf.readVarInt());
+    public static ServerAtlasTransfer decode(PacketBuffer buf) {
+        return new ServerAtlasTransfer(buf.readVarInt(), buf.readInt(), buf.readInt(), buf.readEnumValue(MoveMode.class));
     }
 
     public static class Handler {
-        public static void handle(final ServerTransferStackFromAtlas msg, Supplier<NetworkEvent.Context> ctx) {
+        public static void handle(final ServerAtlasTransfer msg, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 NetworkEvent.Context context = ctx.get();
                 ServerPlayerEntity player = context.getSender();

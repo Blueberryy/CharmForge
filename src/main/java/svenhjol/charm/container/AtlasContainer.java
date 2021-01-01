@@ -1,27 +1,16 @@
 package svenhjol.charm.container;
 
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.Hand;
 import svenhjol.charm.base.container.CharmContainer;
-import svenhjol.charm.base.container.CharmInventoryContainer;
 import svenhjol.charm.base.container.ConditionalSlot;
 import svenhjol.charm.module.Atlas;
-import vazkii.quark.addons.oddities.container.MatrixEnchantingContainer;
-import vazkii.quark.addons.oddities.tile.MatrixEnchantingTableTileEntity;
 
 public class AtlasContainer extends CharmContainer {
     private final AtlasInventory inventory;
-
-    public static AtlasContainer fromNetwork(int windowId, PlayerInventory playerInventory, PacketBuffer buf) {
-        return new AtlasContainer(windowId, playerInventory, AtlasInventory.readFrom(playerInventory.player.world, buf));
-    }
 
     public AtlasContainer(int syncId, PlayerInventory player, AtlasInventory inventory) {
         super(Atlas.CONTAINER, syncId, player, inventory);

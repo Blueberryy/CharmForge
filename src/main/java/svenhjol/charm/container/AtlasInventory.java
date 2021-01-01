@@ -14,7 +14,7 @@ import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
@@ -25,132 +25,99 @@ import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.base.helper.ItemNBTHelper;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 public class AtlasInventory implements INamedContainerProvider, IInventory {
     public static final String CONTENTS = "contents";
+    public static final String EMPTY_MAPS = "empty_maps";
+    public static final String FILLED_MAPS = "filled_maps";
     public static final String ACTIVE_MAP = "active_map";
     public static final String SCALE = "scale";
+    public static final String ID = "id";
     private static final int EMPTY_MAP_SLOTS = 3;
-    private static final int FILLED_MAP_SLOTS = 15;
-
-    private final NonNullList<ItemStack> items;
     private final World world;
-    private final ItemStack itemStack;
-    private final ITextComponent name;
-    private final int scale;
-    private final int radius;
     private final int diameter;
-    private Table<Integer, Integer, MapInfo> mapInfos;
-    private MapInfo activeMap = null;
+    private final Map<Index, MapInfo> mapInfos;
+    private final NonNullList<ItemStack> emptyMaps;
+    private ItemStack atlas;
+    private int scale;
     private boolean isOpen = false;
 
-    public AtlasInventory(World world, ItemStack itemStack) {
-        this(world, itemStack, Collections.emptyList());
-        updateMapInfos();
-    }
-
-    public AtlasInventory(World world, ItemStack itemStack, List<MapInfo> mapInfos) {
+    public AtlasInventory(World world, ItemStack atlas) {
         this.world = world;
-        this.itemStack = itemStack;
-        this.name = itemStack.getDisplayName();
-        this.items = getInventory(itemStack);
-        this.scale = ItemNBTHelper.getInt(itemStack, SCALE, 0);
-        this.radius = 64 * (1 << scale);
-        this.diameter = radius * 2;
-        this.mapInfos = TreeBasedTable.create();
-        mapInfos.forEach(this::putMapInfo);
+        this.atlas = atlas;
+        this.scale = 0;
+        this.diameter = 128 * (1 << scale);
+        this.emptyMaps = NonNullList.withSize(EMPTY_MAP_SLOTS, ItemStack.EMPTY);
+        this.mapInfos = new LinkedHashMap<>();
+        load();
     }
 
-    private static NonNullList<ItemStack> getInventory(ItemStack itemStack) {
-        CompoundNBT nbt = ItemNBTHelper.getCompound(itemStack, CONTENTS);
-        NonNullList<ItemStack> items = NonNullList.withSize(EMPTY_MAP_SLOTS + FILLED_MAP_SLOTS, ItemStack.EMPTY);
-        ItemStackHelper.loadAllItems(nbt, items);
-        return items;
+    public void reload(ItemStack atlas) {
+        this.atlas = atlas;
+        emptyMaps.clear();
+        mapInfos.clear();
+        load();
     }
 
-    public static AtlasInventory readFrom(World world, PacketBuffer buffer) {
-        ItemStack itemStack = buffer.readItemStack();
-        NonNullList<MapInfo> mapInfos = NonNullList.create();
-        for (int i = buffer.readInt(); i > 0; --i) {
-            mapInfos.add(MapInfo.readFrom(buffer));
+    private void load() {
+        scale = ItemNBTHelper.getInt(atlas, SCALE, 0);
+        ItemStackHelper.loadAllItems(ItemNBTHelper.getCompound(atlas, EMPTY_MAPS), emptyMaps);
+        ListNBT listNBT = ItemNBTHelper.getNBT(atlas).getList(FILLED_MAPS, 10);
+        for (int i = 0; i < listNBT.size(); ++i) {
+            putMapInfo(MapInfo.readFrom(listNBT.getCompound(i)));
         }
-        return new AtlasInventory(world, itemStack, mapInfos);
+    }
+
+    public boolean isOpen() {
+        return isOpen;
     }
 
     private void putMapInfo(MapInfo mapInfo) {
-        mapInfos.put(convertCoordinateToIndex(mapInfo.x), convertCoordinateToIndex(mapInfo.z), mapInfo);
+        mapInfos.put(Index.of(convertCoordToIndex(mapInfo.x), convertCoordToIndex(mapInfo.z)), mapInfo);
     }
 
-    public int convertCoordinateToIndex(int coordinate) {
+    public int convertCoordToIndex(int coordinate) {
         return Math.floorDiv(coordinate, diameter);
     }
 
-    private boolean isOnMap(MapInfo info, int x, int z) {
-        return x >= info.x - radius && x < info.x + radius && z >= info.z - radius && z < info.z + radius;
-    }
-
-    private void updateMapInfos() {
-        if (!world.isRemote) {
-            mapInfos.clear();
-            items.stream()
-                    .filter(stack -> stack.getItem() == Items.FILLED_MAP)
-                    .map(this::getMapInfo)
-                    .filter(Objects::nonNull)
-                    .forEach(this::putMapInfo);
-            activeMap = null;
-        }
-    }
-
-    private MapInfo getMapInfo(ItemStack itemStack) {
-        MapData mapData = FilledMapItem.getMapData(itemStack, world);
-        return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, FilledMapItem.getMapId(itemStack), items.indexOf(itemStack)) : null;
+    private MapInfo getMapInfo(ItemStack map) {
+        MapData mapData = FilledMapItem.getMapData(map, world);
+        return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, FilledMapItem.getMapId(map), map) : null;
     }
 
     @Nullable
     public MapInfo updateActiveMap(ServerPlayerEntity player) {
-        int x = convertCoordinateToIndex((int) player.getPosX() + 64);
-        int z = convertCoordinateToIndex((int) player.getPosZ() + 64);
-        MapInfo activeMap = mapInfos.get(x, z);
+        int x = convertCoordToIndex((int) player.getPosX() + 64);
+        int z = convertCoordToIndex((int) player.getPosZ() + 64);
+        MapInfo activeMap = mapInfos.get(Index.of(x, z));
         if (activeMap == null) {
             activeMap = makeNewMap(player, (int) player.getPosX(), (int) player.getPosZ());
         }
-        ItemNBTHelper.setInt(itemStack, ACTIVE_MAP, activeMap != null ? activeMap.id : -1);
+        ItemNBTHelper.setInt(atlas, ACTIVE_MAP, activeMap != null ? activeMap.id : -1);
         return activeMap;
     }
 
     private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
         if (!isOpen) {
-            int from = -1;
-            int to = -1;
             for (int i = 0; i < EMPTY_MAP_SLOTS; ++i) {
                 ItemStack stack = getStackInSlot(i);
                 if (stack.getItem() == Items.MAP) {
-                    from = i;
-                    break;
+                    if (!player.isCreative()) {
+                        decrStackSize(i, 1);
+                    }
+                    ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) scale, true, true);
+                    MapInfo mapInfo = getMapInfo(map);
+                    putMapInfo(mapInfo);
+                    markDirty();
+                    world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, 0.5f,
+                            player.world.rand.nextFloat() * 0.1F + 0.9F);
+                    return mapInfo;
                 }
-            }
-            for (int i = EMPTY_MAP_SLOTS; i < getSizeInventory(); ++i) {
-                ItemStack stack = getStackInSlot(i);
-                if (stack.isEmpty()) {
-                    to = i;
-                    break;
-                }
-            }
-            if (from != -1 && to != -1) {
-                if (!player.isCreative()) {
-                    decrStackSize(from, 1);
-                }
-                ItemStack map = FilledMapItem.setupNewMap(world, x, z, (byte) scale, true, true);
-                setInventorySlotContents(to, map);
-                MapInfo mapInfo = getMapInfo(map);
-                putMapInfo(mapInfo);
-                world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, 0.5f,
-                        player.world.rand.nextFloat() * 0.1F + 0.9F);
-                return mapInfo;
             }
         }
         return null;
@@ -158,90 +125,120 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
 
     @Nullable
     public MapData getActiveMap(ClientPlayerEntity player) {
-        int activeId = ItemNBTHelper.getInt(itemStack, ACTIVE_MAP, -1);
+        int activeId = ItemNBTHelper.getInt(atlas, ACTIVE_MAP, -1);
         if (activeId == -1) return null;
         return player.world.getMapData(FilledMapItem.getMapName(activeId));
     }
 
     @Nullable
     public ItemStack getLastActiveMapItem() {
-        int activeId = ItemNBTHelper.getInt(itemStack, ACTIVE_MAP, -1);
+        int activeId = ItemNBTHelper.getInt(atlas, ACTIVE_MAP, -1);
         if (activeId == -1) return null;
-        return items.stream().filter(it -> FilledMapItem.getMapId(it) == activeId).findAny().orElse(null);
+        return mapInfos.values().stream().filter(it -> it.id == activeId).findAny().map(it -> it.map).orElse(null);
     }
 
     @Override
+    @Nonnull
     public ITextComponent getDisplayName() {
-        return name;
+        return atlas.getDisplayName();
     }
 
     @Nullable
     @Override
-    public Container createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public Container createMenu(int syncId, @Nonnull PlayerInventory playerInventory, @Nonnull PlayerEntity player) {
         return new AtlasContainer(syncId, playerInventory, this);
     }
 
     @Override
     public int getSizeInventory() {
-        return EMPTY_MAP_SLOTS + FILLED_MAP_SLOTS;
+        return EMPTY_MAP_SLOTS;
     }
 
     @Override
     public boolean isEmpty() {
-        for (ItemStack stack : this.items) {
+        for (ItemStack stack : this.emptyMaps) {
             if (!stack.isEmpty()) return false;
         }
-        return true;
+        return mapInfos.isEmpty();
     }
 
+    @Nonnull
     @Override
     public ItemStack getStackInSlot(int index) {
-        return items.get(index);
+        return emptyMaps.get(index);
     }
 
+    @Nonnull
     @Override
     public ItemStack decrStackSize(int index, int count) {
-        ItemStack itemstack = ItemStackHelper.getAndSplit(items, index, count);
+        ItemStack itemstack = ItemStackHelper.getAndSplit(emptyMaps, index, count);
         markDirty();
         return itemstack;
     }
 
+    @Nonnull
     @Override
     public ItemStack removeStackFromSlot(int index) {
-        ItemStack itemStack = ItemStackHelper.getAndRemove(items, index);
+        ItemStack itemStack = ItemStackHelper.getAndRemove(emptyMaps, index);
         markDirty();
         return itemStack;
     }
 
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        items.set(index, stack);
-        if (stack.getCount() > getInventoryStackLimit()) {
-            stack.setCount(getInventoryStackLimit());
-        }
+    public MapInfo removeMapByCoords(int x, int z) {
+        return removeMapByIndex(Index.of(convertCoordToIndex(x), convertCoordToIndex(z)));
+    }
 
-        this.markDirty();
+    private MapInfo removeMapByIndex(Index index) {
+        MapInfo info = mapInfos.remove(index);
+        markDirty();
+        return info;
+    }
+
+    public void addToInventory(ItemStack itemStack) {
+        if (itemStack.getItem() == Items.FILLED_MAP) {
+            putMapInfo(getMapInfo(itemStack));
+            markDirty();
+        }
+    }
+
+    @Override
+    public void setInventorySlotContents(int index, @Nonnull ItemStack stack) {
+        if (!emptyMaps.get(index).equals(stack, true)) {
+            emptyMaps.set(index, stack);
+            if (stack.getCount() > getInventoryStackLimit()) {
+                stack.setCount(getInventoryStackLimit());
+            }
+            markDirty();
+        }
     }
 
     @Override
     public void markDirty() {
-        updateMapInfos();
-        CompoundNBT nbt = new CompoundNBT();
-        ItemStackHelper.saveAllItems(nbt, items, false);
-        ItemNBTHelper.setCompound(itemStack, CONTENTS, nbt);
+        ItemNBTHelper.setInt(atlas, SCALE, scale);
+        CompoundNBT emptyMapNBT = new CompoundNBT();
+        ItemStackHelper.saveAllItems(emptyMapNBT, emptyMaps, false);
+        ItemNBTHelper.setCompound(atlas, EMPTY_MAPS, emptyMapNBT);
+        ListNBT listNBT = new ListNBT();
+        for (MapInfo mapInfo : mapInfos.values()) {
+            CompoundNBT nbt = new CompoundNBT();
+            mapInfo.writeTo(nbt);
+            listNBT.add(nbt);
+        }
+        ItemNBTHelper.getNBT(atlas).put(FILLED_MAPS, listNBT);
     }
 
     @Override
-    public boolean isUsableByPlayer(PlayerEntity player) {
+    public boolean isUsableByPlayer(@Nonnull PlayerEntity player) {
         for (Hand hand : Hand.values()) {
-            if (player.getHeldItem(hand) == itemStack) return true;
+            if (player.getHeldItem(hand) == atlas) return true;
         }
         return false;
     }
 
     @Override
     public void clear() {
-        items.clear();
+        emptyMaps.clear();
+        mapInfos.clear();
     }
 
     @Override
@@ -259,45 +256,82 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     public boolean hasItemStack(ItemStack stack) {
-        return items.stream().anyMatch(it -> !it.isEmpty() && it.isItemEqual(stack));
+        return Stream.concat(emptyMaps.stream(), mapInfos.values().stream().map(it -> it.map)).anyMatch(it -> !it.isEmpty() && it.isItemEqual(stack));
     }
 
     public ItemStack getAtlasItem() {
-        return itemStack;
+        return atlas;
     }
 
-    public Table<Integer, Integer, MapInfo> getMapInfos() {
+    public Map<Index, MapInfo> getMapInfos() {
         return mapInfos;
     }
 
-    public void writeTo(PacketBuffer buffer) {
-        buffer.writeItemStack(itemStack);
-        buffer.writeInt(mapInfos.size());
-        mapInfos.values().forEach(it -> it.writeTo(buffer));
+    public int getScale() {
+        return scale;
     }
 
     public static class MapInfo {
+        private static final String X = "x";
+        private static final String Z = "z";
+        private static final String ID = "id";
+        private static final String MAP = "map";
         public final int x;
         public final int z;
         public final int id;
-        public final int slot;
+        public final ItemStack map;
 
-        private MapInfo(int x, int z, int id, int slot) {
+        private MapInfo(int x, int z, int id, ItemStack map) {
             this.x = x;
             this.z = z;
             this.id = id;
-            this.slot = slot;
+            this.map = map;
         }
 
-        public static MapInfo readFrom(PacketBuffer buffer) {
-            return new MapInfo(buffer.readInt(), buffer.readInt(), buffer.readInt(), buffer.readInt());
+        public static MapInfo readFrom(CompoundNBT nbt) {
+            return new MapInfo(nbt.getInt(X), nbt.getInt(Z), nbt.getInt(ID), ItemStack.read(nbt.getCompound(MAP)));
         }
 
-        public void writeTo(PacketBuffer buffer) {
-            buffer.writeInt(x);
-            buffer.writeInt(z);
-            buffer.writeInt(id);
-            buffer.writeInt(slot);
+        public void writeTo(CompoundNBT nbt) {
+            nbt.putInt(X, x);
+            nbt.putInt(Z, z);
+            nbt.putInt(ID, id);
+            CompoundNBT mapNBT = new CompoundNBT();
+            map.write(mapNBT);
+            nbt.put(MAP, mapNBT);
+        }
+    }
+
+    public static class Index {
+        private static final Table<Integer, Integer, Index> cache = TreeBasedTable.create();
+        public final int x;
+        public final int y;
+
+        private Index(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Index index = (Index) o;
+            return x == index.x && y == index.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return 7079 * x + y;
+        }
+
+        public static Index of(int x, int y) {
+            Index index = cache.get(x, y);
+            if (index == null) {
+                index = new Index(x, y);
+                cache.put(x, y, index);
+            }
+            return index;
         }
     }
 }

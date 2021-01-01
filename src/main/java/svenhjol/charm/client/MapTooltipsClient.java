@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -60,7 +61,7 @@ public class MapTooltipsClient extends CharmClientModule {
         matrices.push();
         matrices.translate(x, y, 500.0);
         matrices.scale(0.5F, 0.5F, 1.0F);
-        IRenderTypeBuffer.Impl bufferSource = mc.getRenderTypeBuffers().getBufferSource();
+        IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());;
         final IVertexBuilder builder = bufferSource.getBuffer(MAP_BACKGROUND);
         Matrix4f matrix4f = matrices.getLast().getMatrix();
         builder.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
@@ -71,6 +72,7 @@ public class MapTooltipsClient extends CharmClientModule {
         matrices.translate(0.0, 0.0, 1.0);
         mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, data, false, light);
         matrices.pop();
+        bufferSource.finish();
         matrices.pop();
         return true;
     }
