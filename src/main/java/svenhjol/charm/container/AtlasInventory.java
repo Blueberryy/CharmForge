@@ -24,15 +24,16 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmSounds;
 import svenhjol.charm.base.helper.ItemNBTHelper;
+import svenhjol.charm.module.Atlas;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class AtlasInventory implements INamedContainerProvider, IInventory {
-    public static final String CONTENTS = "contents";
     public static final String EMPTY_MAPS = "empty_maps";
     public static final String FILLED_MAPS = "filled_maps";
     public static final String ACTIVE_MAP = "active_map";
@@ -40,7 +41,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     public static final String ID = "id";
     private static final int EMPTY_MAP_SLOTS = 3;
     private final World world;
-    private final int diameter;
+    private int diameter;
     private final Map<Index, MapInfo> mapInfos;
     private final NonNullList<ItemStack> emptyMaps;
     private ItemStack atlas;
@@ -51,7 +52,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         this.world = world;
         this.atlas = atlas;
         this.scale = 0;
-        this.diameter = 128 * (1 << scale);
+        this.diameter = 128;
         this.emptyMaps = NonNullList.withSize(EMPTY_MAP_SLOTS, ItemStack.EMPTY);
         this.mapInfos = new LinkedHashMap<>();
         load();
@@ -66,8 +67,9 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
 
     private void load() {
         scale = ItemNBTHelper.getInt(atlas, SCALE, 0);
+        diameter = 128 * (1 << scale);
         ItemStackHelper.loadAllItems(ItemNBTHelper.getCompound(atlas, EMPTY_MAPS), emptyMaps);
-        ListNBT listNBT = ItemNBTHelper.getNBT(atlas).getList(FILLED_MAPS, 10);
+        ListNBT listNBT = ItemNBTHelper.getList(atlas, FILLED_MAPS);
         for (int i = 0; i < listNBT.size(); ++i) {
             putMapInfo(MapInfo.readFrom(listNBT.getCompound(i)));
         }
@@ -90,16 +92,22 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, FilledMapItem.getMapId(map), map) : null;
     }
 
-    @Nullable
-    public MapInfo updateActiveMap(ServerPlayerEntity player) {
+    public boolean updateActiveMap(ServerPlayerEntity player) {
         int x = convertCoordToIndex((int) player.getPosX() + 64);
         int z = convertCoordToIndex((int) player.getPosZ() + 64);
         MapInfo activeMap = mapInfos.get(Index.of(x, z));
+        boolean madeNewMap = false;
         if (activeMap == null) {
             activeMap = makeNewMap(player, (int) player.getPosX(), (int) player.getPosZ());
+            madeNewMap = activeMap != null;
         }
-        ItemNBTHelper.setInt(atlas, ACTIVE_MAP, activeMap != null ? activeMap.id : -1);
-        return activeMap;
+        if(activeMap != null) {
+            Atlas.sendMapToClient(player, activeMap.map);
+            ItemNBTHelper.setInt(atlas, ACTIVE_MAP, activeMap.id);
+        } else {
+            ItemNBTHelper.setInt(atlas, ACTIVE_MAP, -1);
+        }
+        return madeNewMap;
     }
 
     private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
@@ -124,10 +132,10 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     @Nullable
-    public MapData getActiveMap(ClientPlayerEntity player) {
+    public MapData getActiveMap() {
         int activeId = ItemNBTHelper.getInt(atlas, ACTIVE_MAP, -1);
         if (activeId == -1) return null;
-        return player.world.getMapData(FilledMapItem.getMapName(activeId));
+        return world.getMapData(FilledMapItem.getMapName(activeId));
     }
 
     @Nullable
@@ -224,13 +232,14 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
             mapInfo.writeTo(nbt);
             listNBT.add(nbt);
         }
-        ItemNBTHelper.getNBT(atlas).put(FILLED_MAPS, listNBT);
+        ItemNBTHelper.setList(atlas, FILLED_MAPS, listNBT);
     }
 
     @Override
     public boolean isUsableByPlayer(@Nonnull PlayerEntity player) {
         for (Hand hand : Hand.values()) {
-            if (player.getHeldItem(hand) == atlas) return true;
+            ItemStack heldItem = player.getHeldItem(hand);
+            if (heldItem.getItem() == Atlas.ATLAS_ITEM && Objects.equals(ItemNBTHelper.getUuid(atlas, ID), ItemNBTHelper.getUuid(heldItem, ID))) return true;
         }
         return false;
     }

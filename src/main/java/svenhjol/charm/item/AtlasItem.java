@@ -3,8 +3,10 @@ package svenhjol.charm.item;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -13,11 +15,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.item.CharmItem;
-import svenhjol.charm.client.AtlasClient;
 import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.module.Atlas;
-
-import javax.annotation.Nullable;
 
 public class AtlasItem extends CharmItem {
 
@@ -51,12 +50,9 @@ public class AtlasItem extends CharmItem {
                 PlayerEntity player = context.getPlayer();
                 if (player instanceof ServerPlayerEntity) {
                     AtlasInventory inventory = Atlas.getInventory(world, context.getItem());
-                    AtlasInventory.MapInfo info = inventory.updateActiveMap((ServerPlayerEntity) player);
-                    if (info != null) {
-                        MapData mapdata = FilledMapItem.getMapData(info.map, context.getWorld());
-                        if (mapdata != null) {
-                            mapdata.tryAddBanner(context.getWorld(), context.getPos());
-                        }
+                    MapData mapdata = inventory.getActiveMap();
+                    if (mapdata != null) {
+                        mapdata.tryAddBanner(context.getWorld(), context.getPos());
                     }
                 }
             }
@@ -64,11 +60,5 @@ public class AtlasItem extends CharmItem {
         } else {
             return super.onItemUse(context);
         }
-    }
-
-    @Override
-    public void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt) {
-        super.readShareTag(stack, nbt);
-        AtlasClient.updateInventory(stack);
     }
 }

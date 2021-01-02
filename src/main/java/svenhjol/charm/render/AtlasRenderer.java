@@ -51,8 +51,8 @@ public class AtlasRenderer implements AutoCloseable {
         this.clearInstances();
     }
 
-    public void renderAtlas(ClientPlayerEntity player, AtlasInventory inventory, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light) {
-        this.getInstance(inventory).renderAtlas(inventory.getActiveMap(player), matrixStack, buffers, light);
+    public void renderAtlas(AtlasInventory inventory, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light) {
+        this.getInstance(inventory).renderAtlas(inventory.getActiveMap(), matrixStack, buffers, light);
     }
 
     public void renderArm(ClientPlayerEntity player, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light, float swing, float equip, Hand hand) {

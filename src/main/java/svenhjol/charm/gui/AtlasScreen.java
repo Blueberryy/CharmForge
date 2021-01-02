@@ -288,10 +288,13 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             background.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(light).endVertex();
             background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
             if (mapInfo != null) {
-                matrices.push();
-                matrices.translate(0, 0, 1);
-                Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, world.getMapData(FilledMapItem.getMapName(mapInfo.id)), false, light);
-                matrices.pop();
+                MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.id));
+                if(mapData != null) {
+                    matrices.push();
+                    matrices.translate(0, 0, 1);
+                    Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, light);
+                    matrices.pop();
+                }
             }
             bufferSource.finish();
             matrices.pop();
@@ -300,6 +303,11 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
 
         private void drawButtons(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
             if (buttons.isEmpty()) setupButtons();
+            buttons.forEach(it -> {
+                if(!children.contains(it)) {
+                    children.add(it);
+                }
+            });
             AtlasInventory inventory = container.getAtlasInventory();
             Map<Index, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
             if (mapInfo != null) {
@@ -317,23 +325,20 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
 
         private void setupButtons() {
-            int x = this.left + guiLeft;
-            int y = this.top + guiTop;
             int buttonSize = 10;
             int center = (size - buttonSize) / 2;
             //distance of buttons from map
             int dist = 3;
-            buttons.add(new CharmImageButton(x - buttonSize - dist, y + center, buttonSize, buttonSize, 80, 0,
+            buttons.add(new CharmImageButton(() -> left + guiLeft - buttonSize - dist, () -> top + guiTop + center, buttonSize, buttonSize, 80, 0,
                     10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(-1, 0)));
-            buttons.add(new CharmImageButton(x + center, y - buttonSize - dist, buttonSize, buttonSize, 50, 0,
+            buttons.add(new CharmImageButton(() -> left + guiLeft + center, () -> (top + guiTop) - buttonSize - dist, buttonSize, buttonSize, 50, 0,
                     10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, -1)));
-            buttons.add(new CharmImageButton(x + size + dist, y + center, buttonSize, buttonSize, 70, 0,
+            buttons.add(new CharmImageButton(() -> left + guiLeft + size + dist, () -> top + guiTop + center, buttonSize, buttonSize, 70, 0,
                     10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(1, 0)));
-            buttons.add(new CharmImageButton(x + center, y + size + dist, buttonSize, buttonSize, 60, 0,
+            buttons.add(new CharmImageButton(() -> left + guiLeft + center, () -> top + guiTop + size + dist, buttonSize, buttonSize, 60, 0,
                     10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, 1)));
-            buttons.add(new CharmImageButton(guiLeft + xSize - 19, guiTop + 3, 16, 16, 90, 0,
+            buttons.add(new CharmImageButton(() -> guiLeft + xSize - 19, () -> guiTop + 3, 16, 16, 90, 0,
                     17, 34, CharmResources.INVENTORY_BUTTONS, click -> changeGui(getWorldMap())));
-            children.addAll(buttons);
         }
 
         private void buttonClick(int xDiff, int yDiff) {

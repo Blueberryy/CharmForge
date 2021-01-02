@@ -11,14 +11,16 @@ import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
-import svenhjol.charm.gui.AtlasScreen;
 import svenhjol.charm.container.AtlasInventory;
+import svenhjol.charm.gui.AtlasScreen;
 import svenhjol.charm.module.Atlas;
 import svenhjol.charm.render.AtlasRenderer;
 
@@ -88,14 +90,18 @@ public class AtlasClient extends CharmClientModule {
         // transform page based on the hand it is held and render it
         matrixStack.push();
         renderer.transformPageForHand(matrixStack, buffers, light, swing, equip, hand);
-        renderer.renderAtlas(player, inventory, matrixStack, buffers, light);
+        renderer.renderAtlas(inventory, matrixStack, buffers, light);
         matrixStack.pop();
 
         matrixStack.pop(); // close
     }
 
-    public static void updateInventory(ItemStack atlas) {
-        Atlas.getInventory(Minecraft.getInstance().world, atlas).reload(atlas);
+    public static void updateInventory(int atlasSlot) {
+        Minecraft mc = Minecraft.getInstance();
+        ClientPlayerEntity player = mc.player;
+        if (player == null) return;
+        ItemStack atlas = player.inventory.getStackInSlot(atlasSlot);
+        Atlas.getInventory(mc.world, atlas).reload(atlas);
     }
 }
 

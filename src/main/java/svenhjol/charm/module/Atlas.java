@@ -1,5 +1,7 @@
 package svenhjol.charm.module;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import net.minecraft.client.gui.screen.inventory.CartographyTableScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -8,7 +10,6 @@ import net.minecraft.inventory.container.CartographyContainer;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.*;
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -27,16 +28,19 @@ import svenhjol.charm.client.AtlasClient;
 import svenhjol.charm.container.AtlasContainer;
 import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.item.AtlasItem;
+import svenhjol.charm.message.ClientUpdateAtlasInventory;
 import svenhjol.charm.message.ServerAtlasTransfer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Module(mod = Charm.MOD_ID, client = AtlasClient.class, description = "Storage for maps that automatically updates the displayed map as you explore.", hasSubscriptions = true)
 public class Atlas extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "atlas");
     // add items to this list to whitelist them in atlases
     public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
-    private static final Map<UUID, AtlasInventory> cache = new HashMap<>();
+    private static final Table<World, UUID, AtlasInventory> cache = HashBasedTable.create();
 
     @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand")
     public static boolean offHandOpen = false;
@@ -62,18 +66,18 @@ public class Atlas extends CharmModule {
     }
 
     public static AtlasInventory getInventory(World world, ItemStack stack) {
-        CompoundNBT nbt = ItemNBTHelper.getNBT(stack);
-        UUID id;
-        if (nbt.hasUniqueId(AtlasInventory.ID)) {
-            id = nbt.getUniqueId(AtlasInventory.ID);
-        } else {
+        UUID id = ItemNBTHelper.getUuid(stack, AtlasInventory.ID);
+        if (id == null) {
             id = UUID.randomUUID();
-            nbt.putUniqueId(AtlasInventory.ID, id);
+            ItemNBTHelper.setUuid(stack, AtlasInventory.ID, id);
         }
-        AtlasInventory inventory = cache.get(id);
+        AtlasInventory inventory = cache.get(world, id);
         if (inventory == null) {
             inventory = new AtlasInventory(world, stack);
-            cache.put(id, inventory);
+            cache.put(world, id, inventory);
+        }
+        if(inventory.getAtlasItem() != stack) {
+            inventory.reload(stack);
         }
         return inventory;
     }
@@ -94,9 +98,11 @@ public class Atlas extends CharmModule {
             case TO_HAND:
                 player.inventory.setItemStack(inventory.removeMapByCoords(msg.mapX, msg.mapZ).map);
                 player.updateHeldItem();
+                updateClient(player, msg.atlasSlot);
                 break;
             case TO_INVENTORY:
                 player.addItemStackToInventory(inventory.removeMapByCoords(msg.mapX, msg.mapZ).map);
+                updateClient(player, msg.atlasSlot);
                 break;
             case FROM_HAND:
                 ItemStack heldItem = player.inventory.getItemStack();
@@ -104,6 +110,7 @@ public class Atlas extends CharmModule {
                     inventory.addToInventory(heldItem);
                     player.inventory.setItemStack(ItemStack.EMPTY);
                     player.updateHeldItem();
+                    updateClient(player, msg.atlasSlot);
                 }
                 break;
             case FROM_INVENTORY:
@@ -111,9 +118,14 @@ public class Atlas extends CharmModule {
                 if (stack.getItem() == Items.FILLED_MAP && FilledMapItem.getMapData(stack, player.world).scale == inventory.getScale()) {
                     inventory.addToInventory(stack);
                     player.inventory.removeStackFromSlot(msg.mapX);
+                    updateClient(player, msg.atlasSlot);
                 }
                 break;
         }
+    }
+
+    public static void updateClient(ServerPlayerEntity player, int atlasSlot) {
+        Charm.PACKET_HANDLER.sendToPlayer(new ClientUpdateAtlasInventory(atlasSlot), player);
     }
 
     private static AtlasInventory findAtlas(PlayerInventory inventory) {
@@ -145,7 +157,7 @@ public class Atlas extends CharmModule {
             ItemStack output;
             if (inventory.getMapInfos().isEmpty() && bottomStack.getItem() == Items.MAP && inventory.getScale() < 4) {
                 output = topStack.copy();
-                ItemNBTHelper.getNBT(output).putUniqueId(AtlasInventory.ID, UUID.randomUUID());
+                ItemNBTHelper.setUuid(output, AtlasInventory.ID, UUID.randomUUID());
                 ItemNBTHelper.setInt(output, AtlasInventory.SCALE, inventory.getScale() + 1);
             } else {
                 output = ItemStack.EMPTY;
@@ -179,12 +191,11 @@ public class Atlas extends CharmModule {
         if (event.phase == TickEvent.Phase.START && event.side == LogicalSide.SERVER) {
             ServerPlayerEntity player = (ServerPlayerEntity) event.player;
             for (Hand hand : Hand.values()) {
-                ItemStack atlasStack = player.getHeldItem(hand);
-                if (atlasStack.getItem() == ATLAS_ITEM) {
-                    AtlasInventory inventory = getInventory(player.world, atlasStack);
-                    AtlasInventory.MapInfo mapInfo = inventory.updateActiveMap(player);
-                    if (mapInfo != null) {
-                        sendMapToClient(player, mapInfo.map);
+                ItemStack atlas = player.getHeldItem(hand);
+                if (atlas.getItem() == ATLAS_ITEM) {
+                    AtlasInventory inventory = getInventory(player.world, atlas);
+                    if (inventory.updateActiveMap(player)) {
+                        updateClient(player, player.inventory.getSlotFor(atlas));
                     }
                 }
             }
