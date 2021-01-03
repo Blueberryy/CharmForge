@@ -12,6 +12,7 @@ import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.helper.StructureHelper;
 import svenhjol.charm.base.helper.VillagerHelper;
+import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.village.LumberjackTradeOffers;
 
@@ -26,6 +27,9 @@ public class Lumberjacks extends CharmModule {
     public static VillagerProfession LUMBERJACK;
     public static PointOfInterestType POIT;
 
+    @Config(name = "Lumberjack house weight", description = "Chance of a custom building to spawn. For reference, a vanilla library is 5.")
+    public static int buildingWeight = 5;
+
     public static void registerAfterWoodcutters() {
         POIT = VillagerHelper.addPointOfInterestType(Woodcutters.BLOCK_ID, Woodcutters.WOODCUTTER, 1);
         LUMBERJACK = VillagerHelper.addProfession(VILLAGER_ID, POIT, SoundEvents.ENTITY_VILLAGER_WORK_MASON);
@@ -33,12 +37,12 @@ public class Lumberjacks extends CharmModule {
 
     @Override
     public void init() {
-        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_2"), 5);
-        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_lumberjack_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_lumberjack_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberjack_2"), 5);
+        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_lumberjack_2"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_lumberjack_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_lumberjack_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_lumberjack_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberjack_2"), buildingWeight);
     }
 
     @SubscribeEvent

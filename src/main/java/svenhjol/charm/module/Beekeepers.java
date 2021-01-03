@@ -28,6 +28,9 @@ public class Beekeepers extends CharmModule {
     public static ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "beekeeper");
     public static VillagerProfession BEEKEEPER;
 
+    @Config(name = "Beekeeper house weight", description = "Chance of a custom building to spawn. For reference, a vanilla library is 5.")
+    public static int buildingWeight = 5;
+
     @Config(name = "Override", description = "This module is automatically disabled if Buzzier Bees is present. Set true to force enable.")
     public static boolean override = false;
 
@@ -46,13 +49,13 @@ public class Beekeepers extends CharmModule {
         // HACK: set ticketCount so that villager can use it as job site
         ((PointOfInterestTypeAccessor)PointOfInterestType.BEEHIVE).setMaxFreeTickets(1);
 
-        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack"), 5);
-        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_2"), 5);
-        addVillageHouse(StructureHelper.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_beekeeper_1"), 5);
-        addVillageHouse(StructureHelper.VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberbee_1"), 5);
+        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beejack"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.PLAINS, new ResourceLocation("charm:village/plains/houses/plains_beekeeper_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.DESERT, new ResourceLocation("charm:village/desert/houses/desert_beekeeper_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.SAVANNA, new ResourceLocation("charm:village/savanna/houses/savanna_beekeeper_2"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.TAIGA, new ResourceLocation("charm:village/taiga/houses/taiga_beekeeper_1"), buildingWeight);
+        addVillageHouse(StructureHelper.VillageType.SNOWY, new ResourceLocation("charm:village/snowy/houses/snowy_lumberbee_1"), buildingWeight);
     }
 
     @SubscribeEvent
