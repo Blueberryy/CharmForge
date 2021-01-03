@@ -1,13 +1,10 @@
 package svenhjol.charm.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
@@ -15,20 +12,21 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmResources;
+import svenhjol.charm.base.gui.AbstractCharmContainerScreen;
 import svenhjol.charm.base.gui.CharmImageButton;
+import svenhjol.charm.base.helper.MapRenderHelper;
 import svenhjol.charm.container.AtlasContainer;
 import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.container.AtlasInventory.Index;
 import svenhjol.charm.message.ServerAtlasTransfer;
 import svenhjol.charm.message.ServerAtlasTransfer.MoveMode;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -36,11 +34,10 @@ import java.util.Map;
  * @author Lukas
  * @since 28.12.2020
  */
-public class AtlasScreen extends ContainerScreen<AtlasContainer> {
+public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
     private static final ResourceLocation CONTAINER_BACKGROUND = new ResourceLocation(Charm.MOD_ID, "textures/gui/atlas_container.png");
-    private static final RenderType MAP_BACKGROUND = RenderType.getText(new ResourceLocation("textures/map/map_background.png"));
     private static final int SIZE = 48;
-    private static final int LEFT = 80;
+    private static final int LEFT = 74;
     private static final int TOP = 16;
     private static final int BUTTON_SIZE = 9;
     private static final int BUTTON_DISTANCE = 3;
@@ -57,8 +54,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     private int lastSize;
 
     public AtlasScreen(AtlasContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
-        super(screenContainer, inv, titleIn);
-        this.passEvents = true;
+        super(screenContainer, inv, titleIn, CONTAINER_BACKGROUND);
         this.xSize = 175;
         this.ySize = 168;
         this.slot = inv.getSlotFor(screenContainer.getAtlasInventory().getAtlasItem());
@@ -91,13 +87,16 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     }
 
     @Override
-    public void render(@Nonnull MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(matrices);
-        super.render(matrices, mouseX, mouseY, partialTicks);
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         updateGui();
-        renderMap(matrices, mouseX, mouseY, partialTicks);
-        renderButtons(matrices, mouseX, mouseY, partialTicks);
-        renderHoveredTooltip(matrices, mouseX, mouseY);
+        updateButtonState();
+        super.render(matrices, mouseX, mouseY, delta);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrices, int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(matrices, mouseX, mouseY);
+        MapRenderHelper.renderMapWithBackground(matrices, LEFT, TOP, 0, BASE_SCALE, LIGHT, bufferSource -> mapGui.render(matrices, bufferSource, mouseX, mouseY));
     }
 
     private void updateGui() {
@@ -115,50 +114,21 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         lastSize = size;
     }
 
-    private void renderButtons(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
+    private void updateButtonState() {
         buttons.forEach((direction, button) -> {
             button.visible = mapGui.buttonVisible(direction);
             button.active = mapGui.buttonEnabled(direction);
             if (button.visible) {
-                button.render(matrices, mouseX, mouseY, partialTicks);
-                if (!children.contains(button)) children.add(button);
+                if (!super.buttons.contains(button)) addButton(button);
             } else {
-                children.remove(button);
+                removeButton(button);
             }
         });
     }
 
-    private void renderMap(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-        matrices.push();
-        matrices.translate(LEFT + guiLeft, TOP + guiTop, 0);
-        matrices.scale(BASE_SCALE, BASE_SCALE, 1);
-        IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-        final IVertexBuilder background = bufferSource.getBuffer(MAP_BACKGROUND);
-        Matrix4f matrix4f = matrices.getLast().getMatrix();
-        background.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(LIGHT).endVertex();
-        background.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(LIGHT).endVertex();
-        background.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(LIGHT).endVertex();
-        background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(LIGHT).endVertex();
-        mapGui.render(matrices, bufferSource, mouseX, mouseY, partialTicks);
-        bufferSource.finish();
-        matrices.pop();
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrices, int mouseX, int mouseY) {
-        this.font.func_238422_b_(matrices, this.title.func_241878_f(), 8.0F, 6.0F, 4210752);
-        this.font.func_238422_b_(matrices, this.playerInventory.getDisplayName().func_241878_f(), 8.0F, (float) ySize - 94, 4210752);
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        if (minecraft != null) {
-            minecraft.getTextureManager().bindTexture(CONTAINER_BACKGROUND);
-
-            int x = (width - xSize) / 2;
-            int y = (height - ySize) / 2;
-            blit(matrices, x, y, 0, 0, xSize, ySize);
-        }
+    private void removeButton(Widget button) {
+        super.buttons.remove(button);
+        super.children.remove(button);
     }
 
     @Override
@@ -187,7 +157,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         TOP(CENTER, -BUTTON_SIZE - BUTTON_DISTANCE, BUTTON_SIZE, 50, 0, -1),
         RIGHT(SIZE + BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 68, 1, 0),
         BOTTOM(CENTER, SIZE + BUTTON_DISTANCE, BUTTON_SIZE, 59, 0, 1),
-        BACK(76, -12, 16, 86, 0, 0);
+        BACK(82, -12, 16, 86, 0, 0);
         final int left;
         final int top;
         final int size;
@@ -206,7 +176,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     }
 
     private interface MapGui {
-        void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks);
+        void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY);
 
         default boolean mouseClicked(double mouseX, double mouseY, int button) {
             return false;
@@ -257,7 +227,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
 
         @Override
-        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks) {
+        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY) {
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
             if (world == null || !updateExtremes()) {
@@ -287,12 +257,13 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
 
         private void drawLines(MatrixStack matrices) {
             matrices.push();
-            matrices.translate(0, 0, 2);
+            //need to revert the base scale to avoid some lines being to thin to be drawn
+            matrices.scale( 0.5f / BASE_SCALE, 0.5f / BASE_SCALE, 1);
             for (int xLine = 1; xLine < maxMapDistance; ++xLine) {
-                vLine(matrices, xLine * NORMAL_SIZE / maxMapDistance, 0, NORMAL_SIZE, -1);
+                vLine(matrices, xLine * 2 * SIZE / maxMapDistance, 0, 2 * SIZE, -1);
             }
             for (int yLine = 1; yLine < maxMapDistance; ++yLine) {
-                hLine(matrices, 0, NORMAL_SIZE, yLine * NORMAL_SIZE / maxMapDistance, -1);
+                hLine(matrices, 0, 2 * SIZE, yLine * 2 * SIZE / maxMapDistance, -1);
             }
             matrices.pop();
         }
@@ -375,7 +346,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
 
         @Override
-        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks) {
+        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY) {
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
             if (world == null) {

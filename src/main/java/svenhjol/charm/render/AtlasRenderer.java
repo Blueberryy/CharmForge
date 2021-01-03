@@ -16,6 +16,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.Charm;
+import svenhjol.charm.base.helper.MapRenderHelper;
 import svenhjol.charm.container.AtlasInventory;
 
 import java.util.Map;
@@ -122,12 +123,7 @@ public class AtlasRenderer implements AutoCloseable {
             matrixStack.scale(0.38F, 0.38F, 0.38F);
             matrixStack.translate(-0.5D, -0.5D, 0.0D);
             matrixStack.scale(0.0078125F, 0.0078125F, 0.0078125F);
-            IVertexBuilder builder = buffers.getBuffer(background);
-            Matrix4f matrix4f = matrixStack.getLast().getMatrix();
-            builder.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
-            builder.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(light).endVertex();
-            builder.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(light).endVertex();
-            builder.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
+            MapRenderHelper.drawBackgroundVertex(matrixStack, light, buffers.getBuffer(background));
         }
 
         @Override

@@ -18,11 +18,11 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.helper.MapRenderHelper;
 
 import java.util.List;
 
 public class MapTooltipsClient extends CharmClientModule {
-    private static final RenderType MAP_BACKGROUND = RenderType.getText(new ResourceLocation("textures/map/map_background.png"));
 
     public MapTooltipsClient(CharmModule module) {
         super(module);
@@ -57,23 +57,12 @@ public class MapTooltipsClient extends CharmClientModule {
             y = ty + lines.size() * 10 + 8;
 
         int light = 240;
-
-        matrices.push();
-        matrices.translate(x, y, 500.0);
-        matrices.scale(0.5F, 0.5F, 1.0F);
-        IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());;
-        final IVertexBuilder builder = bufferSource.getBuffer(MAP_BACKGROUND);
-        Matrix4f matrix4f = matrices.getLast().getMatrix();
-        builder.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
-        builder.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(light).endVertex();
-        builder.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(light).endVertex();
-        builder.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
-        matrices.push();
-        matrices.translate(0.0, 0.0, 1.0);
-        mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, data, false, light);
-        matrices.pop();
-        bufferSource.finish();
-        matrices.pop();
+        MapRenderHelper.renderMapWithBackground(matrices, x, y, 500, 0.5f, light, bufferSource -> {
+            matrices.push();
+            matrices.translate(0.0, 0.0, 1.0);
+            mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, data, false, light);
+            matrices.pop();
+        });
         return true;
     }
 }
