@@ -291,6 +291,7 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
             float mapScale = 1f / mapDistance;
             int currentMinX = corner != null ? corner.x : minX;
             int currentMinY = corner != null ? corner.y : minY;
+            AtlasInventory inventory = container.getAtlasInventory();
             for (Map.Entry<Index, AtlasInventory.MapInfo> mapInfo : container.getAtlasInventory().getMapInfos().entrySet()) {
                 Index key = mapInfo.getKey();
                 if (corner != null && (corner.x > key.x || key.x >= corner.x + mapDistance || corner.y > key.y || key.y >= corner.y + mapDistance)) {
@@ -304,7 +305,10 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
                     mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, LIGHT);
                     matrices.translate(0, 0, 0.2);
                     renderDecorations(matrices, bufferSource, mapData, 1.5f * mapDistance,
-                            it -> it.getType() != MapDecoration.Type.PLAYER_OFF_MAP && it.getType() != MapDecoration.Type.PLAYER_OFF_LIMITS);
+                            it -> it.getType() != MapDecoration.Type.PLAYER_OFF_MAP && it.getType() != MapDecoration.Type.PLAYER_OFF_LIMITS &&
+                                    (it.getType() != MapDecoration.Type.PLAYER || key.equals(
+                                            Index.of(inventory.convertCoordToIndex((int) (playerInventory.player.getPosX() + 64)),
+                                                    inventory.convertCoordToIndex((int) (playerInventory.player.getPosZ() + 64))))));
                     matrices.pop();
                 }
             }
@@ -395,17 +399,17 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
                 case RIGHT:
                 case BOTTOM:
                     if (corner != null) {
-                        int x = corner.x + direction.x * MAX_MAPS;
-                        x = Math.max(minX, Math.min(maxX + 1 - MAX_MAPS, x));
-                        int y = corner.y + direction.y * MAX_MAPS;
-                        y = Math.max(minY, Math.min(maxY + 1 - MAX_MAPS, y));
+                        int x = corner.x + direction.x * mapDistance;
+                        x = Math.max(minX, Math.min(maxX + 1 - mapDistance, x));
+                        int y = corner.y + direction.y * mapDistance;
+                        y = Math.max(minY, Math.min(maxY + 1 - mapDistance, y));
                         corner = Index.of(x, y);
                     }
                     break;
                 case IN:
                     fixedMapDistance = true;
                     --mapDistance;
-                    if(mapDistance == 1) {
+                    if (mapDistance == 1) {
                         changeGui(getSingleMap(container.getAtlasInventory().getMapInfos().get(corner)));
                     }
                     break;
