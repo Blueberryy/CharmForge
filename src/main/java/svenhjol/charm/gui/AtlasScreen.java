@@ -19,7 +19,6 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
-import sun.reflect.generics.tree.Wildcard;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.gui.CharmImageButton;
@@ -30,9 +29,7 @@ import svenhjol.charm.message.ServerAtlasTransfer;
 import svenhjol.charm.message.ServerAtlasTransfer.MoveMode;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,6 +46,9 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     private static final int BUTTON_DISTANCE = 3;
     private static final int CENTER = (SIZE - BUTTON_SIZE) / 2;
     private static final int MAX_MAPS = 8;
+    private static final int NORMAL_SIZE = 128;
+    private static final float BASE_SCALE = (float) SIZE / NORMAL_SIZE;
+    private static final int LIGHT = 240;
     private final int slot;
     private final Map<ButtonDirection, CharmImageButton> buttons;
     private final WorldMap worldMap = new WorldMap();
@@ -94,6 +94,13 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     public void render(@Nonnull MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
         renderBackground(matrices);
         super.render(matrices, mouseX, mouseY, partialTicks);
+        updateGui();
+        renderMap(matrices, mouseX, mouseY, partialTicks);
+        renderButtons(matrices, mouseX, mouseY, partialTicks);
+        renderHoveredTooltip(matrices, mouseX, mouseY);
+    }
+
+    private void updateGui() {
         Map<Index, AtlasInventory.MapInfo> mapInfos = container.getAtlasInventory().getMapInfos();
         int size = mapInfos.size();
         if (mapGui instanceof WorldMap) {
@@ -106,7 +113,9 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             }
         }
         lastSize = size;
-        mapGui.render(matrices, mouseX, mouseY, partialTicks);
+    }
+
+    private void renderButtons(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
         buttons.forEach((direction, button) -> {
             button.visible = mapGui.buttonVisible(direction);
             button.active = mapGui.buttonEnabled(direction);
@@ -117,7 +126,22 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 children.remove(button);
             }
         });
-        renderHoveredTooltip(matrices, mouseX, mouseY);
+    }
+
+    private void renderMap(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
+        matrices.push();
+        matrices.translate(LEFT + guiLeft, TOP + guiTop, 0);
+        matrices.scale(BASE_SCALE, BASE_SCALE, 1);
+        IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+        final IVertexBuilder background = bufferSource.getBuffer(MAP_BACKGROUND);
+        Matrix4f matrix4f = matrices.getLast().getMatrix();
+        background.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(LIGHT).endVertex();
+        background.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(LIGHT).endVertex();
+        background.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(LIGHT).endVertex();
+        background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(LIGHT).endVertex();
+        mapGui.render(matrices, bufferSource, mouseX, mouseY, partialTicks);
+        bufferSource.finish();
+        matrices.pop();
     }
 
     @Override
@@ -184,7 +208,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     }
 
     private interface MapGui {
-        void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks);
+        void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks);
 
         default boolean mouseClicked(double mouseX, double mouseY, int button) {
             return false;
@@ -235,32 +259,14 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
 
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            int x = LEFT + guiLeft;
-            int y = TOP + guiTop;
+        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks) {
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
-            if (world == null) {
+            if (world == null || !updateExtremes()) {
                 return;
             }
-            int light = 240;
-            float baseScale = (float) SIZE / 128;
-            if (!updateExtremes()) {
-                return;
-            }
-            float mapSize = (float) SIZE / maxMapDistance;
-            matrices.push();
-            matrices.translate(x, y, 0);
-            matrices.scale(baseScale, baseScale, 1);
-            IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-            final IVertexBuilder background = bufferSource.getBuffer(MAP_BACKGROUND);
-            Matrix4f matrix4f = matrices.getLast().getMatrix();
-            background.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
-            matrices.pop();
-            float mapScale = baseScale / maxMapDistance;
+            float mapSize = (float) NORMAL_SIZE / maxMapDistance;
+            float mapScale = 1f / maxMapDistance;
             int currentMinX = corner != null ? corner.x : minX;
             int currentMinY = corner != null ? corner.y : minY;
             for (Map.Entry<Index, AtlasInventory.MapInfo> mapInfo : container.getAtlasInventory().getMapInfos().entrySet()) {
@@ -271,14 +277,26 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.getValue().id));
                 if (mapData != null) {
                     matrices.push();
-                    matrices.translate(x + mapSize * (key.x - currentMinX), y + mapSize * (key.y - currentMinY), 1.0);
+                    matrices.translate(mapSize * (key.x - currentMinX), mapSize * (key.y - currentMinY), 1.0);
                     matrices.scale(mapScale, mapScale, 1);
-                    mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, light);
+                    mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, LIGHT);
                     matrices.pop();
                 }
             }
             bufferSource.finish();
-            drawLines(matrices, x, y, maxMapDistance);
+            drawLines(matrices);
+        }
+
+        private void drawLines(MatrixStack matrices) {
+            matrices.push();
+            matrices.translate(0, 0, 2);
+            for (int xLine = 1; xLine < maxMapDistance; ++xLine) {
+                vLine(matrices, xLine * NORMAL_SIZE / maxMapDistance, 0, NORMAL_SIZE, -1);
+            }
+            for (int yLine = 1; yLine < maxMapDistance; ++yLine) {
+                hLine(matrices, 0, NORMAL_SIZE, yLine * NORMAL_SIZE / maxMapDistance, -1);
+            }
+            matrices.pop();
         }
 
         @Override
@@ -347,20 +365,6 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         private double normalizeForMapArea(double base, double val) {
             return (val - base) / SIZE;
         }
-
-        private void drawLines(MatrixStack matrices, int x, int y, int maxMapDistance) {
-            matrices.push();
-            matrices.translate(x, y, 2);
-            //scale to half size for finer lines
-            matrices.scale(0.5f, 0.5f, 1);
-            for (int xLine = 1; xLine < maxMapDistance; ++xLine) {
-                vLine(matrices, 2 * xLine * SIZE / maxMapDistance, 0, SIZE * 2, -1);
-            }
-            for (int yLine = 1; yLine < maxMapDistance; ++yLine) {
-                hLine(matrices, 0, SIZE * 2, 2 * yLine * SIZE / maxMapDistance, -1);
-            }
-            matrices.pop();
-        }
     }
 
     private class SingleMap implements MapGui {
@@ -371,37 +375,21 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
 
         @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            int x = LEFT + guiLeft;
-            int y = TOP + guiTop;
+        public void render(MatrixStack matrices, IRenderTypeBuffer.Impl bufferSource, int mouseX, int mouseY, float partialTicks) {
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
             if (world == null) {
                 return;
             }
-            int light = 240;
-            float baseScale = (float) SIZE / 128;
-            matrices.push();
-            matrices.translate(x, y, 0);
-            matrices.scale(baseScale, baseScale, 1);
-            IRenderTypeBuffer.Impl bufferSource = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
-            final IVertexBuilder background = bufferSource.getBuffer(MAP_BACKGROUND);
-            Matrix4f matrix4f = matrices.getLast().getMatrix();
-            background.pos(matrix4f, -7.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 1.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, 135.0F, 135.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 1.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, 135.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(1.0F, 0.0F).lightmap(light).endVertex();
-            background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
             if (mapInfo != null) {
                 MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.id));
                 if (mapData != null) {
                     matrices.push();
                     matrices.translate(0, 0, 1);
-                    Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, light);
+                    Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, LIGHT);
                     matrices.pop();
                 }
             }
-            bufferSource.finish();
-            matrices.pop();
         }
 
         @Override
