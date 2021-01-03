@@ -19,6 +19,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import sun.reflect.generics.tree.Wildcard;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.gui.CharmImageButton;
@@ -30,6 +31,7 @@ import svenhjol.charm.message.ServerAtlasTransfer.MoveMode;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +42,17 @@ import java.util.Map;
 public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     private static final ResourceLocation CONTAINER_BACKGROUND = new ResourceLocation(Charm.MOD_ID, "textures/gui/atlas_container.png");
     private static final RenderType MAP_BACKGROUND = RenderType.getText(new ResourceLocation("textures/map/map_background.png"));
+    private static final int SIZE = 48;
+    private static final int LEFT = 80;
+    private static final int TOP = 16;
+    private static final int BUTTON_SIZE = 10;
+    private static final int BUTTON_DISTANCE = 3;
+    private static final int CENTER = (SIZE - BUTTON_SIZE) / 2;
+    private static final int MAX_MAPS = 8;
     private final int slot;
+    private final Map<ButtonDirection, CharmImageButton> buttons;
+    private final WorldMap worldMap = new WorldMap();
+    private final SingleMap singleMap = new SingleMap(null);
     private MapGui mapGui;
     private int lastSize;
 
@@ -53,19 +65,29 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         Map<Index, AtlasInventory.MapInfo> mapInfos = screenContainer.getAtlasInventory().getMapInfos();
         lastSize = mapInfos.size();
         mapGui = mapInfos.size() > 1 ? getWorldMap() : getSingleMap(mapInfos.isEmpty() ? null : mapInfos.values().iterator().next());
+        buttons = new EnumMap<>(ButtonDirection.class);
+        for (ButtonDirection direction : ButtonDirection.values()) {
+            buttons.put(direction, createButton(direction));
+        }
+    }
+
+    private CharmImageButton createButton(ButtonDirection dir) {
+        return new CharmImageButton(() -> guiLeft + LEFT + dir.left, () -> guiTop + TOP + dir.top, dir.size, dir.size,
+                dir.texStart, 0, dir.size, 2 * dir.size, CharmResources.INVENTORY_BUTTONS, it -> mapGui.buttonClick(dir));
     }
 
     private static boolean isShiftClick() {
-        return InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 340) ||
-                InputMappings.isKeyDown(Minecraft.getInstance().getMainWindow().getHandle(), 344);
+        long handle = Minecraft.getInstance().getMainWindow().getHandle();
+        return InputMappings.isKeyDown(handle, 340) || InputMappings.isKeyDown(handle, 344);
     }
 
     private WorldMap getWorldMap() {
-        return new WorldMap(80, 16, 48);
+        return worldMap;
     }
 
     private SingleMap getSingleMap(AtlasInventory.MapInfo mapInfo) {
-        return new SingleMap(80, 16, 48, mapInfo);
+        singleMap.mapInfo = mapInfo;
+        return singleMap;
     }
 
     @Override
@@ -85,6 +107,16 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         }
         lastSize = size;
         mapGui.render(matrices, mouseX, mouseY, partialTicks);
+        buttons.forEach((direction, button) -> {
+            button.visible = mapGui.buttonVisible(direction);
+            button.active = mapGui.buttonEnabled(direction);
+            if (button.visible) {
+                button.render(matrices, mouseX, mouseY, partialTicks);
+                if (!children.contains(button)) children.add(button);
+            } else {
+                children.remove(button);
+            }
+        });
         renderHoveredTooltip(matrices, mouseX, mouseY);
     }
 
@@ -125,8 +157,30 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     }
 
     private void changeGui(MapGui gui) {
-        mapGui.close();
         mapGui = gui;
+    }
+
+    private enum ButtonDirection {
+        LEFT(-BUTTON_SIZE - BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 80, -1, 0),
+        TOP(CENTER, -BUTTON_SIZE - BUTTON_DISTANCE, BUTTON_SIZE, 50, 0, -1),
+        RIGHT(SIZE + BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 70, 1, 0),
+        BOTTOM(CENTER, SIZE + BUTTON_DISTANCE, BUTTON_SIZE, 60, 0, 1),
+        BACK(76, -13, 16, 90, 0, 0);
+        final int left;
+        final int top;
+        final int size;
+        final int texStart;
+        final int x;
+        final int y;
+
+        ButtonDirection(int left, int top, int size, int texStart, int x, int y) {
+            this.left = left;
+            this.top = top;
+            this.size = size;
+            this.texStart = texStart;
+            this.x = x;
+            this.y = y;
+        }
     }
 
     private interface MapGui {
@@ -136,42 +190,65 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             return false;
         }
 
-        default void close() {
-        }
+        void buttonClick(ButtonDirection direction);
+
+        boolean buttonVisible(ButtonDirection direction);
+
+        boolean buttonEnabled(ButtonDirection direction);
     }
 
     private class WorldMap implements MapGui {
-        private final int left;
-        private final int top;
-        private final int size;
+        private Index corner = null;
+        private int minX = 0;
+        private int maxX = 0;
+        private int minY = 0;
+        private int maxY = 0;
+        private int maxMapDistance = 1;
 
-        private WorldMap(int left, int top, int size) {
-            this.left = left;
-            this.top = top;
-            this.size = size;
+        private WorldMap() {
+        }
+
+        private boolean updateExtremes() {
+            AtlasInventory inventory = container.getAtlasInventory();
+            Map<Index, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
+            if (mapInfos.isEmpty()) {
+                return false;
+            }
+            minX = mapInfos.keySet().stream().map(it -> it.x).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
+            maxX = mapInfos.keySet().stream().map(it -> it.x).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
+            minY = mapInfos.keySet().stream().map(it -> it.y).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
+            maxY = mapInfos.keySet().stream().map(it -> it.y).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
+            maxMapDistance = Math.max(maxX + 1 - minX, maxY + 1 - minY);
+            if (maxMapDistance > MAX_MAPS) {
+                maxMapDistance = MAX_MAPS;
+                if (corner == null) {
+                    int x1 = inventory.convertCoordToIndex((int) (playerInventory.player.getPosX() + 64)) - MAX_MAPS / 2;
+                    x1 = Math.max(minX, Math.min(maxX + 1 - MAX_MAPS, x1));
+                    int y1 = inventory.convertCoordToIndex((int) (playerInventory.player.getPosZ() + 64)) - MAX_MAPS / 2;
+                    y1 = Math.max(minY, Math.min(maxY + 1 - MAX_MAPS, y1));
+                    corner = Index.of(x1, y1);
+                }
+            } else {
+                corner = null;
+            }
+            return true;
         }
 
         @Override
         public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            int x = this.left + guiLeft;
-            int y = this.top + guiTop;
+            int x = LEFT + guiLeft;
+            int y = TOP + guiTop;
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
             if (world == null) {
                 return;
             }
             int light = 240;
-            float baseScale = (float) size / 128;
-            Map<Index, AtlasInventory.MapInfo> mapInfos = container.getAtlasInventory().getMapInfos();
-            if (mapInfos.isEmpty()) {
+            float baseScale = (float) SIZE / 128;
+            if (!updateExtremes()) {
                 return;
             }
-            int minX = mapInfos.keySet().stream().map(it -> it.x).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
-            int maxX = mapInfos.keySet().stream().map(it -> it.x).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
-            int minY = mapInfos.keySet().stream().map(it -> it.y).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
-            int maxY = mapInfos.keySet().stream().map(it -> it.y).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
-            int maxMapDistance = Math.max(maxX + 1 - minX, maxY + 1 - minY);
-            float mapSize = (float) size / maxMapDistance;
+            float mapSize = (float) SIZE / maxMapDistance;
             matrices.push();
             matrices.translate(x, y, 0);
             matrices.scale(baseScale, baseScale, 1);
@@ -184,11 +261,17 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
             matrices.pop();
             float mapScale = baseScale / maxMapDistance;
-            for (Map.Entry<Index, AtlasInventory.MapInfo> mapInfo : mapInfos.entrySet()) {
+            int currentMinX = corner != null ? corner.x : minX;
+            int currentMinY = corner != null ? corner.y : minY;
+            for (Map.Entry<Index, AtlasInventory.MapInfo> mapInfo : container.getAtlasInventory().getMapInfos().entrySet()) {
+                Index key = mapInfo.getKey();
+                if (corner != null && (corner.x > key.x || key.x >= corner.x + MAX_MAPS || corner.y > key.y || key.y >= corner.y + MAX_MAPS)) {
+                    continue;
+                }
                 MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.getValue().id));
                 if (mapData != null) {
                     matrices.push();
-                    matrices.translate(x + mapSize * (mapInfo.getKey().x - minX), y + mapSize * (mapInfo.getKey().y - minY), 1.0);
+                    matrices.translate(x + mapSize * (key.x - currentMinX), y + mapSize * (key.y - currentMinY), 1.0);
                     matrices.scale(mapScale, mapScale, 1);
                     mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, light);
                     matrices.pop();
@@ -200,24 +283,17 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
 
         @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            double normX = normalizeForMapArea(left + guiLeft, mouseX);
-            double normY = normalizeForMapArea(top + guiTop, mouseY);
+            double normX = normalizeForMapArea(LEFT + guiLeft, mouseX);
+            double normY = normalizeForMapArea(TOP + guiTop, mouseY);
             if (button == 0 && 0 <= normX && normX < 1 && 0 <= normY && normY < 1) {
                 ItemStack heldItem = playerInventory.getItemStack();
-                AtlasInventory atlasInventory = container.getAtlasInventory();
                 if (!heldItem.isEmpty()) {
                     Charm.PACKET_HANDLER.sendToServer(new ServerAtlasTransfer(slot, -1, -1, MoveMode.FROM_HAND));
                 } else {
-                    Map<Index, AtlasInventory.MapInfo> mapInfos = atlasInventory.getMapInfos();
-                    if (!mapInfos.isEmpty()) {
-                        int minX = mapInfos.keySet().stream().map(it -> it.x).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
-                        int maxX = mapInfos.keySet().stream().map(it -> it.x).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
-                        int minY = mapInfos.keySet().stream().map(it -> it.y).min(Integer::compareTo).orElseThrow(IllegalStateException::new);
-                        int maxY = mapInfos.keySet().stream().map(it -> it.y).max(Integer::compareTo).orElseThrow(IllegalStateException::new);
-                        int maxMapDistance = Math.max(maxX + 1 - minX, maxY + 1 - minY);
+                    if (updateExtremes()) {
                         int x = (int) (normX * maxMapDistance) + minX;
                         int y = (int) (normY * maxMapDistance) + minY;
-                        AtlasInventory.MapInfo mapInfo = mapInfos.get(Index.of(x, y));
+                        AtlasInventory.MapInfo mapInfo = container.getAtlasInventory().getMapInfos().get(Index.of(x, y));
                         if (mapInfo != null) {
                             if (isShiftClick()) {
                                 Charm.PACKET_HANDLER.sendToServer(
@@ -233,8 +309,43 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             return false;
         }
 
+        @Override
+        public void buttonClick(ButtonDirection direction) {
+            if (corner != null) {
+                int x = corner.x + direction.x * MAX_MAPS;
+                x = Math.max(minX, Math.min(maxX + 1 - MAX_MAPS, x));
+                int y = corner.y + direction.y * MAX_MAPS;
+                y = Math.max(minY, Math.min(maxY + 1 - MAX_MAPS, y));
+                corner = Index.of(x, y);
+            }
+        }
+
+        @Override
+        public boolean buttonVisible(ButtonDirection direction) {
+            return direction != ButtonDirection.BACK && corner != null;
+        }
+
+        @Override
+        public boolean buttonEnabled(ButtonDirection direction) {
+            if (corner != null) {
+                switch (direction) {
+                    case LEFT:
+                        return corner.x > minX;
+                    case TOP:
+                        return corner.y > minY;
+                    case RIGHT:
+                        return corner.x + MAX_MAPS <= maxX;
+                    case BOTTOM:
+                        return corner.y + MAX_MAPS <= maxY;
+                    case BACK:
+                        return false;
+                }
+            }
+            return false;
+        }
+
         private double normalizeForMapArea(double base, double val) {
-            return (val - base) / size;
+            return (val - base) / SIZE;
         }
 
         private void drawLines(MatrixStack matrices, int x, int y, int maxMapDistance) {
@@ -243,40 +354,33 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             //scale to half size for finer lines
             matrices.scale(0.5f, 0.5f, 1);
             for (int xLine = 1; xLine < maxMapDistance; ++xLine) {
-                vLine(matrices, 2 * xLine * size / maxMapDistance, 0, size * 2, -1);
+                vLine(matrices, 2 * xLine * SIZE / maxMapDistance, 0, SIZE * 2, -1);
             }
             for (int yLine = 1; yLine < maxMapDistance; ++yLine) {
-                hLine(matrices, 0, size * 2, 2 * yLine * size / maxMapDistance, -1);
+                hLine(matrices, 0, SIZE * 2, 2 * yLine * SIZE / maxMapDistance, -1);
             }
             matrices.pop();
         }
     }
 
     private class SingleMap implements MapGui {
-        private final int left;
-        private final int top;
-        private final int size;
-        private final AtlasInventory.MapInfo mapInfo;
-        private final List<CharmImageButton> buttons = new ArrayList<>();
+        private AtlasInventory.MapInfo mapInfo;
 
-        public SingleMap(int left, int top, int size, AtlasInventory.MapInfo mapInfo) {
-            this.left = left;
-            this.top = top;
-            this.size = size;
+        public SingleMap(AtlasInventory.MapInfo mapInfo) {
             this.mapInfo = mapInfo;
         }
 
         @Override
         public void render(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            int x = this.left + guiLeft;
-            int y = this.top + guiTop;
+            int x = LEFT + guiLeft;
+            int y = TOP + guiTop;
             final Minecraft mc = Minecraft.getInstance();
             final World world = mc.world;
             if (world == null) {
                 return;
             }
             int light = 240;
-            float baseScale = (float) size / 128;
+            float baseScale = (float) SIZE / 128;
             matrices.push();
             matrices.translate(x, y, 0);
             matrices.scale(baseScale, baseScale, 1);
@@ -289,7 +393,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             background.pos(matrix4f, -7.0F, -7.0F, 0.0F).color(255, 255, 255, 255).tex(0.0F, 0.0F).lightmap(light).endVertex();
             if (mapInfo != null) {
                 MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.id));
-                if(mapData != null) {
+                if (mapData != null) {
                     matrices.push();
                     matrices.translate(0, 0, 1);
                     Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, light);
@@ -298,62 +402,46 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
             }
             bufferSource.finish();
             matrices.pop();
-            drawButtons(matrices, mouseX, mouseY, partialTicks);
         }
 
-        private void drawButtons(MatrixStack matrices, int mouseX, int mouseY, float partialTicks) {
-            if (buttons.isEmpty()) setupButtons();
-            buttons.forEach(it -> {
-                if(!children.contains(it)) {
-                    children.add(it);
-                }
-            });
-            AtlasInventory inventory = container.getAtlasInventory();
-            Map<Index, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
-            if (mapInfo != null) {
+        @Override
+        public void buttonClick(ButtonDirection direction) {
+            if (direction == ButtonDirection.BACK) {
+                changeGui(getWorldMap());
+            } else {
+                AtlasInventory inventory = container.getAtlasInventory();
                 int mapX = inventory.convertCoordToIndex(mapInfo.x);
                 int mapY = inventory.convertCoordToIndex(mapInfo.z);
-                buttons.get(0).active = mapInfos.containsKey(Index.of(mapX - 1, mapY));
-                buttons.get(1).active = mapInfos.containsKey(Index.of(mapX, mapY - 1));
-                buttons.get(2).active = mapInfos.containsKey(Index.of(mapX + 1, mapY));
-                buttons.get(3).active = mapInfos.containsKey(Index.of(mapX, mapY + 1));
-            } else {
-                buttons.forEach(it -> it.active = false);
-            }
-            buttons.get(4).active = mapInfo == null && !mapInfos.isEmpty() || mapInfos.size() > 1;
-            buttons.forEach(it -> it.render(matrices, mouseX, mouseY, partialTicks));
-        }
-
-        private void setupButtons() {
-            int buttonSize = 10;
-            int center = (size - buttonSize) / 2;
-            //distance of buttons from map
-            int dist = 3;
-            buttons.add(new CharmImageButton(() -> left + guiLeft - buttonSize - dist, () -> top + guiTop + center, buttonSize, buttonSize, 80, 0,
-                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(-1, 0)));
-            buttons.add(new CharmImageButton(() -> left + guiLeft + center, () -> (top + guiTop) - buttonSize - dist, buttonSize, buttonSize, 50, 0,
-                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, -1)));
-            buttons.add(new CharmImageButton(() -> left + guiLeft + size + dist, () -> top + guiTop + center, buttonSize, buttonSize, 70, 0,
-                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(1, 0)));
-            buttons.add(new CharmImageButton(() -> left + guiLeft + center, () -> top + guiTop + size + dist, buttonSize, buttonSize, 60, 0,
-                    10, 20, CharmResources.INVENTORY_BUTTONS, click -> buttonClick(0, 1)));
-            buttons.add(new CharmImageButton(() -> guiLeft + xSize - 19, () -> guiTop + 3, 16, 16, 90, 0,
-                    17, 34, CharmResources.INVENTORY_BUTTONS, click -> changeGui(getWorldMap())));
-        }
-
-        private void buttonClick(int xDiff, int yDiff) {
-            AtlasInventory inventory = container.getAtlasInventory();
-            int mapX = inventory.convertCoordToIndex(mapInfo.x);
-            int mapY = inventory.convertCoordToIndex(mapInfo.z);
-            AtlasInventory.MapInfo mapInfo = inventory.getMapInfos().get(Index.of(mapX + xDiff, mapY + yDiff));
-            if (mapInfo != null) {
-                changeGui(getSingleMap(mapInfo));
+                AtlasInventory.MapInfo mapInfo1 = inventory.getMapInfos().get(Index.of(mapX + direction.x, mapY + direction.y));
+                if (mapInfo1 != null) {
+                    changeGui(getSingleMap(mapInfo1));
+                }
             }
         }
 
         @Override
+        public boolean buttonVisible(ButtonDirection direction) {
+            return true;
+        }
+
+        @Override
+        public boolean buttonEnabled(ButtonDirection direction) {
+            AtlasInventory inventory = container.getAtlasInventory();
+            Map<Index, AtlasInventory.MapInfo> mapInfos = inventory.getMapInfos();
+            if (direction == ButtonDirection.BACK) {
+                return mapInfo == null && !mapInfos.isEmpty() || mapInfos.size() > 1;
+            }
+            if (mapInfo != null) {
+                int mapX = inventory.convertCoordToIndex(mapInfo.x);
+                int mapY = inventory.convertCoordToIndex(mapInfo.z);
+                return mapInfos.containsKey(Index.of(mapX + direction.x, mapY + direction.y));
+            }
+            return false;
+        }
+
+        @Override
         public boolean mouseClicked(double mouseX, double mouseY, int button) {
-            if (button == 0 && guiLeft + left <= mouseX && mouseX < guiLeft + left + size && guiTop + top <= mouseY && mouseY < guiTop + top + size) {
+            if (button == 0 && guiLeft + LEFT <= mouseX && mouseX < guiLeft + LEFT + SIZE && guiTop + TOP <= mouseY && mouseY < guiTop + TOP + SIZE) {
                 ItemStack heldItem = playerInventory.getItemStack();
                 if (!heldItem.isEmpty()) {
                     Charm.PACKET_HANDLER.sendToServer(new ServerAtlasTransfer(slot, -1, -1, MoveMode.FROM_HAND));
@@ -368,11 +456,6 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                 return true;
             }
             return false;
-        }
-
-        @Override
-        public void close() {
-            children.removeAll(buttons);
         }
     }
 }
