@@ -1,10 +1,11 @@
 package svenhjol.charm.gui;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.ClickType;
@@ -12,9 +13,12 @@ import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import net.minecraft.world.storage.MapDecoration;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.CharmResources;
 import svenhjol.charm.base.gui.AbstractCharmContainerScreen;
@@ -26,9 +30,9 @@ import svenhjol.charm.container.AtlasInventory.Index;
 import svenhjol.charm.message.ServerAtlasTransfer;
 import svenhjol.charm.message.ServerAtlasTransfer.MoveMode;
 
-import javax.annotation.Nullable;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * @author Lukas
@@ -36,6 +40,8 @@ import java.util.Map;
  */
 public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
     private static final ResourceLocation CONTAINER_BACKGROUND = new ResourceLocation(Charm.MOD_ID, "textures/gui/atlas_container.png");
+    private static final RenderType MAP_DECORATIONS = RenderType.getText(new ResourceLocation("textures/map/map_icons.png"));
+    private static final RenderType LINES = RenderType.makeType("lines", DefaultVertexFormats.POSITION_COLOR, 7, 256, RenderType.State.getBuilder().build(false));
     private static final int SIZE = 48;
     private static final int LEFT = 74;
     private static final int TOP = 16;
@@ -152,6 +158,37 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
         mapGui = gui;
     }
 
+    private void renderDecorations(MatrixStack matrices, IRenderTypeBuffer buffer, MapData mapData, float relativeScale, Predicate<MapDecoration> filter) {
+        int k = 0;
+
+        for (MapDecoration mapdecoration : mapData.mapDecorations.values()) {
+            if (!filter.test(mapdecoration) || mapdecoration.render(k)) {
+                ++k;
+                continue;
+            }
+            matrices.push();
+            matrices.translate(mapdecoration.getX() / 2f + 64, mapdecoration.getY() / 2f + 64, 0.02);
+            matrices.rotate(Vector3f.ZP.rotationDegrees(mapdecoration.getRotation() * 22.5f));
+            matrices.scale(relativeScale * 4, relativeScale * 4, 3);
+            matrices.translate(-0.125, 0.125, 0);
+            byte b0 = mapdecoration.getImage();
+            float f1 = (float) (b0 % 16) / 16f;
+            float f2 = (float) (b0 / 16) / 16f;
+            float f3 = (float) (b0 % 16 + 1) / 16f;
+            float f4 = (float) (b0 / 16 + 1) / 16f;
+            Matrix4f matrix4f = matrices.getLast().getMatrix();
+            IVertexBuilder builder = buffer.getBuffer(MAP_DECORATIONS);
+            float z = k * 0.001f;
+            builder.pos(matrix4f, -1, 1, z).color(255, 255, 255, 255).tex(f1, f2).lightmap(LIGHT).endVertex();
+            builder.pos(matrix4f, 1, 1, z).color(255, 255, 255, 255).tex(f3, f2).lightmap(LIGHT).endVertex();
+            builder.pos(matrix4f, 1, -1, z).color(255, 255, 255, 255).tex(f3, f4).lightmap(LIGHT).endVertex();
+            builder.pos(matrix4f, -1, -1, z).color(255, 255, 255, 255).tex(f1, f4).lightmap(LIGHT).endVertex();
+            matrices.pop();
+
+            ++k;
+        }
+    }
+
     private enum ButtonDirection {
         LEFT(-BUTTON_SIZE - BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 77, -1, 0),
         TOP(CENTER, -BUTTON_SIZE - BUTTON_DISTANCE, BUTTON_SIZE, 50, 0, -1),
@@ -245,27 +282,62 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
                 MapData mapData = world.getMapData(FilledMapItem.getMapName(mapInfo.getValue().id));
                 if (mapData != null) {
                     matrices.push();
-                    matrices.translate(mapSize * (key.x - currentMinX), mapSize * (key.y - currentMinY), 1.0);
+                    matrices.translate(mapSize * (key.x - currentMinX), mapSize * (key.y - currentMinY), 0.1);
                     matrices.scale(mapScale, mapScale, 1);
                     mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, LIGHT);
+                    matrices.translate(0, 0, 0.2);
+                    renderDecorations(matrices, bufferSource, mapData, 1.5f * maxMapDistance,
+                            it -> it.getType() != MapDecoration.Type.PLAYER_OFF_MAP && it.getType() != MapDecoration.Type.PLAYER_OFF_LIMITS);
                     matrices.pop();
                 }
             }
-            bufferSource.finish();
-            drawLines(matrices);
+            drawLines(matrices, bufferSource.getBuffer(LINES));
         }
 
-        private void drawLines(MatrixStack matrices) {
+        private void drawLines(MatrixStack matrices, IVertexBuilder builder) {
             matrices.push();
+            matrices.translate(0, 0, 0.2);
             //need to revert the base scale to avoid some lines being to thin to be drawn
-            matrices.scale( 0.5f / BASE_SCALE, 0.5f / BASE_SCALE, 1);
+            matrices.scale(0.5f / BASE_SCALE, 0.5f / BASE_SCALE, 1);
             for (int xLine = 1; xLine < maxMapDistance; ++xLine) {
-                vLine(matrices, xLine * 2 * SIZE / maxMapDistance, 0, 2 * SIZE, -1);
+                vLine(matrices, builder, xLine * 2 * SIZE / maxMapDistance, 0, 2 * SIZE, -1);
             }
             for (int yLine = 1; yLine < maxMapDistance; ++yLine) {
-                hLine(matrices, 0, 2 * SIZE, yLine * 2 * SIZE / maxMapDistance, -1);
+                hLine(matrices, builder, 0, 2 * SIZE, yLine * 2 * SIZE / maxMapDistance, -1);
             }
             matrices.pop();
+        }
+
+        private void hLine(MatrixStack matrixStack, IVertexBuilder builder, int minX, int maxX, int y, int color) {
+            fill(matrixStack,builder, minX, y, maxX + 1, y + 1, color);
+        }
+
+        private void vLine(MatrixStack matrixStack, IVertexBuilder builder, int x, int minY, int maxY, int color) {
+            fill(matrixStack, builder, x, minY + 1, x + 1, maxY, color);
+        }
+
+        private void fill(MatrixStack matrices, IVertexBuilder builder, int minX, int minY, int maxX, int maxY, int color) {
+            if (minX < maxX) {
+                int i = minX;
+                minX = maxX;
+                maxX = i;
+            }
+
+            if (minY < maxY) {
+                int j = minY;
+                minY = maxY;
+                maxY = j;
+            }
+
+            float f3 = (float)(color >> 24 & 255) / 255.0F;
+            float f = (float)(color >> 16 & 255) / 255.0F;
+            float f1 = (float)(color >> 8 & 255) / 255.0F;
+            float f2 = (float)(color & 255) / 255.0F;
+            Matrix4f matrix = matrices.getLast().getMatrix();
+            builder.pos(matrix, (float)minX, (float)maxY, 0.0F).color(f, f1, f2, f3).endVertex();
+            builder.pos(matrix, (float)maxX, (float)maxY, 0.0F).color(f, f1, f2, f3).endVertex();
+            builder.pos(matrix, (float)maxX, (float)minY, 0.0F).color(f, f1, f2, f3).endVertex();
+            builder.pos(matrix, (float)minX, (float)minY, 0.0F).color(f, f1, f2, f3).endVertex();
         }
 
         @Override
@@ -357,7 +429,8 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
                 if (mapData != null) {
                     matrices.push();
                     matrices.translate(0, 0, 1);
-                    Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, false, LIGHT);
+                    Minecraft.getInstance().gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, mapData, true, LIGHT);
+                    renderDecorations(matrices, bufferSource, mapData, 2f, it -> true);
                     matrices.pop();
                 }
             }
