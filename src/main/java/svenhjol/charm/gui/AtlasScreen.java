@@ -60,7 +60,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
         super(screenContainer, inv, titleIn);
         this.passEvents = true;
         this.xSize = 175;
-        this.ySize = 171;
+        this.ySize = 168;
         this.slot = inv.getSlotFor(screenContainer.getAtlasInventory().getAtlasItem());
         Map<Index, AtlasInventory.MapInfo> mapInfos = screenContainer.getAtlasInventory().getMapInfos();
         lastSize = mapInfos.size();
@@ -147,13 +147,11 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     @Override
     protected void drawGuiContainerForegroundLayer(@Nonnull MatrixStack matrices, int mouseX, int mouseY) {
         this.font.func_238422_b_(matrices, this.title.func_241878_f(), 8.0F, 6.0F, 4210752);
-        this.font.func_238422_b_(matrices, this.playerInventory.getDisplayName().func_241878_f(), 8.0F, (float) ySize - 97, 4210752);
+        this.font.func_238422_b_(matrices, this.playerInventory.getDisplayName().func_241878_f(), 8.0F, (float) ySize - 94, 4210752);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrices, float delta, int mouseX, int mouseY) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-
         if (minecraft != null) {
             minecraft.getTextureManager().bindTexture(CONTAINER_BACKGROUND);
 
@@ -309,8 +307,10 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
                     Charm.PACKET_HANDLER.sendToServer(new ServerAtlasTransfer(slot, -1, -1, MoveMode.FROM_HAND));
                 } else {
                     if (updateExtremes()) {
-                        int x = (int) (normX * maxMapDistance) + minX;
-                        int y = (int) (normY * maxMapDistance) + minY;
+                        int currentMinX = corner != null ? corner.x : minX;
+                        int currentMinY = corner != null ? corner.y : minY;
+                        int x = (int) (normX * maxMapDistance) + currentMinX;
+                        int y = (int) (normY * maxMapDistance) + currentMinY;
                         AtlasInventory.MapInfo mapInfo = container.getAtlasInventory().getMapInfos().get(Index.of(x, y));
                         if (mapInfo != null) {
                             if (isShiftClick()) {
