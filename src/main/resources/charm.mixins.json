@@ -35,6 +35,7 @@
     "SingleJigsawPieceMixin",
     "SnowBlockMixin",
     "StrayEntityMixin",
+    "UtilMixin",
     "WanderingTraderSpawnerMixin",
     "accessor.BarrelTileEntityAccessor",
     "accessor.BeeEntityAccessor",

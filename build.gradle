@@ -60,8 +60,12 @@ dependencies {
 	runtimeOnly fg.deobf("mezz.jei:jei-${project.minecraft_version}:${project.jei_version}")
 
 	// for testing apotheosis
-    //compile fg.deobf("curse.maven:apotheosis:3095843")
+	//compile fg.deobf("curse.maven:apotheosis:3095843")
 	//compile fg.deobf("curse.maven:placebo:3092113")
+
+	// for testing buzzier bees
+	//compile fg.deobf("curse.maven:abnormals-core:3154969")
+	//compile fg.deobf("curse.maven:buzzier-bees:3154937")
 }
 
 repositories {
