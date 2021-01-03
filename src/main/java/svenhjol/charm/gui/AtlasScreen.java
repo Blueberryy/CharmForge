@@ -42,7 +42,7 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     private static final int SIZE = 48;
     private static final int LEFT = 80;
     private static final int TOP = 16;
-    private static final int BUTTON_SIZE = 10;
+    private static final int BUTTON_SIZE = 9;
     private static final int BUTTON_DISTANCE = 3;
     private static final int CENTER = (SIZE - BUTTON_SIZE) / 2;
     private static final int MAX_MAPS = 8;
@@ -185,11 +185,11 @@ public class AtlasScreen extends ContainerScreen<AtlasContainer> {
     }
 
     private enum ButtonDirection {
-        LEFT(-BUTTON_SIZE - BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 80, -1, 0),
+        LEFT(-BUTTON_SIZE - BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 77, -1, 0),
         TOP(CENTER, -BUTTON_SIZE - BUTTON_DISTANCE, BUTTON_SIZE, 50, 0, -1),
-        RIGHT(SIZE + BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 70, 1, 0),
-        BOTTOM(CENTER, SIZE + BUTTON_DISTANCE, BUTTON_SIZE, 60, 0, 1),
-        BACK(76, -13, 16, 90, 0, 0);
+        RIGHT(SIZE + BUTTON_DISTANCE, CENTER, BUTTON_SIZE, 68, 1, 0),
+        BOTTOM(CENTER, SIZE + BUTTON_DISTANCE, BUTTON_SIZE, 59, 0, 1),
+        BACK(76, -12, 16, 86, 0, 0);
         final int left;
         final int top;
         final int size;
