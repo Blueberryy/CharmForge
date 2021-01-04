@@ -36,7 +36,7 @@ public class AtlasItem extends CharmItem {
             return ActionResult.resultPass(itemStack);
         }
         AtlasInventory inventory = Atlas.getInventory(world, itemStack);
-        inventory.getMapInfos().values().forEach(it -> Atlas.sendMapToClient((ServerPlayerEntity) player, it.map));
+        inventory.getCurrentDimensionMapInfos(world).values().forEach(it -> Atlas.sendMapToClient((ServerPlayerEntity) player, it.map));
         player.openContainer(inventory);
         return ActionResult.resultConsume(itemStack);
     }
@@ -50,9 +50,9 @@ public class AtlasItem extends CharmItem {
                 PlayerEntity player = context.getPlayer();
                 if (player instanceof ServerPlayerEntity) {
                     AtlasInventory inventory = Atlas.getInventory(world, context.getItem());
-                    MapData mapdata = inventory.getActiveMap();
+                    MapData mapdata = inventory.getActiveMap(world);
                     if (mapdata != null) {
-                        mapdata.tryAddBanner(context.getWorld(), context.getPos());
+                        mapdata.tryAddBanner(world, context.getPos());
                     }
                 }
             }
