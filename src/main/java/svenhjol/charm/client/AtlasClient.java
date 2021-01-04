@@ -90,7 +90,7 @@ public class AtlasClient extends CharmClientModule {
         // transform page based on the hand it is held and render it
         matrixStack.push();
         renderer.transformPageForHand(matrixStack, buffers, light, swing, equip, hand);
-        renderer.renderAtlas(inventory, matrixStack, buffers, light);
+        renderer.renderAtlas(world, inventory, matrixStack, buffers, light);
         matrixStack.pop();
 
         matrixStack.pop(); // close

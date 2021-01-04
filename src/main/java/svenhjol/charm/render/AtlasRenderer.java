@@ -1,7 +1,6 @@
 package svenhjol.charm.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
@@ -12,8 +11,8 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.MapRenderHelper;
@@ -52,8 +51,8 @@ public class AtlasRenderer implements AutoCloseable {
         this.clearInstances();
     }
 
-    public void renderAtlas(AtlasInventory inventory, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light) {
-        this.getInstance(inventory).renderAtlas(inventory.getActiveMap(), matrixStack, buffers, light);
+    public void renderAtlas(World world, AtlasInventory inventory, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light) {
+        this.getInstance(inventory).renderAtlas(inventory.getActiveMap(world), matrixStack, buffers, light);
     }
 
     public void renderArm(ClientPlayerEntity player, MatrixStack matrixStack, IRenderTypeBuffer buffers, int light, float swing, float equip, Hand hand) {

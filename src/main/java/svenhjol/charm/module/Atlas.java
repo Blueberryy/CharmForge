@@ -40,7 +40,7 @@ public class Atlas extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "atlas");
     // add items to this list to whitelist them in atlases
     public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
-    private static final Table<World, UUID, AtlasInventory> cache = HashBasedTable.create();
+    private static final Table<Boolean, UUID, AtlasInventory> cache = HashBasedTable.create();
 
     @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand")
     public static boolean offHandOpen = false;
@@ -71,10 +71,10 @@ public class Atlas extends CharmModule {
             id = UUID.randomUUID();
             ItemNBTHelper.setUuid(stack, AtlasInventory.ID, id);
         }
-        AtlasInventory inventory = cache.get(world, id);
+        AtlasInventory inventory = cache.get(world.isRemote, id);
         if (inventory == null) {
-            inventory = new AtlasInventory(world, stack);
-            cache.put(world, id, inventory);
+            inventory = new AtlasInventory(stack);
+            cache.put(world.isRemote, id, inventory);
         }
         if(inventory.getAtlasItem() != stack) {
             inventory.reload(stack);
@@ -96,18 +96,18 @@ public class Atlas extends CharmModule {
         AtlasInventory inventory = Atlas.getInventory(player.world, player.inventory.getStackInSlot(msg.atlasSlot));
         switch (msg.mode) {
             case TO_HAND:
-                player.inventory.setItemStack(inventory.removeMapByCoords(msg.mapX, msg.mapZ).map);
+                player.inventory.setItemStack(inventory.removeMapByCoords(player.world, msg.mapX, msg.mapZ).map);
                 player.updateHeldItem();
                 updateClient(player, msg.atlasSlot);
                 break;
             case TO_INVENTORY:
-                player.addItemStackToInventory(inventory.removeMapByCoords(msg.mapX, msg.mapZ).map);
+                player.addItemStackToInventory(inventory.removeMapByCoords(player.world, msg.mapX, msg.mapZ).map);
                 updateClient(player, msg.atlasSlot);
                 break;
             case FROM_HAND:
                 ItemStack heldItem = player.inventory.getItemStack();
                 if (heldItem.getItem() == Items.FILLED_MAP && FilledMapItem.getMapData(heldItem, player.world).scale == inventory.getScale()) {
-                    inventory.addToInventory(heldItem);
+                    inventory.addToInventory(player.world, heldItem);
                     player.inventory.setItemStack(ItemStack.EMPTY);
                     player.updateHeldItem();
                     updateClient(player, msg.atlasSlot);
@@ -116,7 +116,7 @@ public class Atlas extends CharmModule {
             case FROM_INVENTORY:
                 ItemStack stack = player.inventory.getStackInSlot(msg.mapX);
                 if (stack.getItem() == Items.FILLED_MAP && FilledMapItem.getMapData(stack, player.world).scale == inventory.getScale()) {
-                    inventory.addToInventory(stack);
+                    inventory.addToInventory(player.world, stack);
                     player.inventory.removeStackFromSlot(msg.mapX);
                     updateClient(player, msg.atlasSlot);
                 }
