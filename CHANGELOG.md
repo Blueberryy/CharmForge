@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.3
+* Mineshaft improvements no longer apply to mesa/badlands mineshafts
+
 ## 2.2.2
 * Show repair cost in item tooltip when on the anvil screen
 * Rework enchantment hook due to incompatible mods

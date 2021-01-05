@@ -14,6 +14,7 @@ import net.minecraft.util.math.MutableBoundingBox;
 import net.minecraft.world.ISeedReader;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.feature.structure.MineshaftPieces;
+import net.minecraft.world.gen.feature.structure.MineshaftStructure;
 import net.minecraft.world.gen.feature.structure.StructureManager;
 import net.minecraft.world.gen.feature.structure.StructurePiece;
 import svenhjol.charm.Charm;
@@ -21,6 +22,7 @@ import svenhjol.charm.base.CharmModule;
 import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.base.iface.Config;
 import svenhjol.charm.base.iface.Module;
+import svenhjol.charm.mixin.accessor.MineshaftPiecesAccessor;
 import svenhjol.charm.mixin.accessor.StructurePieceAccessor;
 import svenhjol.charm.tileentity.CrateTileEntity;
 
@@ -117,6 +119,9 @@ public class MineshaftImprovements extends CharmModule {
 
     public static void generatePiece(StructurePiece piece, ISeedReader world, StructureManager accessor, ChunkGenerator chunkGenerator, Random rand, MutableBoundingBox box, ChunkPos chunkPos, BlockPos blockPos) {
         if (!ModuleHandler.enabled(MineshaftImprovements.class))
+            return;
+
+        if (((MineshaftPiecesAccessor)piece).getMineShaftType() == MineshaftStructure.Type.MESA)
             return;
 
         if (piece instanceof MineshaftPieces.Corridor) {

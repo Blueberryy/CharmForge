@@ -14,6 +14,7 @@ public class UtilMixin {
 
     @Inject(method = "attemptDataFixInternal",
             at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;error(Ljava/lang/String;Ljava/lang/Object;)V"),
+            remap = false,
             cancellable = true)
     private static void hookAttemptDataFixInternal(DSL.TypeReference typeIn, String choiceName, CallbackInfoReturnable<Type<?>> callbackInfo) {
         if(RegistryHandler.SUPPRESS_DATA_FIXER_ERROR.contains(choiceName)) {
