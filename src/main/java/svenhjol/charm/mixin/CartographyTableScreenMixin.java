@@ -4,7 +4,7 @@ import net.minecraft.client.gui.screen.inventory.CartographyTableScreen;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import svenhjol.charm.module.Atlas;
+import svenhjol.charm.client.AtlasClient;
 
 @Mixin(CartographyTableScreen.class)
 public class CartographyTableScreenMixin {
@@ -14,7 +14,7 @@ public class CartographyTableScreenMixin {
             index = 3
     )
     private boolean hookDrawGuiContainerBackgroundLayer(boolean value) {
-        if (Atlas.shouldDrawAtlasCopy((CartographyTableScreen) (Object) this)) {
+        if (AtlasClient.shouldDrawAtlasCopy((CartographyTableScreen) (Object) this)) {
             return true;
         }
         return value;
