@@ -2,7 +2,6 @@ package svenhjol.charm.module;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import net.minecraft.client.gui.screen.inventory.CartographyTableScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftResultInventory;
@@ -169,11 +168,6 @@ public class Atlas extends CharmModule {
             return true;
         }
         return false;
-    }
-
-    public static boolean shouldDrawAtlasCopy(CartographyTableScreen screen) {
-        return ModuleHandler.enabled(Atlas.class) && screen.getContainer().getSlot(0).getStack().getItem() == ATLAS_ITEM
-                && screen.getContainer().getSlot(1).getStack().getItem() == Items.MAP;
     }
 
     @Override

@@ -4,11 +4,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.inventory.CartographyTableScreen;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.IFormattableTextComponent;
@@ -19,6 +21,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import svenhjol.charm.base.CharmClientModule;
 import svenhjol.charm.base.CharmModule;
+import svenhjol.charm.base.handler.ModuleHandler;
 import svenhjol.charm.container.AtlasInventory;
 import svenhjol.charm.gui.AtlasScreen;
 import svenhjol.charm.module.Atlas;
@@ -102,6 +105,11 @@ public class AtlasClient extends CharmClientModule {
         if (player == null) return;
         ItemStack atlas = player.inventory.getStackInSlot(atlasSlot);
         Atlas.getInventory(mc.world, atlas).reload(atlas);
+    }
+
+    public static boolean shouldDrawAtlasCopy(CartographyTableScreen screen) {
+        return ModuleHandler.enabled(Atlas.class) && screen.getContainer().getSlot(0).getStack().getItem() == Atlas.ATLAS_ITEM
+                && screen.getContainer().getSlot(1).getStack().getItem() == Items.MAP;
     }
 }
 
