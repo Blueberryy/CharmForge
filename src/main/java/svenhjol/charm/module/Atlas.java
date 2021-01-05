@@ -30,16 +30,15 @@ import svenhjol.charm.item.AtlasItem;
 import svenhjol.charm.message.ClientUpdateAtlasInventory;
 import svenhjol.charm.message.ServerAtlasTransfer;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Module(mod = Charm.MOD_ID, client = AtlasClient.class, description = "Storage for maps that automatically updates the displayed map as you explore.", hasSubscriptions = true)
 public class Atlas extends CharmModule {
     public static final ResourceLocation ID = new ResourceLocation(Charm.MOD_ID, "atlas");
     // add items to this list to whitelist them in atlases
     public static final List<Item> VALID_ATLAS_ITEMS = new ArrayList<>();
-    private static final Table<Boolean, UUID, AtlasInventory> cache = HashBasedTable.create();
+    private static final Map<UUID, AtlasInventory> serverCache = new HashMap<>();
+    private static final Map<UUID, AtlasInventory> clientCache = new HashMap<>();
 
     @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand")
     public static boolean offHandOpen = false;
@@ -70,10 +69,11 @@ public class Atlas extends CharmModule {
             id = UUID.randomUUID();
             ItemNBTHelper.setUuid(stack, AtlasInventory.ID, id);
         }
-        AtlasInventory inventory = cache.get(world.isRemote, id);
+        Map<UUID, AtlasInventory> cache = world.isRemote ? clientCache : serverCache;
+        AtlasInventory inventory = cache.get(id);
         if (inventory == null) {
             inventory = new AtlasInventory(stack);
-            cache.put(world.isRemote, id, inventory);
+            cache.put(id, inventory);
         }
         if(inventory.getAtlasItem() != stack) {
             inventory.reload(stack);

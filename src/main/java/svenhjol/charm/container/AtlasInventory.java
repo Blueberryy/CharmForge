@@ -2,8 +2,9 @@ package svenhjol.charm.container;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
 import com.mojang.serialization.Dynamic;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -18,6 +19,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTDynamicOps;
 import net.minecraft.util.*;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
@@ -30,6 +32,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class AtlasInventory implements INamedContainerProvider, IInventory {
@@ -77,24 +80,30 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private void putMapInfo(MapInfo mapInfo) {
-        mapInfos.put(mapInfo.dimension, Index.of(convertCoordToIndex(mapInfo.x), convertCoordToIndex(mapInfo.z)), mapInfo);
+        mapInfos.put(mapInfo.dimension, convertCoordsToIndex(mapInfo.x, mapInfo.z), mapInfo);
+    }
+
+    public Index getIndexOf(PlayerEntity player) {
+        return convertCoordsToIndex((int) player.getPosX() + 64,(int) player.getPosZ() + 64);
+    }
+
+    public Index convertCoordsToIndex(int x, int y) {
+        return Index.of(convertCoordToIndex(x), convertCoordToIndex(y));
     }
 
     public int convertCoordToIndex(int coordinate) {
         return Math.floorDiv(coordinate, diameter);
     }
 
-    private MapInfo getMapInfo(World world, ItemStack map) {
+    private static MapInfo createMapInfo(World world, ItemStack map) {
         MapData mapData = FilledMapItem.getMapData(map, world);
         return mapData != null ? new MapInfo(mapData.xCenter, mapData.zCenter, FilledMapItem.getMapId(map), map, mapData.dimension) : null;
     }
 
     public boolean updateActiveMap(ServerPlayerEntity player) {
-        int x = convertCoordToIndex((int) player.getPosX() + 64);
-        int z = convertCoordToIndex((int) player.getPosZ() + 64);
-        MapInfo activeMap = mapInfos.get(player.world.getDimensionKey(), Index.of(x, z));
+        MapInfo activeMap = mapInfos.get(player.world.getDimensionKey(), getIndexOf(player));
         boolean madeNewMap = false;
-        if (activeMap == null) {
+        if (activeMap == null && !isOpen) {
             activeMap = makeNewMap(player, (int) player.getPosX(), (int) player.getPosZ());
             madeNewMap = activeMap != null;
         }
@@ -108,21 +117,19 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private MapInfo makeNewMap(ServerPlayerEntity player, int x, int z) {
-        if (!isOpen) {
-            for (int i = 0; i < EMPTY_MAP_SLOTS; ++i) {
-                ItemStack stack = getStackInSlot(i);
-                if (stack.getItem() == Items.MAP) {
-                    if (!player.isCreative()) {
-                        decrStackSize(i, 1);
-                    }
-                    ItemStack map = FilledMapItem.setupNewMap(player.world, x, z, (byte) scale, true, true);
-                    MapInfo mapInfo = getMapInfo(player.world, map);
-                    putMapInfo(mapInfo);
-                    markDirty();
-                    player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, 0.5f,
-                            player.world.rand.nextFloat() * 0.1F + 0.9F);
-                    return mapInfo;
+        for (int i = 0; i < EMPTY_MAP_SLOTS; ++i) {
+            ItemStack stack = emptyMaps.get(i);
+            if (stack.getItem() == Items.MAP) {
+                if (!player.isCreative()) {
+                    decrStackSize(i, 1);
                 }
+                ItemStack map = FilledMapItem.setupNewMap(player.world, x, z, (byte) scale, true, true);
+                MapInfo mapInfo = createMapInfo(player.world, map);
+                putMapInfo(mapInfo);
+                markDirty();
+                player.world.playSound(null, player.getPosX(), player.getPosY(), player.getPosZ(), SoundEvents.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, SoundCategory.BLOCKS, 0.5f,
+                        player.world.rand.nextFloat() * 0.1F + 0.9F);
+                return mapInfo;
             }
         }
         return null;
@@ -131,8 +138,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     @Nullable
     public MapData getActiveMap(World world) {
         int activeId = ItemNBTHelper.getInt(atlas, ACTIVE_MAP, -1);
-        if (activeId == -1) return null;
-        return world.getMapData(FilledMapItem.getMapName(activeId));
+        return activeId == -1 ? null : world.getMapData(FilledMapItem.getMapName(activeId));
     }
 
     @Nullable
@@ -190,18 +196,14 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     public MapInfo removeMapByCoords(World world, int x, int z) {
-        return removeMapByIndex(world.getDimensionKey(), Index.of(convertCoordToIndex(x), convertCoordToIndex(z)));
-    }
-
-    private MapInfo removeMapByIndex(RegistryKey<World> dimension, Index index) {
-        MapInfo info = mapInfos.remove(dimension, index);
+        MapInfo info = mapInfos.remove(world.getDimensionKey(), convertCoordsToIndex(x, z));
         markDirty();
         return info;
     }
 
     public void addToInventory(World world, ItemStack itemStack) {
         if (itemStack.getItem() == Items.FILLED_MAP) {
-            putMapInfo(getMapInfo(world, itemStack));
+            putMapInfo(createMapInfo(world, itemStack));
             markDirty();
         }
     }
@@ -316,13 +318,45 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     public static class Index {
-        private static final Table<Integer, Integer, Index> cache = TreeBasedTable.create();
+        private static final Int2ObjectMap<Int2ObjectMap<Index>> cache = new Int2ObjectOpenHashMap<>();
         public final int x;
         public final int y;
 
         private Index(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        public Index plus(Index value) {
+            return transform(it -> it.apply(this) + it.apply(value));
+        }
+
+        public Index plus(int value) {
+            return transform(it -> it.apply(this) + value);
+        }
+
+        public Index minus(Index value) {
+            return transform(it -> it.apply(this) - it.apply(value));
+        }
+
+        public Index minus(int value) {
+            return transform(it -> it.apply(this) - value);
+        }
+
+        public Index multiply(int value) {
+            return transform(it -> it.apply(this) * value);
+        }
+
+        public Index divide(int value) {
+            return transform(it -> it.apply(this) / value);
+        }
+
+        public Index clamp(Index min, Index max) {
+            return transform(it -> MathHelper.clamp(it.apply(this), it.apply(min), it.apply(max)));
+        }
+
+        private Index transform(Function<Function<Index, Integer>, Integer> transformer) {
+            return Index.of(transformer.apply(it -> it.x), transformer.apply(it -> it.y));
         }
 
         @Override
@@ -339,10 +373,15 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
         }
 
         public static Index of(int x, int y) {
-            Index index = cache.get(x, y);
+            Int2ObjectMap<Index> columnCache = cache.get(x);
+            if (columnCache == null) {
+                columnCache = new Int2ObjectOpenHashMap<>();
+                cache.put(x, columnCache);
+            }
+            Index index = columnCache.get(y);
             if (index == null) {
                 index = new Index(x, y);
-                cache.put(x, y, index);
+                columnCache.put(y, index);
             }
             return index;
         }
