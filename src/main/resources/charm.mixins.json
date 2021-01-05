@@ -50,6 +50,7 @@
     "accessor.ItemEntityAccessor",
     "accessor.JigsawPatternAccessor",
     "accessor.MinecraftServerAccessor",
+    "accessor.MineshaftPiecesAccessor",
     "accessor.MobEntityAccessor",
     "accessor.MobSpawnInfoAccessor",
     "accessor.PatrolSpawnerAccessor",
