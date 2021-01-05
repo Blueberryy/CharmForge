@@ -1,7 +1,6 @@
 package svenhjol.charm.module;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.CraftResultInventory;
@@ -189,10 +188,18 @@ public class Atlas extends CharmModule {
                 if (atlas.getItem() == ATLAS_ITEM) {
                     AtlasInventory inventory = getInventory(player.world, atlas);
                     if (inventory.updateActiveMap(player)) {
-                        updateClient(player, player.inventory.getSlotFor(atlas));
+                        updateClient(player, getSlotFromHand(player, hand));
                     }
                 }
             }
+        }
+    }
+
+    private static int getSlotFromHand(PlayerEntity player, Hand hand) {
+        if(hand == Hand.MAIN_HAND) {
+            return player.inventory.currentItem;
+        } else {
+            return player.inventory.getSizeInventory() - 1;
         }
     }
 }
