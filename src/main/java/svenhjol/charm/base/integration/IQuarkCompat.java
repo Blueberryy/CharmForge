@@ -6,6 +6,4 @@ public interface IQuarkCompat {
     boolean isModuleEnabled(String moduleName);
 
     boolean isInBigDungeon(PlayerEntity player);
-
-    void forceQuarkConfigLoad();
 }

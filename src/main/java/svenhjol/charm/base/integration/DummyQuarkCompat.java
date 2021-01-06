@@ -12,7 +12,4 @@ public class DummyQuarkCompat implements IQuarkCompat {
     public boolean isInBigDungeon(PlayerEntity player) {
         return false;
     }
-
-    @Override
-    public void forceQuarkConfigLoad() { }
 }
