@@ -252,13 +252,17 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     @Override
     public void openInventory(PlayerEntity player) {
         isOpen = true;
-        player.playSound(CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+        if(!player.world.isRemote) {
+            player.playSound(CharmSounds.BOOKSHELF_OPEN, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+        }
     }
 
     @Override
     public void closeInventory(PlayerEntity player) {
         isOpen = false;
-        player.playSound(CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+        if(!player.world.isRemote) {
+            player.playSound(CharmSounds.BOOKSHELF_CLOSE, SoundCategory.BLOCKS, 0.5f, player.world.rand.nextFloat() * 0.1F + 0.9F);
+        }
     }
 
     public boolean hasItemStack(ItemStack stack) {
