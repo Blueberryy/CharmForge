@@ -17,6 +17,7 @@ import svenhjol.charm.base.iface.Module;
 import svenhjol.charm.block.BookcaseBlock;
 import svenhjol.charm.client.BookcasesClient;
 import svenhjol.charm.container.BookcaseContainer;
+import svenhjol.charm.item.AtlasItem;
 import svenhjol.charm.tileentity.BookcaseTileEntity;
 
 import java.util.*;
@@ -44,7 +45,8 @@ public class Bookcases extends CharmModule {
             Items.KNOWLEDGE_BOOK.getClass(),
             Items.PAPER.getClass(),
             Items.MAP.getClass(),
-            Items.FILLED_MAP.getClass()
+            Items.FILLED_MAP.getClass(),
+            AtlasItem.class
         ));
 
         VanillaVariantMaterial.getTypes().forEach(type -> {
