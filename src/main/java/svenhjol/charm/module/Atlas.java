@@ -80,8 +80,11 @@ public class Atlas extends CharmModule {
         return inventory;
     }
 
-    public static void sendMapToClient(ServerPlayerEntity player, ItemStack map) {
+    public static void sendMapToClient(ServerPlayerEntity player, ItemStack map, boolean markDirty) {
         if (map.getItem().isComplex()) {
+            if(markDirty) {
+                FilledMapItem.getMapData(map, player.world).updateMapData(0, 0);
+            }
             map.getItem().inventoryTick(map, player.world, player, -1, true);
             IPacket<?> packet = ((AbstractMapItem) map.getItem()).getUpdatePacket(map, player.world, player);
             if (packet != null) {

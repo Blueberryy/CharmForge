@@ -36,7 +36,7 @@ public class AtlasItem extends CharmItem {
             return ActionResult.resultPass(itemStack);
         }
         AtlasInventory inventory = Atlas.getInventory(world, itemStack);
-        inventory.getCurrentDimensionMapInfos(world).values().forEach(it -> Atlas.sendMapToClient((ServerPlayerEntity) player, it.map));
+        inventory.getCurrentDimensionMapInfos(world).values().forEach(it -> Atlas.sendMapToClient((ServerPlayerEntity) player, it.map, true));
         player.openContainer(inventory);
         return ActionResult.resultConsume(itemStack);
     }

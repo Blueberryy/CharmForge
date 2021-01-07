@@ -108,7 +108,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
             madeNewMap = activeMap != null;
         }
         if (activeMap != null) {
-            Atlas.sendMapToClient(player, activeMap.map);
+            Atlas.sendMapToClient(player, activeMap.map, false);
             ItemNBTHelper.setInt(atlas, ACTIVE_MAP, activeMap.id);
         } else {
             ItemNBTHelper.setInt(atlas, ACTIVE_MAP, -1);
