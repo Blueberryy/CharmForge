@@ -351,15 +351,15 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
             return transform(it -> it.apply(this) * value);
         }
 
-        public Index divide(int value) {
-            return transform(it -> it.apply(this) / value);
-        }
-
         public Index clamp(Index min, Index max) {
             return transform(it -> MathHelper.clamp(it.apply(this), it.apply(min), it.apply(max)));
         }
 
-        private Index transform(Function<Function<Index, Integer>, Integer> transformer) {
+        public static Index max(Index i1, Index i2) {
+            return transform(it -> Math.max(it.apply(i1), it.apply(i2)));
+        }
+
+        private static Index transform(Function<Function<Index, Integer>, Integer> transformer) {
             return Index.of(transformer.apply(it -> it.x), transformer.apply(it -> it.y));
         }
 

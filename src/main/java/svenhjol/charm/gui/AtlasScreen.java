@@ -61,9 +61,9 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
     private final Map<ButtonDirection, CharmImageButton> buttons;
     private final WorldMap worldMap = new WorldMap();
     private final SingleMap singleMap = new SingleMap(null);
+    private final MapItemRenderer mapItemRenderer;
     private MapGui mapGui;
     private int lastSize;
-    private final MapItemRenderer mapItemRenderer;
 
     public AtlasScreen(AtlasContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn, CONTAINER_BACKGROUND);
@@ -415,7 +415,7 @@ public class AtlasScreen extends AbstractCharmContainerScreen<AtlasContainer> {
                 case RIGHT:
                 case BOTTOM:
                     if (corner != null) {
-                        corner = corner.plus(direction.vector.multiply(mapDistance)).clamp(extremes.min, extremes.max.plus(1 - mapDistance));
+                        corner = corner.plus(direction.vector.multiply(mapDistance)).clamp(extremes.min, Index.max(extremes.min, extremes.max.plus(1 - mapDistance)));
                     }
                     break;
                 case IN:
