@@ -39,8 +39,11 @@ public class Atlas extends CharmModule {
     private static final Map<UUID, AtlasInventory> serverCache = new HashMap<>();
     private static final Map<UUID, AtlasInventory> clientCache = new HashMap<>();
 
-    @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand")
+    @Config(name = "Open in off hand", description = "Allow opening the atlas while it is in the off hand.")
     public static boolean offHandOpen = false;
+
+    @Config(name = "Map scale", description = "Map scale used in atlases by default.")
+    public static int defaultScale = 1;
 
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;

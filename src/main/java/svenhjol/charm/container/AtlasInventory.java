@@ -51,7 +51,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
 
     public AtlasInventory(ItemStack atlas) {
         this.atlas = atlas;
-        this.scale = 0;
+        this.scale = Atlas.defaultScale;
         this.diameter = 128;
         this.emptyMaps = NonNullList.withSize(EMPTY_MAP_SLOTS, ItemStack.EMPTY);
         this.mapInfos = HashBasedTable.create();
@@ -66,7 +66,7 @@ public class AtlasInventory implements INamedContainerProvider, IInventory {
     }
 
     private void load() {
-        scale = ItemNBTHelper.getInt(atlas, SCALE, 0);
+        scale = ItemNBTHelper.getInt(atlas, SCALE, Atlas.defaultScale);
         diameter = 128 * (1 << scale);
         ItemStackHelper.loadAllItems(ItemNBTHelper.getCompound(atlas, EMPTY_MAPS), emptyMaps);
         ListNBT listNBT = ItemNBTHelper.getList(atlas, FILLED_MAPS);
