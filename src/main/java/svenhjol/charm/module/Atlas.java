@@ -43,7 +43,7 @@ public class Atlas extends CharmModule {
     public static boolean offHandOpen = false;
 
     @Config(name = "Map scale", description = "Map scale used in atlases by default.")
-    public static int defaultScale = 1;
+    public static int defaultScale = 0;
 
     public static AtlasItem ATLAS_ITEM;
     public static ContainerType<AtlasContainer> CONTAINER;
