@@ -72,17 +72,17 @@ repositories {
 	maven {
 		// for AutoRegLib
 		name "blamejared"
-		url "http://maven.blamejared.com/"
+		url "https://maven.blamejared.com/"
 	}
 	maven {
 		// for JEI
 		name "progwml6"
-		url "http://dvs1.progwml6.com/files/maven"
+		url "https://dvs1.progwml6.com/files/maven"
 	}
 	maven {
 		// for Mappings
 		name "gigaherz"
-		url "http://dogforce-games.com/maven/"
+		url "https://dogforce-games.com/maven/"
 	}
 	flatDir {
 		// for including local jar files

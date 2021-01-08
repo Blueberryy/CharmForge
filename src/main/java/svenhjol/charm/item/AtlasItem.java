@@ -3,7 +3,10 @@ package svenhjol.charm.item;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -33,12 +36,7 @@ public class AtlasItem extends CharmItem {
             return ActionResult.resultPass(itemStack);
         }
         AtlasInventory inventory = Atlas.getInventory(world, itemStack);
-        for (int i = 0; i < inventory.getSizeInventory(); ++i) {
-            ItemStack item = inventory.getStackInSlot(i);
-            if (item.getItem() == Items.FILLED_MAP) {
-                Atlas.sendMapToClient((ServerPlayerEntity) player, item, i);
-            }
-        }
+        inventory.getCurrentDimensionMapInfos(world).values().forEach(it -> Atlas.sendMapToClient((ServerPlayerEntity) player, it.map, true));
         player.openContainer(inventory);
         return ActionResult.resultConsume(itemStack);
     }
@@ -52,13 +50,9 @@ public class AtlasItem extends CharmItem {
                 PlayerEntity player = context.getPlayer();
                 if (player instanceof ServerPlayerEntity) {
                     AtlasInventory inventory = Atlas.getInventory(world, context.getItem());
-                    AtlasInventory.MapInfo info = inventory.updateActiveMap((ServerPlayerEntity) player);
-                    if (info != null) {
-                        ItemStack map = inventory.getStackInSlot(info.slot);
-                        MapData mapdata = FilledMapItem.getMapData(map, context.getWorld());
-                        if (mapdata != null) {
-                            mapdata.tryAddBanner(context.getWorld(), context.getPos());
-                        }
+                    MapData mapdata = inventory.getActiveMap(world);
+                    if (mapdata != null) {
+                        mapdata.tryAddBanner(world, context.getPos());
                     }
                 }
             }

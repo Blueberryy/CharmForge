@@ -12,5 +12,7 @@ public class CharmMessages {
         Charm.PACKET_HANDLER.register(ClientSetGlowingEntities.class, ClientSetGlowingEntities::encode, ClientSetGlowingEntities::decode, ClientSetGlowingEntities.Handler::handle);
         Charm.PACKET_HANDLER.register(ClientOpenInventory.class, ClientOpenInventory::encode, ClientOpenInventory::decode, ClientOpenInventory.Handler::handle);
         Charm.PACKET_HANDLER.register(ClientUpdatePlayerState.class, ClientUpdatePlayerState::encode, ClientUpdatePlayerState::decode, ClientUpdatePlayerState.Handler::handle);
+        Charm.PACKET_HANDLER.register(ServerAtlasTransfer.class, ServerAtlasTransfer::encode, ServerAtlasTransfer::decode, ServerAtlasTransfer.Handler::handle);
+        Charm.PACKET_HANDLER.register(ClientUpdateAtlasInventory.class, ClientUpdateAtlasInventory::encode, ClientUpdateAtlasInventory::decode, ClientUpdateAtlasInventory.Handler::handle);
     }
 }
