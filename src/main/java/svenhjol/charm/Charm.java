@@ -67,6 +67,7 @@ public class Charm {
             NetheriteNuggets.class,
             ParrotsStayOnShoulder.class,
             PathToDirt.class,
+            PlayerPressurePlates.class,
             PlayerState.class,
             PortableCrafting.class,
             PortableEnderChest.class,
