@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.3.0
+* Added improved atlases (F43nd1r)
+
 ## 2.2.3
 * Mineshaft improvements no longer apply to mesa/badlands mineshafts
 
