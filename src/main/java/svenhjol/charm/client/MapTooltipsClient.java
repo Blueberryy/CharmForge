@@ -23,27 +23,25 @@ import svenhjol.charm.base.helper.MapRenderHelper;
 import java.util.List;
 
 public class MapTooltipsClient extends CharmClientModule {
-
     public MapTooltipsClient(CharmModule module) {
         super(module);
     }
-
 
     @SubscribeEvent
     public void onRenderTooltip(RenderTooltipEvent.PostBackground event) {
         handleRenderTooltip(event.getMatrixStack(), event.getStack(), event.getLines(), event.getX(), event.getY());
     }
 
-    private boolean handleRenderTooltip(MatrixStack matrices, ItemStack stack, List<? extends ITextProperties> lines, int tx, int ty) {
-        if (stack.getItem() != Items.FILLED_MAP) return false;
+    private void handleRenderTooltip(MatrixStack matrices, ItemStack stack, List<? extends ITextProperties> lines, int tx, int ty) {
+        if (stack.getItem() != Items.FILLED_MAP) return;
 
         final Minecraft mc = Minecraft.getInstance();
         final World world = mc.world;
-        if (world == null) return false;
+        if (world == null) return;
 
         MapData data = FilledMapItem.getMapData(stack, world);
 
-        if (data == null) return false;
+        if (data == null) return;
 
         int x = tx;
         int y = ty - 72;
@@ -63,7 +61,6 @@ public class MapTooltipsClient extends CharmClientModule {
             mc.gameRenderer.getMapItemRenderer().renderMap(matrices, bufferSource, data, false, light);
             matrices.pop();
         });
-        return true;
     }
 }
 
