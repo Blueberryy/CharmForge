@@ -2,6 +2,7 @@ package svenhjol.charm.base;
 
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 public abstract class CharmClientModule {
     protected CharmModule module;
@@ -33,5 +34,9 @@ public abstract class CharmClientModule {
 
     public void loadWorld(Minecraft client) {
         // run on client side, only if module enabled
+    }
+
+    public void onClientSetup(FMLClientSetupEvent event) {
+        // run on client side, even if module disabled
     }
 }

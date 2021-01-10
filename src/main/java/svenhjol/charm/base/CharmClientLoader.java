@@ -66,11 +66,19 @@ public class CharmClientLoader {
     }
 
     public void onClientSetup(FMLClientSetupEvent event) {
+        // always run onClientSetup
+        eachModule(module -> module.onClientSetup(event));
+
+        // post init, only enabled modules are run
         eachEnabledModule(ClientHandler.INSTANCE::init);
     }
 
     public void onTextureStitch(TextureStitchEvent event) {
         eachEnabledModule(module -> module.textureStitch(event));
+    }
+
+    protected void eachModule(Consumer<CharmClientModule> consumer) {
+        LOADED_MODULES.values().forEach(consumer);
     }
 
     protected void eachEnabledModule(Consumer<CharmClientModule> consumer) {
