@@ -5,6 +5,7 @@ import net.minecraft.world.server.ServerWorld;
 import svenhjol.charm.Charm;
 import svenhjol.charm.base.helper.PosHelper;
 import svenhjol.charm.base.helper.StringHelper;
+import vazkii.quark.base.Quark;
 import vazkii.quark.base.module.ModuleLoader;
 import vazkii.quark.base.module.QuarkModule;
 import vazkii.quark.content.world.module.BigDungeonModule;
@@ -23,7 +24,11 @@ public class QuarkCompat implements IQuarkCompat {
             String packageName = moduleName.substring(0, dot);
             String className = moduleName.substring(dot);
             Class<?> clazz = Class.forName("vazkii.quark.content." + packageName + StringHelper.snakeToUpperCamel(className));
-            return ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends QuarkModule>) clazz);
+            boolean isEnabled = ModuleLoader.INSTANCE.isModuleEnabled((Class<? extends QuarkModule>) clazz);
+
+            Charm.LOG.debug("Quark " + clazz.toString() + " is " + (isEnabled ? "enabled" : "not enabled"));
+            return isEnabled;
+
         } catch (Exception e) {
             Charm.LOG.debug("Failed to resolve Quark module class: " + moduleName);
             return false;
@@ -36,5 +41,10 @@ public class QuarkCompat implements IQuarkCompat {
             return PosHelper.isInsideStructure((ServerWorld)player.world, player.getPosition(), BigDungeonModule.STRUCTURE);
         }
         return false;
+    }
+
+    @Override
+    public void forceQuarkConfigLoad() {
+        Quark.proxy.handleQuarkConfigChange();
     }
 }
